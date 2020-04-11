@@ -23,7 +23,6 @@
 - Provides the payment API, quickly realizes the payment logic, achieves the profit goal
 - Create AEX9 TOKENS with one key
 - Deployment and use of predictive chicken (in development)
-- Publish tokens with one click
 
 
 
