@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/fonts/font-awesome-4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_demo.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_component.css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit.css">
+    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="http://www.gongjuji.net/Content/files/jquery.md5.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+    <style>
+        .content {
+            width: 100%;
+            text-align: center;
+        }
+
+        .content {
+            /* position: absolute; */
+            /* top: 50%; */
+            /* transform: translate(0%, -50%); */
+        }
+
+        .title {
+            color: #ff0d6a;
+            font-family: Inter, sans-serif;
+            margin-top: -50px;
+            opacity: 1;
+
+        }
+
+        .content h2 {
+            opacity: 1;
+            margin: 0 0 0 0;
+        }
+
+        .input__field--minoru {
+            width: 100%;
+            background: #fff;
+            box-shadow: 0px 0px 0px 2px transparent;
+            color: #ff0d6a;
+            -webkit-transition: box-shadow 0.3s;
+            transition: box-shadow 0.3s;
+            resize: none;
+        }
+
+        .hint {
+            font-size: 15px;
+            margin-top: 60px;
+        }
+
+        .input__field--minoru {
+            height: auto;
+            color: #2f3238;
+            word-break: normal;
+            line-height: 30px;
+            display: block;
+            word-wrap: break-word;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /*.input__field--minoru2 {*/
+        /*    margin-top: 20px;*/
+        /*}*/
+
+        span {
+
+        }
+
+        .content p {
+            padding: 5em 0 0 0;
+            margin-top: 10px;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .spanhint {
+            margin-top: 10px;
+            font-size: 18px;
+            width: auto;
+            text-align: left;
+            color: #ff0d6a;
+        }
+
+        .spanhint-p {
+            font-size: 18px;
+            text-align: center;
+
+            height: auto;
+            color: #ff0d6a;
+        }
+
+
+        .input {
+            overflow: hidden;
+            height: auto;
+        }
+
+        .input__field--minoru3 {
+            margin-bottom: 10px;
+        }
+
+        .dismiss > a {
+            height: 55px;
+            max-width: 380px;
+            background-image: linear-gradient(116deg, #6948a1 0%, #6948a1 90%);
+            border-radius: 55px;
+            line-height: 55px;
+            color: white;
+            font-size: 16px;
+            letter-spacing: 1.2px;
+            margin: 20px auto;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .swal-content__input, .swal-content__textarea {
+            -webkit-appearance: none;
+            background-color: #fff;
+            border: none;
+            font-size: 14px;
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid rgba(0, 0, 0, .14);
+            padding: 10px 13px;
+            border-radius: 2px;
+            transition: border-color .2s;
+        }
+
+        .swal-button {
+            background-color: #ff0d6a;
+            color: #fff;
+            border: none;
+            box-shadow: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 24px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .swal-button:not([disabled]):hover {
+            background-color: #ba0c55;
+        }
+
+        .swal-content__input:focus, .swal-content__textarea:focus {
+            outline: none;
+            border-color: #ff0d6a;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="body">
+    <section class="content">
+        <h2 class="title">The confirmation</h2>
+        <div class="input">
+
+            <p class="spanhint-p" style="padding-top: 1px;">
+                My address</p>
+            <span style="margin-top: 10px" class="input__field input__field--minoru input__field--minoru3"
+                  type="text">{{.myAddress}}</span>
+            <div>
+                <p class="spanhint-p" style="padding-top: 1px;">
+                    Transfer to 👇</p>
+            </div>
+            <span class="input__field input__field--minoru input__field--minoru2" type="text"
+                  id="input-13">{{.address}}</span>
+            <label class="input__label input__label--minoru" for="input-13">
+                <span class="input__label-content input__label-content--minoru"
+                      style="margin-top: 10px; float: right;text-align: right">Transfer amount   <span
+                            style="font-size: 32px; color:#ff0d6a "> {{.tokens}}ae</span></span>
+            </label>
+        </div>
+
+        <div id="buy" class="recover">
+            <a href="#">BUY</a>
+        </div>
+        <div class="dismiss">
+            <a id="dismiss" href="#">DISMISS</a>
+        </div>
+        <span class="hint">Confirm your transfer information twice</span>
+    </section>
+</div>
+</body>
+<script>
+    $(function () {
+        $.LoadingOverlaySetup({
+            image: "../static/img/android-chrome-256x256.png",
+            size: "15",
+            background: "#ffffff",
+            color: "#ba0c55"
+        });
+
+        $("#buy").on('click', function () {
+            // alert(1221);
+            swal("Please enter your payment password", {
+                content: "input",
+            })
+                .then((value) => {
+                    $.LoadingOverlay("show");
+
+                    let order_no = getQueryString('order_no');
+                    let redirect_uri = getQueryString('redirect_uri');
+                    setTimeout(function(){
+                        $.post("/pay/buy", {order_no: order_no, password: $.md5(value+"aeasy")}, function (result) {
+                            let obj = jQuery.parseJSON(result);
+                            if (obj.code === 200) {
+                                window.location.href = redirect_uri + "?order_no=" + obj.data.order_no + "&th_merchants=" + obj.data.th_merchants;
+                            } else {
+                                swal(obj.msg);
+                            }
+                            $.LoadingOverlay("hide");
+
+                        });
+
+                    }, 1500);
+
+                    // Text
+
+                });
+        });
+
+        $(".swal-content__input").attr("type", "password");
+
+
+    });
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+</script>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/tokens_detail.css">
+    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.qrcode.min.js"></script>
+    <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <script type="text/javascript" src="../static/js/ui.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+</head>
+<style>
+    .swal-button {
+        background-color: #ff0d6a;
+        color: #fff;
+        border: none;
+        box-shadow: none;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 24px;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .swal-button:active {
+        background-color: #b8094c;
+    }
+
+    .swal-button:not([disabled]):hover {
+        background-color: #b8094c;
+    }
+
+    .swal-button:hover {
+        background-color: #b8094c;
+    }
+</style>
+<body>
+
+<div class="div-bg">
+    <div class="bg"></div>
+</div>
+
+<div class="body">
+    <div class="header">
+        <div class="logo">
+            <img src="../static/img/android-chrome-256x256.png" alt="">
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="https://www.showdoc.cc/AEASY" target="_blank">DOCUMENT</a></li>
+                <li><a id="go-logout" class="login" href="#">LOGOUT</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="left">
+            <p class="p-h1" style="margin-top: 40px">YOUR TOKENS</p>
+
+
+            <p class="p-title" style="margin-top: 10px">Name : <span
+                        style="color: #2f3238 ;text-align: right;width: 100%">{{.name}}</span></p>
+            <p class="p-title" style="margin-top: 10px">Count : <span style="color: #2f3238">{{.total_supply}}</span>
+            </p>
+            <p class="p-title" style="margin-top: 10px">Decimals : <span style="color: #2f3238">{{.decimals}}</span></p>
+            <div style=" height: 1px;background: #eeeeee;width: 460px; margin: 20px auto"></div>
+
+            <div class="contracts" style="margin-top: 30px">
+                <p class="p-title" style="margin-top: 10px ; line-height: 30px; height: 30px">Contracts : </p>
+                <p style="color: #2f3238;font-size: 14px;line-height: 14px ;float: left">
+                    {{.contracts}}</p>
+
+                <p class="p-title" style="margin-top: 30px ; line-height: 30px; height: 30px">Owner : </p>
+                <p style="color: #2f3238;font-size: 14px;line-height: 14px ;float: left">
+                    {{.address}}</p>
+            </div>
+
+        </div>
+        <div class="right">
+            <p class="p-h1" style="margin-top: 40px">TRANSFER</p>
+            <p class="p-title">Address</p>
+            <div>
+                <label>
+                    <textarea class="input"
+                              id="address"
+                              style="height: 44px;
+                              line-height: 44px;
+                              text-align: center;
+                              border-radius: 22px;
+                              padding-right: 10px;
+                              font-size: 12px;
+                              resize:none"
+                              type="text" spellcheck="false" maxlength="100"></textarea>
+                </label>
+            </div>
+            <p class="p-hint">Enter the address where you want to send the token</p>
+            <p class="p-title">Count</p>
+            <div>
+                <label>
+                    <input class="input" id="count" type=text t_value="" o_value=""
+                           onkeypress="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
+                           onkeyup="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
+                           onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
+                </label>
+            </div>
+            <p class="p-hint">How many tokens are currently ready to send</p>
+            <p class="p-balance">Balance Token : <span id='balance' class="span-balance">{{.balance}}</span> {{.name}}
+            </p>
+            <div id="transfer-token" class="start">
+                <a href="#">TRANSFER</a>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+</body>
+<script>
+    $(function () {
+        $('#transfer-token').on('click', function () {
+            let address = $('#address').val();
+            let count = $('#count').val();
+            let balance = $('#balance').html();
+
+            swal("Confirm to transfer " + count + " " + "{{.name}}" + "?", {
+                buttons: {
+                    cancel: "Cancel",
+                    catch: {
+                        text: "OK",
+                        value: "ok",
+                    },
+                },
+            })
+                .then((value) => {
+                    switch (value) {
+                        case "ok":
+                            $.LoadingOverlay("show");
+                            setTimeout(function () {
+
+                                $.post("/token/transfer", {address: address, count: count}, function (result) {
+                                    let obj = jQuery.parseJSON(result);
+                                    if (obj.code === 200) {
+                                        swal("Token sucess!", "transfer on your successful tokens!", "success", {
+                                            button: "OK!",
+                                        }).then((value) => {
+                                            // window.location.href = '/token';
+                                            $('#balance').html(balance - count);
+                                            $('#count').val('');
+                                        });
+                                    } else {
+                                        swal(obj.msg);
+                                    }
+                                    $.LoadingOverlay("hide");
+                                });
+
+
+                            }, 1500);
+
+                            break;
+                    }
+                });
+        });
+
+        function getData() {
+            $.post("/token/info", {address: address, count: count}, function (result) {
+                let obj = jQuery.parseJSON(result);
+                if (obj.code === 200) {
+                    swal("Token sucess!", "transfer on your successful tokens!", "success", {
+                        button: "OK!",
+                    }).then((value) => {
+                    });
+                } else {
+                    swal(obj.msg);
+                }
+                $.LoadingOverlay("hide");
+            });
+        }
+
+    });
+
+
+</script>
+</html>

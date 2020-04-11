@@ -1,0 +1,163 @@
+package controllers
+
+import (
+	"AEasy.io/models"
+	"AEasy.io/utils"
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
+//订单支付
+type TokenCreateController struct {
+	BaseController
+}
+
+type TransferController struct {
+	BaseController
+}
+type TokenInfoController struct {
+	BaseController
+}
+
+//tokens 创建
+func (c *TokenCreateController) Post() {
+	name := c.GetString("name")
+	countString := c.GetString("count")
+	if countString == "" || name == "" {
+		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		return
+	}
+	if len(name) < 2 || len(name) > 5 {
+		c.ErrorJson(-301, "parameter is name len < 2 and > 5", JsonData{})
+		return
+	}
+	count, err := strconv.Atoi(countString)
+	if err != nil {
+		c.ErrorJson(-301, err.Error(), JsonData{})
+		return
+	}
+	if count > 999999999999 {
+		c.ErrorJson(-301, "parameter is count > 999999999999", JsonData{})
+		return
+	}
+	secret, err := models.FindSecretUserID(c.getCurrentUserId())
+	if err != nil {
+		c.ErrorJson(-301, err.Error(), JsonData{})
+		return
+	}
+	stringAccount, err := models.SigningKeyHexStringAccount(secret.SigningKey)
+	if err != nil {
+		c.ErrorJson(-301, err.Error(), JsonData{})
+
+		return
+	}
+	//_, err = models.ApiSpend(stringAccount, "ak_wNL5NYtbr6AAuAWxKGF3ZwQNBeb7UMpu9BHoVb24pS9iWAQCo", 1000, "")
+	//if err != nil {
+	//	c.ErrorJson(-301, err.Error(), JsonData{})
+	//	return
+	//}
+
+	if !models.Is1AE(stringAccount.Address) {
+		c.ErrorJson(-301, "The balance should be greater than 1ae", JsonData{})
+		return
+	}
+
+	s, e := models.CompileContractInit(stringAccount, name, strconv.Itoa(count)+"000000000000000000")
+
+	if e == nil {
+		models.UpdateSecretContracts(c.getCurrentUserId(), s)
+		_, err = models.InsertToken(c.getCurrentUserId(), name, s, secret.Address, strconv.Itoa(count)+"000000000000000000")
+		c.SuccessJson(map[string]interface{}{
+			"contract": s,
+		})
+	} else {
+		c.ErrorJson(-500, e.Error(), nil)
+	}
+}
+
+func (c *TransferController) Post() {
+	address := c.GetString("address")
+	countString := c.GetString("count")
+	if c.isLogin() {
+		if countString == "" || address == "" {
+			c.ErrorJson(-301, "parameter is nul", JsonData{})
+			return
+		}
+
+		count, err := strconv.ParseFloat(countString, 64)
+		if err != nil {
+			c.ErrorJson(-301, err.Error(), JsonData{})
+			return
+		}
+		if count > 999999999999 {
+			c.ErrorJson(-301, "parameter is count > 999999999999", JsonData{})
+			return
+		}
+		secret, e := models.FindSecretUserID(c.getCurrentUserId())
+		if e != nil {
+			c.ErrorJson(-500, e.Error(), JsonData{})
+			return
+		}
+		if secret.Contracts == "" {
+			c.ErrorJson(-500, "contracts error", JsonData{})
+			return
+		}
+		account, _ := models.SigningKeyHexStringAccount(secret.SigningKey)
+		fmt.Println(strconv.FormatFloat(count*1000000000000000000, 'f', -1, 64))
+		_, err = models.CallContractFunction(account, secret.Contracts, "transfer", []string{address, strconv.FormatFloat(count*1000000000000000000, 'f', -1, 64)})
+
+		if err != nil {
+			c.ErrorJson(-500, err.Error(), JsonData{})
+			return
+		}
+		c.SuccessJson(JsonData{})
+	} else {
+		c.TplName = "index.html"
+		return
+	}
+}
+
+func (c *TokenInfoController) Get() {
+
+	if c.isLogin() {
+		secret, err := models.FindSecretUserID(c.getCurrentUserId())
+		if err != nil {
+			c.ErrorJson(-301, err.Error(), JsonData{})
+			return
+		}
+		if secret.Contracts == "" {
+			c.ErrorJson(-301, "contracts nil", JsonData{})
+			return
+		}
+		account, _ := models.SigningKeyHexStringAccount(secret.SigningKey)
+
+		metaInfoCall, _ := models.CallContractFunction(account, secret.Contracts, "meta_info", []string{})
+		totalSupplyCall, _ := models.CallContractFunction(account, secret.Contracts, "total_supply", []string{})
+		balanceCall, _ := models.CallContractFunction(account, secret.Contracts, "balance", []string{account.Address})
+		metaInfoJson, _ := json.Marshal(&metaInfoCall)
+		totalSupplyJson, _ := json.Marshal(&totalSupplyCall)
+		balanceJson, _ := json.Marshal(&balanceCall)
+
+		var metaInfo MetaInfo
+		var totalSupply float64
+		var balance Balance
+		_ = json.Unmarshal(metaInfoJson, &metaInfo)
+		_ = json.Unmarshal(totalSupplyJson, &totalSupply)
+		_ = json.Unmarshal(balanceJson, &balance)
+
+		c.Data["total_supply"] = utils.FormatTokens(totalSupply)
+		c.Data["balance"] = utils.FormatTokens(balance.Some[0])
+		c.Data["decimals"] = metaInfo.Decimals
+		c.Data["name"] = metaInfo.Name
+		c.Data["symbol"] = metaInfo.Symbol
+		c.Data["contracts"] = secret.Contracts
+		c.Data["address"] = secret.Address
+		c.SuccessJson(map[string]interface{}{
+			"total_supply": utils.FormatTokens(totalSupply),
+		})
+	} else {
+		c.TplName = "index.html"
+		return
+	}
+}

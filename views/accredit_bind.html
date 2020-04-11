@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_demo.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/login.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_component.css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit.css">
+    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
+    <script type="text/javascript" src="http://www.gongjuji.net/Content/files/jquery.md5.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+    <style>
+        .content {
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            color: #ff0d6a;
+            font-family: Inter, sans-serif;
+            opacity: 1;
+
+        }
+
+        .content h2 {
+            opacity: 1;
+            margin: 0 0 0;
+        }
+
+        .input__field--minoru {
+            width: 100%;
+            background: #fff;
+            /*box-shadow: 0px 0px 0px 2px transparent;*/
+            color: #ff0d6a;
+            /*-webkit-transition: box-shadow 0.3s;*/
+            /*transition: box-shadow 0.3s;*/
+            resize: none;
+        }
+
+        .hint {
+            font-size: 15px;
+            margin-top: 60px;
+        }
+
+        .swal-button {
+            background-color: #ff0d6a;
+            color: #fff;
+            border: none;
+            box-shadow: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 24px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .swal-button:active {
+            background-color: #b8094c;
+        }
+
+        .swal-button:not([disabled]):hover {
+            background-color: #b8094c;
+        }
+
+        .swal-button:hover {
+            background-color: #b8094c;
+        }
+
+        .sms {
+            float: right;
+            height: 55px;
+            background-image: linear-gradient(116deg, #6948a1 0%, #6948a1 90%);
+            border-radius: 55px;
+            line-height: 55px;
+            color: white;
+            width: 45%;
+            font-size: 16px;
+            letter-spacing: 1.2px;
+            margin: auto;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<div class="body">
+    <section class="content">
+        <h2 class="title">Bind email address</h2>
+        <span class="input">
+					<input class="input__field input__field--minoru"
+                           style="height: 55px;line-height: 55px;  border-radius: 5px;" type="text"
+                           id="email"/>
+					<label class="input__label input__label--minoru" for="email">
+						<span class="input__label-content input__label-content--minoru">Please enter email address</span>
+					</label>
+
+            	<input class="input__field input__field--minoru"
+                       style="height: 55px ;width: 50% ;  border-radius: 5px; float: left" type="text"
+                       id="captcha"/>
+              <a id="go-captcha" class="sms" href="#">Send verification</a>
+					<label class="input__label input__label--minoru" for="captcha">
+						<span class="input__label-content input__label-content--minoru">verification code</span>
+					</label>
+             <input class="input__field input__field--minoru"
+                    style="height: 55px;line-height: 55px;  border-radius: 5px;" type="password"
+                    id="password"/>
+					<label class="input__label input__label--minoru" for="password">
+						<span class="input__label-content input__label-content--minoru">Set payment password</span>
+					</label>
+
+        </span>
+
+
+        <div class="recover">
+            <a id="bind" href="#">THE BINGDING</a>
+        </div>
+        <span class="hint">Bind your account and mailbox together</span>
+    </section>
+</div>
+</body>
+<script>
+    $(function () {
+        $.LoadingOverlaySetup({
+            image: "../static/img/android-chrome-256x256.png",
+            size: "15",
+            background: "#ffffff",
+            color: "#ba0c55"
+        });
+        $('#bind').on('click', function () {
+            let app_id = getQueryString('app_id');
+            let app_secret = getQueryString('app_secret');
+            let redirect_uri = getQueryString('redirect_uri');
+            let temp_token = getQueryString('temp_token');
+
+            let email = $('#email').val();
+            let captcha = $('#captcha').val();
+            let password = $('#password').val();
+            if (email === '') {
+                swal('Email is null');
+                return;
+            }
+            if (captcha === '') {
+                swal('captcha is null');
+                return;
+            }
+            if (password === '') {
+                swal('password is null');
+                return;
+            }
+
+            if (app_id === '') {
+                swal('app_id is null');
+                return;
+            }
+
+            if (app_secret === '') {
+                swal('app_secret is null');
+                return;
+            }
+
+            if (redirect_uri === '') {
+                swal('redirect_uri is null');
+                return;
+            }
+            if (temp_token === '') {
+                swal('temp_token is null');
+                return;
+            }
+            $.LoadingOverlay("show");
+
+            setTimeout(function () {
+                $.post("/accredit/bind", {
+                    app_id: app_id,
+                    app_secret: app_secret,
+                    redirect_uri: redirect_uri,
+                    temp_token: temp_token,
+                    email: email,
+                    captcha: captcha,
+                    password: $.md5(password + 'aeasy'),
+                }, function (result) {
+                    let obj = jQuery.parseJSON(result);
+                    if (obj.code === 200) {
+                        window.location.href = obj.data.redirectUri + "?code=" + obj.data.code;
+                    } else {
+                        swal(obj.msg);
+                    }
+                    $.LoadingOverlay("hide");
+                });
+            }, 1500);
+
+        });
+
+
+    });
+
+    let isCountDown = false;
+    let goCaptcha = $('#go-captcha').on('click', function () {
+        if (!isCountDown) {
+            let email = $('#email').val();
+            if (email === '') {
+                swal('Email is null');
+                return;
+            }
+            $.post("/mail/send", {email: email, type: "2"}, function (result) {
+                let obj = jQuery.parseJSON(result);
+                if (obj.code === 200) {
+                    countDown(60);
+                } else {
+                    swal(obj.msg);
+                }
+            });
+        }
+
+        //读秒
+        function countDown(count) {
+            isCountDown = true;
+            const down = setInterval(CountDown, 1000);//每秒执行一次，赋值
+            function CountDown() {
+
+                goCaptcha.text(count + 's');//写入
+                goCaptcha.css("background-image", "linear-gradient(116deg, #DCDCDC 0%, #DCDCDC 10%)");
+                if (count === 0) {
+                    $('#go-captcha').text('Get');//
+                    $("#go-captcha").css("background-image", "linear-gradient(116deg, #6948a1 0%, #6948a1 90%)");
+                    // $('#putvf1').css('display', 'none');//修改状态
+                    // $('#putvf').css('display', 'block');
+                    clearInterval(down);//销毁计时器
+                    isCountDown = false;
+                    return;
+                }
+                count--;
+            }
+        }
+    });
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+</script>
+</html>

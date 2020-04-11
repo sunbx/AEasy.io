@@ -1,0 +1,304 @@
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    width: 100%;
+    overflow: hidden;
+}
+
+/*中间的过度的横线*/
+.line {
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #f1f1f1;
+}
+
+.body {
+    width: 100%;
+    height: 100%;
+}
+
+.header {
+    width: 100%;
+    height: 80px;
+}
+
+.header .logo {
+    width: 200px;
+    line-height: 80px;
+    float: left;
+    font-size: 22px;
+    font-weight: bold;
+    font-family: Roboto-Black, serif;
+}
+
+.header .logo img {
+    width: 100px;
+    height: 100px;
+    margin-top: -10px;
+    margin-left: -20px;
+}
+
+
+.header .menu {
+    height: 80px;
+    float: right;
+}
+
+
+.header .menu li {
+    float: left;
+    list-style-type: none;
+    height: 80px;
+    display: block;
+}
+
+.header .menu li > a {
+    font-family: PingFangSC-Regular, serif;
+    font-size: 14px;
+    text-align: center;
+    margin-left: 25px;
+    height: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    display: block;
+    line-height: 30px;
+    margin-top: 25px;
+
+}
+
+
+.header .menu li > a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.header .menu li .login {
+    border-radius: 15px;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.header .menu li .login:hover {
+    border-radius: 15px;
+    border-color: white;
+    color: #E51363;
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.content .slogan-title {
+    font-family: PingFangSC-Semibold, serif;
+    font-size: 32px;
+    color: #000000;
+    letter-spacing: 1px;
+    margin-top: -80px;
+    line-height: 52px;
+}
+
+.content .slogan-content {
+    opacity: 0.5;
+    font-family: Roboto-Regular, serif;
+    font-size: 15px;
+    color: #000000;
+    letter-spacing: 1.42px;
+    line-height: 18px;
+    margin-top: 20px;
+}
+
+.recover {
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.create {
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.recover > a {
+    height: 55px;
+    max-width: 380px;
+    background-image: linear-gradient(116deg, #F7296E 0%, #F7296E 90%);
+    border-radius: 55px;
+    line-height: 55px;
+    color: white;
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    margin: auto;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.create > a {
+    height: 55px;
+    max-width: 380px;
+    background-image: linear-gradient(116deg, #6948a1 0%, #6948a1 90%);
+    border-radius: 55px;
+    line-height: 55px;
+    color: white;
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    margin: 20px auto;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    height: 170px;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    text-align: center;
+    width: 1200px;
+}
+
+
+.footer .icon img {
+    width: 38px;
+    height: 38px;
+    line-height: 42px;
+}
+
+.footer .title {
+    font-family: Roboto-BoldCondensed, serif;
+    font-size: 16px;
+    color: #000000;
+    letter-spacing: 0.4px;
+}
+
+.footer .sub {
+    font-family: Roboto-Condensed, serif;
+    font-size: 12px;
+    color: #9B9B9B;
+    letter-spacing: 0.31px;
+    text-align: center;
+    margin-top: 10px;
+    line-height: 27px;
+}
+
+.footer .sub2 {
+    font-family: Roboto-Condensed, serif;
+    font-size: 12px;
+    color: #9B9B9B;
+    letter-spacing: 0.31px;
+    text-align: center;
+    line-height: 27px;
+}
+
+.footer .about {
+    width: 350px;
+    float: left;
+    height: 120px;
+    bottom: 0;
+    position: absolute;
+    overflow: hidden;
+}
+
+.footer .help {
+    width: 400px;
+    height: 120px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.footer .contact {
+    width: 350px;
+    right: 0;
+    float: right;
+    overflow: hidden;
+    height: 120px;
+    position: absolute;
+    bottom: 0;
+}
+
+.down-arrow-aepps {
+    background-image: url('../img/arrow-sort-down-small.png');
+    background-position: 96% 50%;
+    background-repeat: no-repeat;
+    outline: none;
+    background-size: 10px;
+    background-blend-mode: lighten;
+}
+
+.down-arrow-zoology {
+    background-image: url('../img/arrow-sort-down-small.png');
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    outline: none;
+    background-size: 10px;
+    background-blend-mode: lighten;
+}
+
+.ui-search-select-list-aepps {
+    position: absolute;
+    text-align: center;
+    display: none;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+    border-width: 0px;
+    overflow: hidden;
+    margin-left: 30px;
+}
+
+
+.ui-search-select-list-zoology {
+    position: absolute;
+    text-align: center;
+    display: none;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+    border-width: 0px;
+    overflow: hidden;
+    margin-left: 30px;
+}
+
+
+.select-item {
+    flex: 1;
+    background-color: white;
+    color: black;
+    line-height: 40px;
+    text-decoration: none;
+    font-size: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: block;
+    font-weight: bold;
+}
+
+.select-item:hover {
+    color: black;
+    background-color: #f1f1f1;
+}
+
+
+

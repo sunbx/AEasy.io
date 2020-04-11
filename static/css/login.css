@@ -1,0 +1,327 @@
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background: #F5F5F5;
+}
+
+li {
+    list-style-type: none;
+}
+
+
+/*.base {*/
+/*    width: 800px;*/
+/*    height: 500px;*/
+/*    background: white;*/
+/*    !*水平居中*!*/
+/*    position: relative;*/
+/*    top: 50%; !*偏移*!*/
+/*    margin: -250px auto 0;*/
+/*    display: flex;*/
+/*    overflow: hidden;*/
+/*    border-radius: 10px;*/
+/*    box-shadow: 10px 10px 10px 10px rgba(0.1, 0.1, 0.1, 0.1);*/
+/*}*/
+.logo {
+    width: 200px;
+    line-height: 80px;
+    float: left;
+    font-size: 22px;
+    font-weight: bold;
+    position: absolute;
+    font-family: Roboto-Black, serif;
+}
+
+.logo img {
+    width: 100px;
+    height: 100px;
+    margin-top: -10px;
+    margin-left: 40px;
+}
+
+
+.base {
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    overflow: hidden;
+}
+
+
+.base .bg {
+    width: 100%;
+    height: 100%;
+    background-image: url("https://aeternity.com/brandguide/assets/images/logo-white.png");
+    background-size: 320px 200px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+
+}
+
+.banner {
+    width: 65%;
+    height: 100%;
+    background-image: linear-gradient(116deg, #5E3AFF 00%, #F7296E 80%);
+
+}
+
+.content {
+    width: 35%;
+    height: 100%;
+}
+
+.content .div-login {
+    margin-top: 130px;
+    margin-left: 60px;
+    margin-right: 60px;
+    overflow: hidden;
+}
+
+.content .display-none {
+    display: none;
+}
+
+
+.content .div-login .p-login {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.content .div-login .p-register {
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.content .div-login .register {
+    color: #f72a6f;
+
+}
+
+.content .div-login .div-email {
+    height: 44px;
+    margin-top: 37px;
+
+}
+
+.content .div-login .p-email {
+    float: left;
+    width: 90px;
+    font-size: 16px;
+}
+
+
+.content .div-login .input-email {
+    height: 44px;
+    width: 100%;
+    border-radius: 22px;
+    border-color: #d6d6d0;
+    padding-left: 20px;
+    float: left;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 16px;
+    outline: none;
+}
+
+.content .div-login .div-password {
+    height: 33px;
+    margin-top: 20px;
+}
+
+.content .div-login .p-password {
+    float: left;
+    width: 90px;
+    font-size: 16px;
+}
+
+.content .div-login .input-password {
+    height: 44px;
+    width: 100%;
+    float: left;
+    font-size: 16px;
+    border-radius: 22px;
+    border-color: #d6d6d0;
+    border-style: solid;
+    padding-left: 20px;
+    border-width: 1px;
+    outline: none;
+}
+
+
+.content .div-login .p-forget {
+    float: right;
+    margin-top: 20px;
+    text-align: right;
+    color: black;
+
+}
+
+.content .div-login .login {
+    width: 100%;
+    height: 45px;
+    background-image: linear-gradient(116deg, #5E3AFF 0%, #F7296E 90%);
+    border-radius: 23px;
+    color: white;
+    font-size: 16px;
+    line-height: 45px;
+    margin-top: 80px;
+    letter-spacing: 1.2px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+/*=====================================================*/
+
+.content .div-register {
+    margin-top: 80px;
+    margin-left: 60px;
+    margin-right: 60px;
+    overflow: hidden;
+}
+
+.content .div-register .p-register {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.content .div-register .p-login {
+    font-size: 16px;
+    margin-top: 15px;
+
+}
+
+.content .div-register .login {
+    color: #f72a6f;
+}
+
+.content .div-register .div-email {
+    height: 44px;
+    margin-top: 20px;
+}
+
+.content .div-register .p-email {
+    float: left;
+    width: 80px;
+    margin-top: 30px;
+}
+
+
+.content .div-register .input-email {
+    height: 44px;
+    width: 100%;
+    border-radius: 22px;
+    border-color: #d6d6d0;
+    padding-left: 20px;
+    float: left;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 16px;
+    outline: none;
+}
+
+.content .div-register .div-captcha {
+    height: 44px;
+    margin-top: 20px;
+}
+
+.content .div-register .div-captcha .p-captcha {
+    float: left;
+    width: 80px;
+
+    font-size: 16px;
+}
+
+.content .div-register .div-captcha .input-captcha {
+    height: 44px;
+    width: 65%;
+    border-radius: 22px;
+    border-color: #d6d6d0;
+    padding-left: 20px;
+    float: left;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 16px;
+    outline: none;
+}
+
+.content .div-register .div-captcha .a-captcha {
+    width: 30%;
+    height: 44px;
+    background-image: linear-gradient(116deg, #5E3AFF 0%, #F7296E 90%);
+    border-radius: 23px;
+    color: white;
+    font-size: 16px;
+    line-height: 44px;
+    margin-left: 5%;
+    letter-spacing: 1.2px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    float: left;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.content .div-register .div-password {
+    height: 44px;
+    margin-top: 20px;
+}
+
+.content .div-register .p-password {
+    float: left;
+    width: 80px;
+    font-size: 16px;
+}
+
+.content .div-register .input-password {
+    height: 44px;
+    width: 100%;
+    border-radius: 22px;
+    float: left;
+    font-size: 16px;
+    border-color: #d6d6d0;
+    border-style: solid;
+    padding-left: 20px;
+    border-width: 1px;
+    outline: none;
+}
+
+
+.content .div-register .register {
+    width: 100%;
+    height: 45px;
+    background-image: linear-gradient(116deg, #5E3AFF 0%, #F7296E 90%);
+    border-radius: 23px;
+    color: white;
+    font-size: 16px;
+    line-height: 45px;
+    margin-top: 30px;
+    letter-spacing: 1.2px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.privacy {
+    width: 100%;
+    text-align: center;
+    display: block;
+    margin-top: 40px;
+    color: black;
+}

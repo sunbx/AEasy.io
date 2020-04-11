@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_demo.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit_component.css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/accredit.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+    <style>
+        .content {
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            color: #ff0d6a;
+            font-family: Inter, sans-serif;
+            opacity: 1;
+
+        }
+
+        .content h2 {
+            opacity: 1;
+            margin: 0 0 0;
+        }
+
+        .input__field--minoru {
+            width: 100%;
+            background: #fff;
+            box-shadow: 0px 0px 0px 2px transparent;
+            color: #ff0d6a;
+            -webkit-transition: box-shadow 0.3s;
+            transition: box-shadow 0.3s;
+            resize: none;
+        }
+
+        .hint {
+            font-size: 15px;
+            margin-top: 60px;
+        }
+
+        .swal-button {
+            background-color: #ff0d6a;
+            color: #fff;
+            border: none;
+            box-shadow: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 24px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .swal-button:active {
+            background-color: #b8094c;
+        }
+
+        .swal-button:not([disabled]):hover {
+            background-color: #b8094c;
+        }
+
+        .swal-button:hover {
+            background-color: #b8094c;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<div class="body">
+    <section class="content">
+        <h2 class="title">Certificate authority</h2>
+        <span class="input">
+					<textarea id="mnemonic" rows="4" cols="20" class="input__field input__field--minoru" type="text"
+                              id="input-13" style=" border-radius: 5px;"></textarea>
+					<label class="input__label input__label--minoru" for="input-13">
+						<span class="input__label-content input__label-content--minoru">Mnemonic login, and base mnemonic common</span>
+					</label>
+				</span>
+        <div class="recover">
+            <a id="recover" href="#">RECOVER</a>
+        </div>
+        <div class="create">
+            <a id="register" href="#">CREATE NEW ACCOUNT</a>
+        </div>
+        <span class="hint">OAuth is the way to log in to your account</span>
+    </section>
+</div>
+</body>
+<script>
+    $(function () {
+        $.LoadingOverlaySetup({
+            image: "../static/img/android-chrome-256x256.png",
+            size: "15",
+            background: "#ffffff",
+            color: "#ba0c55"
+        });
+        $('#register').one('click', function () {
+            let app_id = getQueryString('app_id');
+            let app_secret = getQueryString('app_secret');
+            let redirect_uri = getQueryString('redirect_uri');
+            $.LoadingOverlay("show");
+
+            setTimeout(function () {
+
+                $.post("/accredit/register", {
+                    app_id: app_id,
+                    app_secret: app_secret,
+                    redirect_uri: redirect_uri,
+                }, function (result) {
+                    let obj = jQuery.parseJSON(result);
+                    if (obj.code === 301) {
+                        swal("👉\n\n" +
+                            "" + obj.data.mnemonic + "" +
+                            "\n\n👈", "Congratulations on your successful account registration. Please remember your mnemonic for your next use").then((value) => {
+                            window.location.href = "/accredit_bind" +
+                                "?redirect_uri=" + obj.data.redirectUri +
+                                "&app_id=" + obj.data.appId +
+                                "&app_secret=" + obj.data.appSecret +
+                                "&temp_token=" + obj.data.tempToken;
+                        });
+
+                    } else {
+                        swal(obj.msg);
+                    }
+                    $.LoadingOverlay("hide");
+                });
+            }, 1500);
+        });
+
+        $('#recover').on('click', function () {
+            let mnemonic = $('#mnemonic').val();
+            let app_id = getQueryString('app_id');
+            let redirect_uri = getQueryString('redirect_uri');
+            $.LoadingOverlay("show");
+            setTimeout(function () {
+                $.post("/accredit/login", {
+                    mnemonic: mnemonic,
+                    app_id: app_id,
+                    redirect_uri: redirect_uri,
+                }, function (result) {
+                    let obj = jQuery.parseJSON(result);
+                    if (obj.code === 200) {
+                        window.location.href = obj.data.redirectUri + "?code=" + obj.data.code;
+                    } else if (obj.code === 301) {
+                        window.location.href = "/accredit_bind" +
+                            "?redirect_uri=" + obj.data.redirectUri +
+                            "&app_id=" + obj.data.appId +
+                            "&temp_token=" + obj.data.tempToken;
+                    } else {
+                        swal(obj.msg);
+                    }
+                    $.LoadingOverlay("hide");
+                });
+
+            }, 1500);
+        });
+
+
+    });
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+</script>
+</html>

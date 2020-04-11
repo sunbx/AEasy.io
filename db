@@ -1,0 +1,77 @@
+CREATE TABLE `aea_user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `mobile` char(20) CHARACTER SET utf8 DEFAULT NULL COMMENT '手机号/登录名',
+  `email` char(20) CHARACTER SET utf8 DEFAULT NULL COMMENT '邮箱/登录名',
+  `password` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '密码',
+  `app_key` varchar(32) NOT NULL,
+  `app_secret` varchar(128) NOT NULL,
+  `nickname` varchar(12) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '昵称',
+  `gender` tinyint(4) unsigned NOT NULL DEFAULT '2' COMMENT '0=女,1=男,2=未知',
+  `birthday` date NOT NULL DEFAULT '0000-00-00' COMMENT '生日 格式 YYYY-MM-DD',
+  `about` varchar(500) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '简介',
+  `vip` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '会员0=否 1=是',
+  `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '0=冻结,1=正常,2=停用',
+  `login_ip` varchar(255) NOT NULL DEFAULT '0' COMMENT '登录ip',
+  `login_last_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `update_time` bigint(11) unsigned NOT NULL DEFAULT '0',
+  `create_time` bigint(11) unsigned NOT NULL DEFAULT '0',
+  `delete_time` bigint(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_mobile` (`mobile`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
+CREATE TABLE `aea_email` (
+  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `email` varchar(16) NOT NULL DEFAULT '' COMMENT '手机号',
+  `template_id` int(11) NOT NULL DEFAULT '0' COMMENT '模板id',
+  `data` varchar(128) NOT NULL DEFAULT '' COMMENT '数据',
+  `status` tinyint(11) NOT NULL COMMENT '状态0未发送 1已发送 2失败',
+  `type` int(11) DEFAULT NULL COMMENT '发送类型 0 注册',
+  `ip` varchar(255) DEFAULT NULL COMMENT 'ip',
+  `update_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `create_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `delete_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=120067 DEFAULT CHARSET=utf8 COMMENT='邮箱发送记录表';
+
+
+CREATE TABLE `aea_account` (
+  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  `address` varchar(128) NOT NULL DEFAULT '' COMMENT '地址',
+  `mnemonic` varchar(128) NOT NULL DEFAULT '' COMMENT '助记词',
+  `signing_key` tinyint(11) NOT NULL COMMENT '签名',
+  `status` int(11) DEFAULT NULL COMMENT '是否封禁',
+  `create_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='ae用户表';
+
+CREATE TABLE `aea_secret` (
+  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  `app_secret` varchar(128) NOT NULL DEFAULT '' COMMENT '地址',
+  `mnemonic` varchar(128) NOT NULL DEFAULT '' COMMENT '助记词',
+  `signing_key` tinyint(11) NOT NULL COMMENT '签名',
+  `type` tinyint(11) NOT NULL COMMENT '账户类型',
+  `status` int(11) DEFAULT NULL COMMENT '是否封禁',
+  `tokens` decimal(30,0) NOT NULL 'token数量',
+  `create_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='ae app表';
+
+CREATE TABLE `aea_order` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `order_no` char(40) NOT NULL DEFAULT '',
+  `body` varchar(255) NOT NULL DEFAULT '' COMMENT '商品描述/备注',
+  `tokens` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '价格',
+  `pay_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '完成支付时间',
+  `pay_status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '1=未支付, 2=已支付',
+  `app_id` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '商户的app_id',
+  `send_address` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '商户的app_id',
+  `receive_address` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '商户的app_id',
+  `update_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `create_time` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uniq_order_no` (`order_no`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单表';

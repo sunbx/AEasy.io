@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/login.css">
+    <script src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+    {{/*    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js" ></script>*/}}
+    <script type="text/javascript" src="http://www.gongjuji.net/Content/files/jquery.md5.js"></script>
+    <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/js/dependancies/bootstrap-select-1.12.4/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/htmleaf-demo.css">
+
+
+    <script>window.jQuery || document.write('<script src="../static/js/jquery-1.11.0.min.js"><\/script>')</script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../static/js/dependancies/bootstrap-select-1.12.4/dist/js/bootstrap-select.min.js"></script>
+    <script src="../static/js/countrypicker.min.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+</head>
+<style>
+    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 100%
+    }
+
+    .swal-button {
+        background-color: #ff0d6a;
+        color: #fff;
+        border: none;
+        box-shadow: none;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 10px 24px;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .swal-button:active {
+        background-color: #b8094c;
+    }
+
+    .swal-button:not([disabled]):hover {
+        background-color: #b8094c;
+    }
+
+    .swal-button:hover {
+        background-color: #b8094c;
+    }
+</style>
+<style>
+
+    .btn-group > .btn:first-child {
+        height: 44px;
+        width: 100%;
+        margin: 0;
+        border-radius: 22px;
+        padding-left: 20px;
+        margin-top: 30px;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        height: 300px;
+    }
+
+    .col-lg-3 {
+        margin-bottom: 15px;
+        text-align: center;
+        border: 1px solid #e5e5e5;
+        background-color: #fcfcfc;
+        min-height: 300px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+
+        margin-left: 1em;
+        margin-right: 1em;
+
+    }
+
+    .attr {
+        padding: 2px 4px;
+        font-size: 90%;
+        color: #09a049;
+        background-color: #f9f2f4;
+        border-radius: 4px;
+    }
+
+    .bs-docs-header {
+        margin-bottom: 0;
+        background: #337ab7;
+        color: #fff;
+        padding-top: 80px;
+        padding-bottom: 80px;
+        border-radius: 0px !important;
+        margin-bottom: 80px;
+    }
+
+    .bs-docs-header .aff,
+    .bs-docs-header .aff:hover,
+    .bs-docs-header .aff:active {
+        color: white !important;
+        text-decoration: underline;
+    }
+
+    .bs-docs-header .btn {
+        padding: 15px 30px;
+        font-size: 20px;
+        margin-top: 30px;
+    }
+
+    .btn-outline-inverse, .btn-outline-inverse:active {
+        color: #fff !important;
+        background-color: transparent;
+        border-color: #fff;
+    }
+
+    .btn-outline-inverse:hover {
+        background-color: white !important;
+        color: #337ab7 !important;
+    }
+
+    .row {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+</style>
+<body>
+<div class="logo">
+    <img src="../static/img/android-chrome-256x256.png" alt="">
+</div>
+<div class="base">
+
+
+    <div class="content">
+        <div class="div-login">
+
+            <div><p class="p-login">Login</p></div>
+            <div><p class="p-register">No Aeasy account <a id="go-register" class="register" href="#">register</a></p>
+            </div>
+
+            <div class="div-email">
+                <input id="login-input-email"
+                       class="input-email"
+                       placeholder="Email and Phone"
+                       type="tel"
+                       name="user">
+            </div>
+
+            <div class="div-password">
+                <input id="login-input-password"
+                       placeholder="Password"
+                       class="input-password"
+                       type="password"
+                       name="pwd">
+            </div>
+
+            <div>
+                <a id="go-forget" class="p-forget" href="#">Forgot password?</a>
+            </div>
+            <a id="login" class="login" href="#">Login</a>
+
+
+        </div>
+
+
+        <div class="div-register display-none">
+
+            <div><p class="p-register">Register</p></div>
+            <div><p class="p-login">Existing account <a id="go-login" class="login" href="#">login</a></p></div>
+
+            <select id="select" class="selectpicker countrypicker" data-live-search="true" data-default="0086"
+                    data-flag="false"></select>
+            <p class="privacy" style="font-size: 12px;color: #6a7989;margin-top: 10px">Outside China, it is recommended to register by email</p>
+            <div class="div-email">
+
+
+                <input id="register-input-email"
+                       class="input-email"
+                       type="tel"
+                       placeholder="Phone or Email"
+                       name="user">
+            </div>
+            <div class="div-captcha">
+                <input id="register-input-captcha"
+                       class="input-captcha"
+                       type="tel"
+                       onkeyup="this.value=this.value.replace(/\D/g,'')"
+                       placeholder="Verification code"
+                       maxlength="6"
+                       name="user">
+                <a id="go-captcha" class="a-captcha" href="#">Get</a>
+            </div>
+
+            <div class="div-password">
+                <input id="register-input-password"
+                       class="input-password"
+                       type="password"
+                       maxlength="20"
+                       placeholder="Set the password"
+                       name="pwd">
+            </div>
+
+
+            <a id="register" class="register" href="#">Register / Login</a>
+
+
+            <a id="go-privacy" class="privacy" href="#">privacy</a>
+        </div>
+    </div>
+    <div class="banner">
+        <div class="bg">
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+<script>$(function () {
+
+
+//	============================================================
+
+        $('#go-register').on('click', function () {
+            $('.div-login').hide();
+            $('.div-register').show();
+        });
+
+        $('#go-login').on('click', function () {
+            $('.div-register').hide();
+            $('.div-login').show();
+        });
+        $.LoadingOverlaySetup({
+            image: "../static/img/android-chrome-256x256.png",
+            size: "15",
+            background: "#ffffff",
+            color: "#ba0c55"
+        });
+//	============================================================
+        let isCountDown = false;
+        let goCaptcha = $('#go-captcha').on('click', function () {
+
+            if (!isCountDown) {
+                let email = $('#register-input-email').val();
+                var options = $("#select option:selected"); //获取选中的项
+                let code = options.val();
+                if (email === '') {
+                    swal('Email is null');
+                    return;
+                }
+                $.LoadingOverlay("show");
+
+                setTimeout(function () {
+                    $.post("/mail/send", {
+                            code: code,
+                            email: email,
+                            type: "1"
+                        },
+
+                        function (result) {
+                            let obj = jQuery.parseJSON(result);
+                            if (obj.code === 200) {
+                                countDown(60);
+                            } else {
+                                swal(obj.msg);
+                            }
+                            $.LoadingOverlay("hide");
+                        }
+                    )
+                    ;
+                }, 1500);
+
+
+            }
+
+            //读秒
+            function countDown(count) {
+                isCountDown = true;
+                const down = setInterval(CountDown, 1000);//每秒执行一次，赋值
+                function CountDown() {
+
+                    goCaptcha.text(count + 's');//写入
+                    goCaptcha.css("background-image", "linear-gradient(116deg, #DCDCDC 0%, #DCDCDC 10%)");
+                    if (count === 0) {
+                        $('#go-captcha').text('Get');//
+                        $("#go-captcha").css("background-image", "linear-gradient(116deg, #5E3AFF 0%, #F7296E 90%)");
+                        // $('#putvf1').css('display', 'none');//修改状态
+                        // $('#putvf').css('display', 'block');
+                        clearInterval(down);//销毁计时器
+                        isCountDown = false;
+                        return;
+                    }
+                    count--;
+                }
+            }
+        });
+
+        $('#register').on('click', function () {
+            var options = $("#select option:selected"); //获取选中的项
+            let code = options.val();
+            let email = $('#register-input-email').val();
+            let captcha = $('#register-input-captcha').val();
+            let password = $('#register-input-password').val();
+
+            if (!isPasswd(password)) {
+                swal('Only 6-20 letters, Numbers, and underscores can be entered');
+                return;
+            }
+
+            $.post("/user/register", {
+                code: code,
+                email: email,
+                captcha: captcha,
+                password: $.md5(password + 'aeasy')
+            }, function (result) {
+                let obj = jQuery.parseJSON(result);
+                if (obj.code === 200) {
+                    window.location.href = '/';
+                } else {
+                    swal(obj.msg);
+                }
+            });
+        });
+
+        $('#login').on('click', function () {
+            let email = $('#login-input-email').val();
+            let password = $('#login-input-password').val();
+
+            if (isPasswd(password)) {
+                $.post("/user/login", {email: email, password: $.md5(password + 'aeasy')}, function (result) {
+                    let obj = jQuery.parseJSON(result);
+                    if (obj.code === 200) {
+                        window.location.href = '/';
+                    } else {
+                        swal(obj.msg);
+                    }
+                });
+            } else {
+                swal('Only 6-20 letters, Numbers, and underscores can be entered');
+            }
+        });
+
+
+        $('#go-forget').on('click', function () {
+            swal('Please contact customer service to retrieve the password')
+        });
+        $('#go-privacy').on('click', function () {
+
+            swal('This website is used for development and learning, if the abnormal situation is not responsible, the final right of interpretation belongs to this website')
+        });
+        $('#go-logout').on('click', function () {
+            $.post("/user/logout", function (result) {
+                let obj = jQuery.parseJSON(result);
+                if (obj.code === 200) {
+                    window.location.href = '/';
+                } else {
+                    swal(obj.msg);
+                }
+            });
+        });
+        let address = $('#address').text();
+        $('#qrcode').qrcode({
+            foreground: "#311B58",
+            background: "#FFF",
+            width: 200, height: 200,
+            text: address
+        });
+
+    });
+
+    //校验密码：只能输入6-20个字母、数字、下划线
+    function isPasswd(s) {
+        let patrn = /^(\w){6,20}$/;
+        return patrn.exec(s);
+
+    }
+
+
+</script>
+
+</html>

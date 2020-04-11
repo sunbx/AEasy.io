@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/user.css">
+    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.qrcode.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+
+    <script type="text/javascript" src="../static/js/ui.js"></script>
+
+    <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
+        technology</title>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="body">
+    <div class="header">
+        <div class="logo">
+            <img src="../static/img/android-chrome-256x256.png" alt="">
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="https://www.showdoc.cc/AEASY" target="_blank">DOCUMENT</a></li>
+                <li><a id="go-logout" class="login" href="#">LOGOUT</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="left">
+            <div class="title">
+                <p class="p-receive">
+                    <span class="span-receive">Receive</span>
+                    tokens
+                </p>
+                <p class="p-qraddress">Let others scan your QR code or share your address</p>
+            </div>
+            <div class="code">
+                <div id="qrcode" class="qrcode"></div>
+            </div>
+
+            <div class="div-address">
+                <p class="p-address-title">Address 👆👇</p>
+                <p id="address" class="p-address">{{.Address}}</p>
+            </div>
+        </div>
+
+        <div class="right">
+            <p class="p-balance">Balance Token : <span class="span-balance">{{.Token}}</span> ae</p>
+            <div class="div-id-secret">
+                <p class="p-id">appId: {{.AppId}}</p>
+                <p class="p-secret">appSecret: {{.AppSecret}}</p>
+            </div>
+            <div style="overflow:hidden;">
+                <div class="start" style="float: left">
+                    <a href="https://www.showdoc.cc/AEASY" target="_blank">Document</a>
+                </div>
+                <div class="start2" style="float: left;margin-left: 20px">
+                    <a href="/token" target="_blank">Tokens</a>
+                </div>
+            </div>
+
+            <p class="p-explain">Explain:</p>
+            <p class="p-explain-doc">&nbsp&nbsp&nbsp&nbspWelcome to use AEasy SDK development, make aeternity block
+                chain faster and easier to develop more aepps. Now that you have successfully registered, you can
+                only
+                use the development API interface in the last step, and you only need to pay 1ae(for later
+                transaction
+                use) to your account address to get the appId and appSecret.</p>
+        </div>
+
+
+    </div>
+    <p class="p-service">Contact customer service for questions <span>WeChat: s283122529</span></p>
+
+
+</div>
+
+</body>
+</html>
