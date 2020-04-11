@@ -1,6 +1,8 @@
 # AEasy.io
+
 > AEasy is Convenient Aeternity Framework . AEasy quickly, conveniently realize Aeternity aaepp development
-![](https://www.showdoc.cc/server/api/common/visitfile/sign/b611d1e6f55ac9a56bde336e38a5ceda?showdoc=.jpg)
+
+
 
 |Author|position|
 |:----    |:---  
