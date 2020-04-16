@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"AEasy.io/models"
+	"ae/models"
 	"time"
 )
 

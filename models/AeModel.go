@@ -1,7 +1,7 @@
 package models
 
 import (
-	"AEasy.io/utils"
+	"ae/utils"
 	"encoding/json"
 	"errors"
 	"github.com/aeternity/aepp-sdk-go/account"

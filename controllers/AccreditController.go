@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"AEasy.io/models"
-	"AEasy.io/utils"
+	"ae/models"
+	"ae/utils"
 	_ "github.com/typa01/go-utils"
 	"net/url"
 	"strconv"

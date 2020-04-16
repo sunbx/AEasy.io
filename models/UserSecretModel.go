@@ -1,7 +1,7 @@
 package models
 
 import (
-	"AEasy.io/utils"
+	"ae/utils"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql" // import your used driver
 	"time"

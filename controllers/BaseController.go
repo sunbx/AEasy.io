@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"AEasy.io/models"
+	"ae/models"
 	"encoding/json"
 	"github.com/aeternity/aepp-sdk-go/account"
 	"github.com/astaxie/beego"

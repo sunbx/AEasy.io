@@ -45,7 +45,7 @@ func VerifyIpEmail(mail string, ip string) (Email, error) {
 	qs := orm.NewOrm().QueryTable("aea_email")
 	err := qs.
 		Filter("ip", ip).
-		Filter("create_time__gt", unix-1000*60).
+		Filter("create_time__gt", unix-10000*60).
 		One(&email)
 	return email, err
 }

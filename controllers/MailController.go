@@ -2,8 +2,8 @@ package controllers
 
 
 import (
-	"AEasy.io/models"
-	"AEasy.io/utils"
+	"ae/models"
+	"ae/utils"
 	"strconv"
 )
 //发送邮箱验证码
@@ -15,7 +15,7 @@ type MailSendController struct {
 func (c *MailSendController) Post() {
 	email := c.GetString("email")
 	t := c.GetString("type")
-	code := c.GetString("code")
+	//code := c.GetString("code")
 	addr := c.Ctx.Request.RemoteAddr
 	//captcha := "8888"
 	captcha := utils.CreateCaptcha()
@@ -24,7 +24,7 @@ func (c *MailSendController) Post() {
 	//	c.ErrorJson(-301, "未开放注册", JsonData{})
 	//}
 
-	if email == "" || code == "" || captcha == "" || t == "" || addr == "" {
+	if email == ""  || captcha == "" || t == "" || addr == "" {
 		c.ErrorJson(-301, "parameter is nul", JsonData{})
 		return
 	}
@@ -54,13 +54,13 @@ func (c *MailSendController) Post() {
 	if e != nil {
 
 		if !utils.IsEmail(email) {
-			res, _ := utils.SendRegisterSms(code+email, captcha)
+			res, _ := utils.SendRegisterSms(email, captcha)
 			if res.Code != "OK" {
 				c.ErrorJson(-203, res.Message, JsonData{})
 				return
 			}
 			//插入邮箱信息到数据库
-			instEmail, e := models.InstEmail(code+email, addr, tInt, captcha)
+			instEmail, e := models.InstEmail(email, addr, tInt, captcha)
 			if e == nil && instEmail > 0 {
 				c.SuccessJson(JsonData{})
 				return

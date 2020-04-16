@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"AEasy.io/models"
-	"AEasy.io/utils"
+	"ae/models"
+	"ae/utils"
 	"encoding/json"
 	"fmt"
 	"strconv"

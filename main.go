@@ -1,8 +1,8 @@
 package main
 
 import (
-	"AEasy.io/models"
-	_ "AEasy.io/routers"
+	"ae/models"
+	_ "ae/routers"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql" // import your used driver

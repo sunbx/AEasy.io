@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"AEasy.io/controllers"
+	"ae/controllers"
 	"github.com/astaxie/beego"
 )
 

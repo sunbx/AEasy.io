@@ -2,8 +2,8 @@ package controllers
 
 import "C"
 import (
-	"AEasy.io/models"
-	"AEasy.io/utils"
+	"ae/models"
+	"ae/utils"
 	"encoding/json"
 	"strconv"
 )

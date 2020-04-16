@@ -1,7 +1,7 @@
 package models
 
 import (
-	"AEasy.io/utils"
+	"ae/utils"
 	"github.com/astaxie/beego/orm"
 	"time"
 )

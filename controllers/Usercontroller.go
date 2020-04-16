@@ -1,6 +1,8 @@
 package controllers
 
-import "AEasy.io/models"
+import (
+	"ae/models"
+)
 
 type UserRegisterController struct {
 	BaseController
@@ -16,15 +18,15 @@ func (c *UserRegisterController) Post() {
 	email := c.GetString("email")
 	captcha := c.GetString("captcha")
 	password := c.GetString("password")
-	code := c.GetString("code")
 	addr := c.Ctx.Request.RemoteAddr
 
-	if email == "" || code == "" || captcha == "" || password == "" || addr == "" {
+	if email == "" || captcha == "" || password == "" || addr == "" {
 		c.ErrorJson(-301, "parameter is nul", JsonData{})
 		return
 	}
 
-	_, e := models.VerifyEmail(code+email, captcha, 1)
+	_, e := models.VerifyEmail(email, captcha, 1)
+
 	if e == nil {
 		_, e := models.FindUserEmail(email)
 		if e == nil {
