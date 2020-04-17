@@ -118,8 +118,8 @@
 						<span class="input__label-content input__label-content--minoru">verification code</span>
 					</label>
              <input class="input__field input__field--minoru"
-                    style="height: 55px;line-height: 55px;  border-radius: 5px;" type="password"
-                    id="password"/>
+                    style="height: 55px;line-height: 55px;  border-radius: 5px;" type="text"
+                    id="password" onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"/>
 					<label class="input__label input__label--minoru" for="password">
 						<span class="input__label-content input__label-content--minoru">Set payment password</span>
 					</label>

@@ -71,6 +71,21 @@ func (c *BaseController) getCurrentUserId() int {
 	}
 }
 
+func (c *BaseController) getAccessTokenOpenId(token string) string {
+	openId := bm.Get(token)
+	if value, ok := openId.(string); ok == true {
+		if value == "" {
+			return ""
+		} else {
+			//更新时间
+			_ = bm.Put(token, value, 30*24*60*60*time.Second)
+			return value
+		}
+	} else {
+		return ""
+	}
+}
+
 func (c *BaseController) GetSecretAeAccount() *account.Account {
 	var appId string
 	var appSecret string

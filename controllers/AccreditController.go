@@ -244,7 +244,7 @@ func (c *AccreditBindEmailController) Post() {
 		password := c.GetString("password")
 
 		//检测参数是否是空
-		if tempToken == "" || redirectUri == "" || appId == "" || email == "" || captcha == "" || password == "" {
+		if tempToken == ""  || appId == "" || email == "" || captcha == "" || password == "" {
 			c.ErrorJson(-301, "parameter is nul", JsonData{})
 			return
 		}
