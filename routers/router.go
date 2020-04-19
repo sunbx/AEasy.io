@@ -64,7 +64,27 @@ func init() {
 	//创建账户
 	beego.Router("/ae/api/create_account", &controllers.ApiCreateAccountController{})
 
-	//创建账户
-	beego.Router("/test", &controllers.TestController{})
-	beego.Router("/test2", &controllers.TestController2{})
+
+
+
+
+	//抓取数据
+	beego.Router("/article/data", &controllers.ArticleDataController{})
+	beego.Router("/wealth/data", &controllers.WealthDataController{})
+	beego.Router("/names/data", &controllers.NameshDataController{})
+
+	//api调用
+	beego.Router("/article/list", &controllers.ArticleListController{})
+	beego.Router("/wealth/list", &controllers.WealthListController{})
+	//即将结束拍卖
+	beego.Router("/names/auctions", &controllers.NamesAuctionsActiveController{})
+	//即将过期未续费的域名
+	beego.Router("/names/overdue", &controllers.NamesOverdueController{})
+	//最新注册的域名
+	beego.Router("/names/new", &controllers.NamesNewController{})
+	//获取我的已注册域名
+	beego.Router("/names/my/register", &controllers.NamesMyRegisterController{})
+	//获取我的拍卖中域名
+	beego.Router("/names/my/activity", &controllers.NamesMyActivityController{})
+
 }

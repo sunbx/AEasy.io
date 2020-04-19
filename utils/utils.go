@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math"
 	"math/big"
 	"math/rand"
 	"net/http"
@@ -22,6 +23,50 @@ type Resp struct {
 	Code string      `json:"code"`
 	Msg  string      `json:"msg"`
 	data interface{} `json:"object"`
+}
+
+
+/**
+* @des 时间转换函数
+* @param atime string 要转换的时间戳（秒）
+* @return string
+ */
+func StrTime(atime int64) string {
+	var byTime = []int64{365 * 24 * 60 * 60, 24 * 60 * 60, 60 * 60, 60, 1}
+	var unit = []string{"年", "天", "小时", "分钟", "秒钟"}
+	now := time.Now().Unix()
+	ct := now - atime
+	if ct < 0 {
+		return "已结束"
+	}
+	var res string
+	for i := 0; i < len(byTime); i++ {
+		if ct < byTime[i] {
+			continue
+		}
+		var temp = math.Floor(float64(ct / byTime[i]))
+		ct = ct % byTime[i];
+		if temp > 0 {
+			var tempStr string
+			tempStr = strconv.FormatFloat(temp, 'f', -1, 64)
+			res = MergeString(tempStr, unit[i]) //此处调用了一个我自己封装的字符串拼接的函数（你也可以自己实现）
+		}
+		break //我想要的形式是精确到最大单位，即："2天前"这种形式，如果想要"2天12小时36分钟48秒前"这种形式，把此处break去掉，然后把字符串拼接调整下即可（别问我怎么调整，这如果都不会我也是无语）
+	}
+	return res
+}
+
+/**
+* @des 拼接字符串
+* @param args ...string 要被拼接的字符串序列
+* @return string
+ */
+func MergeString(args ...string) string {
+	buffer := bytes.Buffer{}
+	for i := 0; i < len(args); i++ {
+		buffer.WriteString(args[i])
+	}
+	return buffer.String()
 }
 
 func CreateCaptcha() string {
@@ -47,6 +92,14 @@ func UniqueId(salt string) string {
 func FormatTokens(tokens float64) string {
 	if tokens > 0 {
 		str := strconv.FormatFloat(tokens/1000000000000000000, 'f', 5, 64)
+		return str
+	} else {
+		return "0"
+	}
+}
+func FormatTokensP(tokens float64, p int) string {
+	if tokens > 0 {
+		str := strconv.FormatFloat(tokens/1000000000000000000, 'f', p, 64)
 		return str
 	} else {
 		return "0"
@@ -144,7 +197,7 @@ func IsMobile(userAgent string) bool {
 //url:请求地址
 //response:请求返回的内容
 func Get(url string) (response string) {
-	client := http.Client{Timeout: 5 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	resp, error := client.Get(url)
 	defer resp.Body.Close()
 	if error != nil {

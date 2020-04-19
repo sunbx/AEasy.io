@@ -4,6 +4,7 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
+	"fmt"
 	"strconv"
 )
 //发送邮箱验证码
@@ -17,8 +18,8 @@ func (c *MailSendController) Post() {
 	t := c.GetString("type")
 	//code := c.GetString("code")
 	addr := c.Ctx.Request.RemoteAddr
-	//captcha := "8888"
-	captcha := utils.CreateCaptcha()
+	captcha := "8888"
+	//captcha := utils.CreateCaptcha()
 
 	//if true{
 	//	c.ErrorJson(-301, "未开放注册", JsonData{})
@@ -55,6 +56,7 @@ func (c *MailSendController) Post() {
 
 		if !utils.IsEmail(email) {
 			res, _ := utils.SendRegisterSms(email, captcha)
+			fmt.Println(email)
 			if res.Code != "OK" {
 				c.ErrorJson(-203, res.Message, JsonData{})
 				return
