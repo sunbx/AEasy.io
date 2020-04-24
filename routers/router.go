@@ -21,9 +21,7 @@ func init() {
 	beego.Router("/pay", &controllers.PayController{})
 	//token创建
 	beego.Router("/token", &controllers.TokenController{})
-	//token详情
-	beego.Router("/token/info", &controllers.TokenInfoController{})
-	//token详情
+	//文章详情
 	beego.Router("/article/info", &controllers.ArticleInfoController{})
 
 	//====================网站相关====================
@@ -94,4 +92,6 @@ func init() {
 	//获取我的拍卖中域名
 	beego.Router("/names/my/activity", &controllers.NamesMyActivityController{})
 
+
+	beego.Router("/test", &controllers.TestController{})
 }

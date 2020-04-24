@@ -4,6 +4,7 @@ import (
 	"ae/utils"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/aeternity/aepp-sdk-go/account"
 	"github.com/aeternity/aepp-sdk-go/aeternity"
 	"github.com/aeternity/aepp-sdk-go/config"
@@ -140,16 +141,7 @@ func CompilerVersion() (v string) {
 	return v
 }
 
-//编译Sophiae
-func CompileContract() (s string, e error) {
-
-	c := naet.NewCompiler("https://compiler.aepps.com", true)
-
-	expected, _ := ioutil.ReadFile("contract/fungible-token.aes")
-	source, e := c.CompileContract(string(expected), config.Compiler.Backend)
-	return source, e
-}
-
+//创建AEX9代币
 func CompileContractInit(account *account.Account, name string, number string) (s string, e error) {
 	n := naet.NewNode(nodeURL, false)
 	c := naet.NewCompiler("https://compiler.aepps.com", true)
@@ -173,11 +165,13 @@ func CompileContractInit(account *account.Account, name string, number string) (
 type CallInfoResult struct {
 	CallInfo CallInfo `json:"call_info"`
 }
+
 type CallInfo struct {
 	ReturnType  string `json:"return_type"`
 	ReturnValue string `json:"return_value"`
 }
 
+//是否大于1ae
 func Is1AE(address string) bool {
 	accountNet, err := ApiGetAccount(address)
 	if err != nil {
@@ -193,6 +187,7 @@ func Is1AE(address string) bool {
 	return true
 }
 
+//调用aex9 合约方法
 func CallContractFunction(account *account.Account, ctID string, function string, args []string) (s interface{}, e error) {
 	n := naet.NewNode(nodeURL, false)
 	//c := naet.NewCompiler(nodeURL, true)
@@ -221,5 +216,20 @@ func CallContractFunction(account *account.Account, ctID string, function string
 	//fmt.Println(genericTx)
 
 	return decodeResult, err
+}
 
+func TransferAENS(account *account.Account, recipientAddress string, name string) ( *aeternity.TxReceipt, error) {
+	client := naet.NewNode(nodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+	// Transfer the name to a recipient
+	transferTx, err := transactions.NewNameTransferTx(account.Address, name, recipientAddress, ctxAlice.TTLNoncer())
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Transfer")
+	txReceipt, err := ctxAlice.SignBroadcastWait(transferTx, config.Client.WaitBlocks)
+	if err != nil {
+		return nil, err
+	}
+	return txReceipt, err
 }

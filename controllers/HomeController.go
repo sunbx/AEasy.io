@@ -43,6 +43,9 @@ type ArticleInfoController struct {
 }
 
 
+
+
+
 type MetaInfo struct {
 	Decimals int    `json:"decimals"`
 	Name     string `json:"name"`
@@ -200,31 +203,6 @@ func (c *UserController) Get() {
 }
 
 func (c *MainController) Get() {
-
-	//isSucess := models.Send("283122529@qq.com", "082273")
-	//if(isSucess){
-	//	c.Ctx.WriteString("发送成功")
-	//}else{
-	//	c.Ctx.WriteString("发送失败")
-	//}
-
-	//c.JsonData["Website"] = "beego.me"
-	//c.JsonData["Email"] = "astaxie@gmail.com"
-	//c.TplName = "index.tpl"
-
-	//entropy, _ := bip39.NewEntropy(128)
-	//mnemonic, _ := bip39.NewMnemonic(entropy)
-	//account, err, msg := models.MnemonicAccount("tail disagree oven fit state cube rule test economy claw nice stable")
-	//signingKeyHex := account.SigningKeyToHexString()
-	//if (err != nil) {
-	//	c.Ctx.WriteString(msg)
-	//}
-	//c.Ctx.WriteString(account.Address+"-----")
-	//c.Ctx.WriteString(signingKeyHex+"-----")
-	//
-	//acc :=models.SigningKeyHexStringAccount("659cc72a32b75ec5c488e7b2a788f6b94d9a8a6b5d8c0fcbaf3518a3d8f8eb8ef050d196f8a70d41b1ad22998be3020710f553e31033f9fa6f02752e4630d049")
-	//
-	//c.Ctx.WriteString(acc.Address+"-----")
 	if c.isLogin() {
 		c.Redirect("/user", 302)
 	} else {

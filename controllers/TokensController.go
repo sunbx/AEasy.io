@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"ae/models"
-	"ae/utils"
-	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -16,9 +14,7 @@ type TokenCreateController struct {
 type TransferController struct {
 	BaseController
 }
-type TokenInfoController struct {
-	BaseController
-}
+
 
 //tokens 创建
 func (c *TokenCreateController) Post() {
@@ -118,46 +114,3 @@ func (c *TransferController) Post() {
 	}
 }
 
-func (c *TokenInfoController) Get() {
-
-	if c.isLogin() {
-		secret, err := models.FindSecretUserID(c.getCurrentUserId())
-		if err != nil {
-			c.ErrorJson(-301, err.Error(), JsonData{})
-			return
-		}
-		if secret.Contracts == "" {
-			c.ErrorJson(-301, "contracts nil", JsonData{})
-			return
-		}
-		account, _ := models.SigningKeyHexStringAccount(secret.SigningKey)
-
-		metaInfoCall, _ := models.CallContractFunction(account, secret.Contracts, "meta_info", []string{})
-		totalSupplyCall, _ := models.CallContractFunction(account, secret.Contracts, "total_supply", []string{})
-		balanceCall, _ := models.CallContractFunction(account, secret.Contracts, "balance", []string{account.Address})
-		metaInfoJson, _ := json.Marshal(&metaInfoCall)
-		totalSupplyJson, _ := json.Marshal(&totalSupplyCall)
-		balanceJson, _ := json.Marshal(&balanceCall)
-
-		var metaInfo MetaInfo
-		var totalSupply float64
-		var balance Balance
-		_ = json.Unmarshal(metaInfoJson, &metaInfo)
-		_ = json.Unmarshal(totalSupplyJson, &totalSupply)
-		_ = json.Unmarshal(balanceJson, &balance)
-
-		c.Data["total_supply"] = utils.FormatTokens(totalSupply)
-		c.Data["balance"] = utils.FormatTokens(balance.Some[0])
-		c.Data["decimals"] = metaInfo.Decimals
-		c.Data["name"] = metaInfo.Name
-		c.Data["symbol"] = metaInfo.Symbol
-		c.Data["contracts"] = secret.Contracts
-		c.Data["address"] = secret.Address
-		c.SuccessJson(map[string]interface{}{
-			"total_supply": utils.FormatTokens(totalSupply),
-		})
-	} else {
-		c.TplName = "index.html"
-		return
-	}
-}

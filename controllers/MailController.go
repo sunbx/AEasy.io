@@ -18,8 +18,8 @@ func (c *MailSendController) Post() {
 	t := c.GetString("type")
 	//code := c.GetString("code")
 	addr := c.Ctx.Request.RemoteAddr
-	captcha := "8888"
-	//captcha := utils.CreateCaptcha()
+	//captcha := "8888"
+	captcha := utils.CreateCaptcha()
 
 	//if true{
 	//	c.ErrorJson(-301, "未开放注册", JsonData{})

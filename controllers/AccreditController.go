@@ -400,25 +400,15 @@ func (c *PayBuyController) Post() {
 		}
 		if tokens/1000000000000000000 >= order.Tokens {
 
-			thPlatform, e := models.ApiSpend(aeasyAccount, "ak_wNL5NYtbr6AAuAWxKGF3ZwQNBeb7UMpu9BHoVb24pS9iWAQCo", order.Tokens, order.Data)
-			if e != nil {
-				c.ErrorJson(-505, e.Error(), JsonData{})
-				return
-			}
-			stringAccount, e := models.SigningKeyHexStringAccount("3c75f05efbd55b92529b1bb6cd0dc9cee79156c5612bb3b5bbcdf9ce548ff0007b72d7aa70c8dc2b32ba0c5879a4ab475d89337da262263564b9fd725cd30d30")
-			if e != nil {
-				c.ErrorJson(-506, e.Error(), JsonData{})
-				return
-			}
-			thMerchants, e := models.ApiSpend(stringAccount, order.ReceiveAddress, order.Tokens*0.8, order.Data)
+			thMerchants, e := models.ApiSpend(aeasyAccount, order.ReceiveAddress, order.Tokens, order.Data)
 			if e != nil {
 				c.ErrorJson(-507, e.Error(), JsonData{})
 				return
 			}
-			models.UpdateOrderOrderNo(orderNo, thPlatform.Hash, thMerchants.Hash)
+
+			models.UpdateOrderOrderNo(orderNo, "", thMerchants.Hash)
 			c.SuccessJson(map[string]interface{}{
 				"order_no":     orderNo,
-				"th_platform":  thPlatform,
 				"th_merchants": thMerchants,
 			})
 		} else {
