@@ -37,6 +37,15 @@ func GetArticleAll(page int) ([]Article, error) {
 	return articles, err
 }
 
+func FindArticleId(articleId string) (Article, error) {
+	var article Article
+	qs := orm.NewOrm().QueryTable("aea_article")
+	err := qs.
+		Filter("article_id", articleId).
+		One(&article)
+	return article, err
+}
+
 func (email *Article) TableName() string {
 	return "aea_article"
 }

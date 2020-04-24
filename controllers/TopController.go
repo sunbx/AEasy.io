@@ -3,13 +3,15 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
+	"encoding/json"
 )
-
 
 type WealthListController struct {
 	BaseController
 }
-
+type BaseDataController struct {
+	BaseController
+}
 
 func (c *WealthListController) Get() {
 	page, _ := c.GetInt("page", 0)
@@ -33,4 +35,29 @@ func (c *WealthListController) Get() {
 
 	}
 	c.SuccessJson(topJsons)
+}
+
+type AeKnowAPI struct {
+	PriceUsdt         string `json:"price_usdt"`
+	PriceBtc          string `json:"price_btc"`
+	BlockHeight       string `json:"block_height"`
+	TotalTransactions string `json:"total_transactions"`
+	MaxTps            string `json:"max_tps"`
+	MarketCap         string `json:"market_cap"`
+	TotalCoins        string `json:"total_coins"`
+	AensTotal         string `json:"aens_total"`
+	OraclesTotal      string `json:"oracles_total"`
+	ContractsTotal    string `json:"contracts_total"`
+	AccountsTotal     string `json:"accounts_total"`
+}
+
+func (c *BaseDataController) Post() {
+	response := utils.Get("https://www.aeknow.org/api")
+	var knowApi AeKnowAPI
+	err := json.Unmarshal([]byte(response), &knowApi)
+	if err != nil {
+		c.ErrorJson(500, "Umarshal failed", JsonData{})
+		return
+	}
+	c.SuccessJson(knowApi)
 }

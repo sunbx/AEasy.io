@@ -21,8 +21,6 @@ type NameshDataController struct {
 	BaseController
 }
 
-
-
 type Article struct {
 	Id            int64    `json:"id"`
 	Title         Rendered `json:"title"`

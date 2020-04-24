@@ -35,10 +35,10 @@ func SendEMail(mail string, code string) bool {
 func sendMail(mailTo []string, subject string, body string) error {
 
 	mailConn := map[string]string{
-		"user": "",
-		"pass": "",
-		"host": "",
-		"port": "",
+		"user": "admin@aeasy.io",
+		"pass": "Lx125634897",
+		"host": "smtp.exmail.qq.com",
+		"port": "465",
 	}
 
 	port, _ := strconv.Atoi(mailConn["port"]) //转换端口类型为int
@@ -61,14 +61,14 @@ func sendMail(mailTo []string, subject string, body string) error {
 }
 
 func SendRegisterSms(phoneNumber string, data string) (res *dysmsapi.SendSmsResponse, e error) {
-	client, err := dysmsapi.NewClientWithAccessKey("cn-hangzhou", "", "")
+	client, err := dysmsapi.NewClientWithAccessKey("cn-hangzhou", "LTAI4FhFrGzcs39RnXn3NhZu", "Op4sUb3Uj2rLu5z1aIRWMWBWEz94jr")
 
 	request := dysmsapi.CreateSendSmsRequest()
 	request.Scheme = "https"
 
 	request.PhoneNumbers = phoneNumber
-	request.SignName = ""
-	request.TemplateCode = ""
+	request.SignName = "aeasy"
+	request.TemplateCode = "SMS_187261217"
 	m := map[string]string{"code": data}
 	mjson, _ := json.Marshal(m)
 	mString := string(mjson)

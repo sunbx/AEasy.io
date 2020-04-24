@@ -38,19 +38,10 @@ type TokenController struct {
 	BaseController
 }
 
-func (c *TestController) Get() {
-
-	account, _ := models.SigningKeyHexStringAccount("6573e06af35c35cb959c061ca39020378ae308de06a2bf0ed5253a61443465b8c72526132f12f39cf3a563667c0537059dd37587b7c95b875a84fa6e8e52280e")
-
-	s, e := models.CompileContractInit(account, "ABC", "100000000000000000000000000")
-	if e == nil {
-		c.SuccessJson(map[string]interface{}{
-			"Contract": s,
-		})
-	} else {
-		c.ErrorJson(-500, e.Error(), nil)
-	}
+type ArticleInfoController struct {
+	BaseController
 }
+
 
 type MetaInfo struct {
 	Decimals int    `json:"decimals"`
@@ -61,29 +52,6 @@ type Balance struct {
 	Some []float64 `json:"Some"`
 }
 
-func (c *TestController2) Get() {
-	fun := c.GetString("fun")
-	address := c.GetString("address")
-	account, _ := models.SigningKeyHexStringAccount("6573e06af35c35cb959c061ca39020378ae308de06a2bf0ed5253a61443465b8c72526132f12f39cf3a563667c0537059dd37587b7c95b875a84fa6e8e52280e")
-
-	s, e := models.CallContractFunction(account, "ct_2PnjvT3yhuccyv29u7rcZxwQGrQtFFB982ww4R5idiLSqwTezD", fun, []string{address})
-	if e == nil {
-		//	switch s.(type) {
-		//	case string:
-		//		// 将interface转为string字符串类型
-		//		op, ok := value.(string)
-		//		fmt.Println(op, ok)
-		//	case int32:
-
-		//jStr, err := json.Marshal(&s)
-		//var metaInfo MetaInfo
-		//err = json.Unmarshal(jStr, &metaInfo)
-		//fmt.Println(metaInfo, err)
-		c.SuccessJson(s)
-	} else {
-		c.ErrorJson(-500, e.Error(), nil)
-	}
-}
 func (c *AccreditController) Get() {
 	if c.verifyAppId() {
 		c.TplName = "accredit.html"
@@ -120,7 +88,7 @@ func (c *TokenController) Get() {
 		} else {
 			account, _ := models.SigningKeyHexStringAccount(secret.SigningKey)
 
-			if !models.Is1AE(account.Address){
+			if !models.Is1AE(account.Address) {
 				c.TplName = "error2.html"
 				return
 			}
@@ -290,4 +258,14 @@ func (c *PayController) Get() {
 	c.Data["address"] = order.ReceiveAddress
 	c.Data["tokens"] = order.Tokens
 	c.TplName = "pay.html"
+}
+
+func (c *ArticleInfoController) Get() {
+	articleId := c.GetString("article_id")
+	article, e := models.FindArticleId(articleId)
+	if e != nil {
+		c.TplName = "error.html"
+	}
+	c.Data["article"] = article.Content
+	c.TplName = "article.html"
 }

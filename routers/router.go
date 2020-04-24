@@ -19,11 +19,12 @@ func init() {
 	beego.Router("/accredit_bind", &controllers.AccreditBindController{})
 	//授权页面-pay
 	beego.Router("/pay", &controllers.PayController{})
-	//token页面
+	//token创建
 	beego.Router("/token", &controllers.TokenController{})
-	//token页面
-	beego.Router("/token/transfer", &controllers.TransferController{})
+	//token详情
 	beego.Router("/token/info", &controllers.TokenInfoController{})
+	//token详情
+	beego.Router("/article/info", &controllers.ArticleInfoController{})
 
 	//====================网站相关====================
 	//验证码发送
@@ -63,19 +64,25 @@ func init() {
 	beego.Router("/ae/api/balance", &controllers.ApiBalanceController{})
 	//创建账户
 	beego.Router("/ae/api/create_account", &controllers.ApiCreateAccountController{})
-
-
-
-
+	//token转账 AEX9
+	beego.Router("/token/transfer", &controllers.TransferController{})
 
 	//抓取数据
+	//文章数据抓取
 	beego.Router("/article/data", &controllers.ArticleDataController{})
+	//钱包排行榜数据抓取
 	beego.Router("/wealth/data", &controllers.WealthDataController{})
+	//aens 数据抓取
 	beego.Router("/names/data", &controllers.NameshDataController{})
 
 	//api调用
+	//文章列表
 	beego.Router("/article/list", &controllers.ArticleListController{})
+	//钱包排行榜
 	beego.Router("/wealth/list", &controllers.WealthListController{})
+	//基础数据
+	beego.Router("/base/data", &controllers.BaseDataController{})
+
 	//即将结束拍卖
 	beego.Router("/names/auctions", &controllers.NamesAuctionsActiveController{})
 	//即将过期未续费的域名

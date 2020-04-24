@@ -29,6 +29,9 @@ func init() {
 	models.RegisterOrderDB()
 	models.RegisterAccountDB()
 	models.RegisterTokenDB()
+	models.RegisterArticleDB()
+	models.RegisterTopDB()
+	models.RegisterNamesDB()
 }
 
 func main() {
