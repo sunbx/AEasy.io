@@ -42,10 +42,6 @@ type ArticleInfoController struct {
 	BaseController
 }
 
-
-
-
-
 type MetaInfo struct {
 	Decimals int    `json:"decimals"`
 	Name     string `json:"name"`

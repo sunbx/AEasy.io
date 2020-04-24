@@ -101,27 +101,14 @@
 
 <div class="body">
     <section class="content">
-        <h2 class="title">Bind email address</h2>
+        <h2 class="title">Bind Address Password</h2>
         <span class="input">
-					<input class="input__field input__field--minoru"
-                           style="height: 55px;line-height: 55px;  border-radius: 5px;" type="text"
-                           id="email"/>
-					<label class="input__label input__label--minoru" for="email">
-						<span class="input__label-content input__label-content--minoru">Please enter email address</span>
-					</label>
 
-            	<input class="input__field input__field--minoru"
-                       style="height: 55px ;width: 50% ;  border-radius: 5px; float: left" type="text"
-                       id="captcha"/>
-              <a id="go-captcha" class="sms" href="#">Send verification</a>
-					<label class="input__label input__label--minoru" for="captcha">
-						<span class="input__label-content input__label-content--minoru">verification code</span>
-					</label>
              <input class="input__field input__field--minoru"
-                    style="height: 55px;line-height: 55px;  border-radius: 5px;" type="text"
-                    id="password" onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"/>
+                    style="height: 55px;line-height: 55px;  border-radius: 5px;" type="tel"
+                    id="password" oninput = "value=value.replace(/[^\d]/g,'')" maxlength="6"/>
 					<label class="input__label input__label--minoru" for="password">
-						<span class="input__label-content input__label-content--minoru">Set payment password</span>
+						<span class="input__label-content input__label-content--minoru">Set a six-digit pure digital payment password</span>
 					</label>
 
         </span>
@@ -130,7 +117,7 @@
         <div class="recover">
             <a id="bind" href="#">THE BINGDING</a>
         </div>
-        <span class="hint">Bind your account and mailbox together</span>
+        <span class="hint">Set the payment password for your address</span>
     </section>
 </div>
 </body>
@@ -144,21 +131,11 @@
         });
         $('#bind').on('click', function () {
             let app_id = getQueryString('app_id');
-            let app_secret = getQueryString('app_secret');
             let redirect_uri = getQueryString('redirect_uri');
             let temp_token = getQueryString('temp_token');
 
-            let email = $('#email').val();
-            let captcha = $('#captcha').val();
             let password = $('#password').val();
-            if (email === '') {
-                swal('Email is null');
-                return;
-            }
-            if (captcha === '') {
-                swal('captcha is null');
-                return;
-            }
+
             if (password === '') {
                 swal('password is null');
                 return;
@@ -169,15 +146,6 @@
                 return;
             }
 
-            if (app_secret === '') {
-                swal('app_secret is null');
-                return;
-            }
-
-            if (redirect_uri === '') {
-                swal('redirect_uri is null');
-                return;
-            }
             if (temp_token === '') {
                 swal('temp_token is null');
                 return;
@@ -187,11 +155,8 @@
             setTimeout(function () {
                 $.post("/accredit/bind", {
                     app_id: app_id,
-                    app_secret: app_secret,
                     redirect_uri: redirect_uri,
                     temp_token: temp_token,
-                    email: email,
-                    captcha: captcha,
                     password: $.md5(password + 'aeasy'),
                 }, function (result) {
                     let obj = jQuery.parseJSON(result);

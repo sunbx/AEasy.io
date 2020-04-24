@@ -39,7 +39,6 @@ type PayBuyController struct {
 	BaseController
 }
 
-
 //用户信息
 func (c *AccreditInfoController) Post() {
 	token := c.GetString("access_token")
@@ -133,7 +132,7 @@ func (c *AccreditLoginController) Post() {
 			aeasyAccount, e := models.FindAccountSigningKey(account.SigningKeyToHexString())
 			//没有错误,表示查到数据了,直接返回对接方
 			if e == nil {
-				if aeasyAccount.Email == "" {
+				if aeasyAccount.Password == "" {
 					encryptOpenId := url.QueryEscape(utils.AesEncrypt(aeasyAccount.OpenId, "0888888888888880"))
 					unix := time.Now().UnixNano() / 1e6
 					tempToken := utils.Md5V(encryptOpenId + strconv.FormatInt(unix, 10))
@@ -233,66 +232,49 @@ func (c *AccreditRegisterController) Post() {
 	}
 }
 
-//绑定邮箱
+//绑定密码
 func (c *AccreditBindEmailController) Post() {
 	if c.verifyAppId() {
 		tempToken := c.GetString("temp_token")
 		redirectUri := c.GetString("redirect_uri")
 		appId := c.GetString("app_id")
-		email := c.GetString("email")
-		captcha := c.GetString("captcha")
 		password := c.GetString("password")
 
 		//检测参数是否是空
-		if tempToken == ""  || appId == "" || email == "" || captcha == "" || password == "" {
+		if tempToken == "" || appId == "" || password == "" {
 			c.ErrorJson(-301, "parameter is nul", JsonData{})
 			return
 		}
-		//检测验证码是否正确
-		_, e := models.VerifyEmail(email, captcha, 2)
-		if e == nil {
 
-			_, e := models.FindAccountEmail(email)
-			if e != nil {
-				tempTokenCache := bm.Get(tempToken)
-				if value, ok := tempTokenCache.(string); ok == true {
-					tempTokenUnUrlsEncode, _ := url.QueryUnescape(value)
-					openId := utils.AesDecrypt(tempTokenUnUrlsEncode, "0888888888888880")
-					aeasyAccount, e := models.FindAccountOpenId(openId)
-					if e == nil {
-						if aeasyAccount.Email == "" {
-							models.UpdateAccountOpenIdToEmailPassword(openId, email, password)
-
-							unix := time.Now().UnixNano() / 1e6
-							md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
-							accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
-							_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
-							_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
-							openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
-							if valueOpenIdKey, ok := openIdKey.(string); ok == true {
-								if valueOpenIdKey != "" {
-									_ = bm.Put(valueOpenIdKey, "", 0)
-									_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
-								}
-							}
-							c.SuccessJson(map[string]string{
-								"code":        md5OpenIdCode,
-								"redirectUri": redirectUri,
-							})
-						} else {
-							c.ErrorJson(-500, "Mailbox already exists error", JsonData{})
-						}
-					} else {
-						c.ErrorJson(-500, e.Error(), JsonData{})
+		tempTokenCache := bm.Get(tempToken)
+		if value, ok := tempTokenCache.(string); ok == true {
+			tempTokenUnUrlsEncode, _ := url.QueryUnescape(value)
+			openId := utils.AesDecrypt(tempTokenUnUrlsEncode, "0888888888888880")
+			aeasyAccount, e := models.FindAccountOpenId(openId)
+			if e == nil {
+				models.UpdateAccountOpenIdToEmailPassword(openId, "", password)
+				unix := time.Now().UnixNano() / 1e6
+				md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
+				accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
+				_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
+				_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
+				openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
+				if valueOpenIdKey, ok := openIdKey.(string); ok == true {
+					if valueOpenIdKey != "" {
+						_ = bm.Put(valueOpenIdKey, "", 0)
+						_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
 					}
-				} else {
-					c.ErrorJson(-500, "token error", JsonData{})
 				}
+				c.SuccessJson(map[string]string{
+					"code":        md5OpenIdCode,
+					"redirectUri": redirectUri,
+				})
+
 			} else {
-				c.ErrorJson(-500, "The mailbox has been bound error", JsonData{})
+				c.ErrorJson(-500, e.Error(), JsonData{})
 			}
 		} else {
-			c.ErrorJson(-500, "captcha error", JsonData{})
+			c.ErrorJson(-500, "token error", JsonData{})
 		}
 	} else {
 		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
