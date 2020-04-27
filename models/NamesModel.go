@@ -65,7 +65,7 @@ func InsertNames(names []Names) {
 //获取即将过期的域名
 func GetNamesAllHeight(page int, top int) ([]Names, error) {
 	var names []Names
-	ids := []int{top, top, 49589, (page - 1) * 10, page * 10}
+	ids := []int{top, top, 49589, (page - 1) * 20, page * 20}
 	o := orm.NewOrm()
 	_, err := o.Raw("select * from aea_names where expires_at > ? and auction_end_height < ?  and expires_at - auction_end_height > ? order by expires_at limit ?,?", ids).QueryRows(&names)
 	return names, err
@@ -91,7 +91,7 @@ func GetNamesAllMyActivity(top int, address string) ([]Names, error) {
 func GetNamesOver(top int,page int) ([]Names, error) {
 	var names []Names
 	o := orm.NewOrm()
-	_, err := o.Raw("select * from aea_names where created_at_height < ? and auction_end_height > ?  order by auction_end_height  limit ?,?", top, top,(page - 1) * 10, page * 10).QueryRows(&names)
+	_, err := o.Raw("select * from aea_names where created_at_height < ? and auction_end_height > ?  order by auction_end_height  limit ?,?", top, top,(page - 1) * 20, page * 20).QueryRows(&names)
 	return names, err
 }
 

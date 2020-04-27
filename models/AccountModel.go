@@ -7,17 +7,13 @@ import (
 )
 
 type AeasyAccount struct {
-	ID         int64   `orm:"column(id)" json:"id"`
-	Email      string  `orm:"column(email)" json:"email"`
-	Password   string  `orm:"column(password)" json:"email"`
-	UserId     int64   `orm:"column(user_id)" json:"user_id"`
-	OpenId     string  `orm:"column(open_id)" json:"open_id"`
-	Status     int     `orm:"column(status)" json:"status"`
-	Mnemonic   string  `orm:"column(mnemonic)" json:"-"`
-	Address    string  `orm:"column(address)" json:"-"`
-	SigningKey string  `orm:"column(signing_key)" json:"-"`
-	Tokens     float64 `orm:"column(tokens);digits(30);decimals(0)" json:"tokens"`
-	CTime      int64   `orm:"column(create_time)" json:"create_time"`
+	ID         int64  `orm:"column(id)" json:"id"`
+	UserId     int64  `orm:"column(user_id)" json:"user_id"`
+	Status     int    `orm:"column(status)" json:"status"`
+	Address    string `orm:"column(address)" json:"-"`
+	Password   string `orm:"column(password)" json:"-"`
+	SigningKey string `orm:"column(signing_key)" json:"-"`
+	CTime      int64  `orm:"column(create_time)" json:"create_time"`
 }
 
 func (email *AeasyAccount) TableName() string {
@@ -28,16 +24,13 @@ func RegisterAccountDB() {
 	orm.RegisterModel(new(AeasyAccount))
 }
 
-func InsertAccount(userId int64, mnemonic string, signingKey string, address string, tokens float64) (AeasyAccount, error) {
+func InsertAccount(userId int64, signingKey string, address string) (AeasyAccount, error) {
 	unix := time.Now().UnixNano() / 1e6
 
 	aeasyAccount := AeasyAccount{
 		UserId:     userId,
-		Mnemonic:   mnemonic,
 		Address:    address,
 		SigningKey: signingKey,
-		Tokens:     tokens,
-		OpenId:     utils.Md5V(mnemonic + address + signingKey),
 		CTime:      unix,
 	}
 	_, err := orm.NewOrm().Insert(&aeasyAccount)

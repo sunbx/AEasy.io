@@ -48,9 +48,8 @@ type NamesMyBid struct {
 	NameAuctionEntry Names `json:"name_auction_entry"`
 }
 
-func (c *NamesAuctionsActiveController) Get() {
-	page, _ := c.GetInt("page", 0)
-
+func (c *NamesAuctionsActiveController) Post() {
+	page, _ := c.GetInt("page", 1)
 
 	height := models.ApiBlocksTop()
 	names, err := models.GetNamesOver(int(height), page)
@@ -59,7 +58,7 @@ func (c *NamesAuctionsActiveController) Get() {
 		return
 	}
 
-	var namesJsons []models.NamesJson
+	var namesJsons = []models.NamesJson{}
 	for i := 0; i < len(names); i++ {
 		var namesJson models.NamesJson
 		namesJson.Id = names[i].Id
@@ -72,7 +71,7 @@ func (c *NamesAuctionsActiveController) Get() {
 		namesJson.TxHash = names[i].TxHash
 
 		now := time.Now().Unix()
-		namesJson.ExpirationTime = utils.StrTime(now - int64(60*3*(int(names[i].AuctionEndHeight)-int(height))))
+		namesJson.ExpirationTime = "倒计时:" + utils.StrTime(now-int64(60*3*(int(names[i].AuctionEndHeight)-int(height))))
 		//tokens, _ := strconv.ParseFloat(names[i].WinningBid, 64)
 		//content := utils.FormatTokens(tokens, 5)
 		//names[i].WinningBid = content + " AE"
@@ -107,7 +106,7 @@ func (c *NamesAuctionsActiveController) Get() {
 	//c.SuccessJson(names)
 }
 
-func (c *NamesNewController) Get() {
+func (c *NamesNewController) Post() {
 
 	page, _ := c.GetInt("page", 0)
 	height := models.ApiBlocksTop()
@@ -116,7 +115,7 @@ func (c *NamesNewController) Get() {
 		c.ErrorJson(-200, err.Error(), JsonData{})
 		return
 	}
-	var namesJsons []models.NamesJson
+	var namesJsons = []models.NamesJson{}
 	for i := 0; i < len(names); i++ {
 		var namesJson models.NamesJson
 		namesJson.Id = names[i].Id
@@ -129,7 +128,7 @@ func (c *NamesNewController) Get() {
 		namesJson.TxHash = names[i].TxHash
 
 		now := time.Now().Unix()
-		namesJson.ExpirationTime = utils.StrTime(now - int64(60*3*(int(names[i].AuctionEndHeight)-int(height))))
+		namesJson.ExpirationTime = "倒计时:" + utils.StrTime(now-int64(60*3*(int(names[i].AuctionEndHeight)-int(height))))
 		//tokens, _ := strconv.ParseFloat(names[i].WinningBid, 64)
 		//content := utils.FormatTokens(tokens, 5)
 		//names[i].WinningBid = content + " AE"
@@ -142,7 +141,7 @@ func (c *NamesNewController) Get() {
 	c.SuccessJson(namesJsons)
 }
 
-func (c *NamesOverdueController) Get() {
+func (c *NamesOverdueController) Post() {
 	page, _ := c.GetInt("page", 0)
 	height := models.ApiBlocksTop()
 	names, err := models.GetNamesAllHeight(page, int(height+1))
@@ -150,7 +149,7 @@ func (c *NamesOverdueController) Get() {
 		c.ErrorJson(-200, err.Error(), JsonData{})
 		return
 	}
-	var namesJsons []models.NamesJson
+	var namesJsons = []models.NamesJson{}
 	for i := 0; i < len(names); i++ {
 		var namesJson models.NamesJson
 		namesJson.Id = names[i].Id
@@ -163,7 +162,7 @@ func (c *NamesOverdueController) Get() {
 		namesJson.TxHash = names[i].TxHash
 
 		now := time.Now().Unix()
-		namesJson.ExpirationTime = utils.StrTime(now - int64(60*3*(int(names[i].ExpiresAt)-int(height))))
+		namesJson.ExpirationTime = "过期倒计时:" + utils.StrTime(now-int64(60*3*(int(names[i].ExpiresAt)-int(height))))
 		//tokens, _ := strconv.ParseFloat(names[i].WinningBid, 64)
 		//content := utils.FormatTokens(tokens, 5)
 		//names[i].WinningBid = content + " AE"

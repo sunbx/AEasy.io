@@ -7,7 +7,7 @@ type ArticleListController struct {
 }
 
 func (c *ArticleListController) Post() {
-	page, _ := c.GetInt("page", 0)
+	page, _ := c.GetInt("page", 1)
 	articles, err := models.GetArticleAll(page)
 	if err != nil {
 		c.ErrorJson(-200, err.Error(), JsonData{})

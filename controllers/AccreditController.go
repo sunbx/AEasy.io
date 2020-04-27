@@ -4,7 +4,6 @@ import (
 	"ae/models"
 	"ae/utils"
 	_ "github.com/typa01/go-utils"
-	"net/url"
 	"strconv"
 	"time"
 )
@@ -129,63 +128,26 @@ func (c *AccreditLoginController) Post() {
 		account, e := models.MnemonicAccount(mnemonic)
 		if e == nil {
 			//查询数据库,获取ae账户
-			aeasyAccount, e := models.FindAccountSigningKey(account.SigningKeyToHexString())
+			_, e := models.FindAccountSigningKey(utils.Md5V(account.SigningKeyToHexString()+"aeasy"))
 			//没有错误,表示查到数据了,直接返回对接方
 			if e == nil {
-				if aeasyAccount.Password == "" {
-					encryptOpenId := url.QueryEscape(utils.AesEncrypt(aeasyAccount.OpenId, "0888888888888880"))
-					unix := time.Now().UnixNano() / 1e6
-					tempToken := utils.Md5V(encryptOpenId + strconv.FormatInt(unix, 10))
-					_ = bm.Put(tempToken, encryptOpenId, 30*time.Minute)
-					c.ErrorJson(301, "", map[string]string{
-						"tempToken":   tempToken,
-						"redirectUri": redirectUri,
-						"appId":       appId,
-					})
-
-				} else {
-					unix := time.Now().UnixNano() / 1e6
-					md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
-					accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
-					_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
-					_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
-					openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
-					if valueOpenIdKey, ok := openIdKey.(string); ok == true {
-						if valueOpenIdKey != "" {
-							_ = bm.Put(valueOpenIdKey, "", 0)
-							_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
-						}
-					}
-					c.SuccessJson(map[string]string{
-						"code":        md5OpenIdCode,
-						"redirectUri": redirectUri,
-					})
-				}
-
+				c.SuccessJson(map[string]string{
+					"redirectUri": redirectUri,
+					"appId":       appId,
+					"mnemonic":    mnemonic,
+					"signingKey":  account.SigningKeyToHexString(),
+				})
 			} else {
 				//查询商户信息
 				secret, _ := models.FindSecretId(appId)
-				//通过地址查询账户余额
-				accountNet, e := models.ApiGetAccount(account.Address)
-				//查询失败,返回错误
-				if e != nil {
-					c.ErrorJson(-500, e.Error(), JsonData{})
-					return
-				}
-				//转换token数量
-				tokens, e := strconv.ParseFloat(accountNet.Balance.String(), 64)
 				//插入数据库
-				aeasyAccount, e := models.InsertAccount(secret.UserId, mnemonic, account.SigningKeyToHexString(), account.Address, tokens)
-				//返回对接方
+				_, e = models.InsertAccount(secret.UserId, utils.Md5V(account.SigningKeyToHexString()+"aeasy"), account.Address)
 				if e == nil {
-					encryptOpenId := url.QueryEscape(utils.AesEncrypt(aeasyAccount.OpenId, "0888888888888880"))
-					unix := time.Now().UnixNano() / 1e6
-					tempToken := utils.Md5V(encryptOpenId + strconv.FormatInt(unix, 10))
-					_ = bm.Put(tempToken, encryptOpenId, 30*time.Minute)
-					c.ErrorJson(301, "", map[string]string{
-						"tempToken":   tempToken,
+					c.SuccessJson(map[string]string{
 						"redirectUri": redirectUri,
 						"appId":       appId,
+						"mnemonic":    mnemonic,
+						"signingKey":  account.SigningKeyToHexString(),
 					})
 				} else {
 					c.ErrorJson(-500, e.Error(), JsonData{})
@@ -210,22 +172,16 @@ func (c *AccreditRegisterController) Post() {
 		//accountGet := c.GetSecretAeAccount()
 		//txHash, e := models.ApiSpend(accountGet, accountCreate.Address, 0.00001, "")
 		secret, _ := models.FindSecretId(appId)
-		aeasyAccount, e := models.InsertAccount(secret.UserId, mnemonic, accountCreate.SigningKeyToHexString(), accountCreate.Address, utils.GetRealAebalanceFloat64(0))
+		_, e := models.InsertAccount(secret.UserId, utils.Md5V(accountCreate.SigningKeyToHexString()+"aeasy"), accountCreate.Address)
 		if e == nil {
-			encryptOpenId := url.QueryEscape(utils.AesEncrypt(aeasyAccount.OpenId, "0888888888888880"))
-			unix := time.Now().UnixNano() / 1e6
-			tempToken := utils.Md5V(encryptOpenId + strconv.FormatInt(unix, 10))
-			_ = bm.Put(tempToken, encryptOpenId, 30*time.Minute)
-			c.ErrorJson(301, "", map[string]string{
-				"tempToken":   tempToken,
+			c.SuccessJson(map[string]string{
 				"redirectUri": redirectUri,
 				"appId":       appId,
 				"mnemonic":    mnemonic,
+				"signingKey":  accountCreate.SigningKeyToHexString(),
 			})
-
 		} else {
 			c.ErrorJson(-500, e.Error(), JsonData{})
-
 		}
 	} else {
 		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
@@ -233,53 +189,53 @@ func (c *AccreditRegisterController) Post() {
 }
 
 //绑定密码
-func (c *AccreditBindEmailController) Post() {
-	if c.verifyAppId() {
-		tempToken := c.GetString("temp_token")
-		redirectUri := c.GetString("redirect_uri")
-		appId := c.GetString("app_id")
-		password := c.GetString("password")
-
-		//检测参数是否是空
-		if tempToken == "" || appId == "" || password == "" {
-			c.ErrorJson(-301, "parameter is nul", JsonData{})
-			return
-		}
-
-		tempTokenCache := bm.Get(tempToken)
-		if value, ok := tempTokenCache.(string); ok == true {
-			tempTokenUnUrlsEncode, _ := url.QueryUnescape(value)
-			openId := utils.AesDecrypt(tempTokenUnUrlsEncode, "0888888888888880")
-			aeasyAccount, e := models.FindAccountOpenId(openId)
-			if e == nil {
-				models.UpdateAccountOpenIdToEmailPassword(openId, "", password)
-				unix := time.Now().UnixNano() / 1e6
-				md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
-				accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
-				_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
-				_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
-				openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
-				if valueOpenIdKey, ok := openIdKey.(string); ok == true {
-					if valueOpenIdKey != "" {
-						_ = bm.Put(valueOpenIdKey, "", 0)
-						_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
-					}
-				}
-				c.SuccessJson(map[string]string{
-					"code":        md5OpenIdCode,
-					"redirectUri": redirectUri,
-				})
-
-			} else {
-				c.ErrorJson(-500, e.Error(), JsonData{})
-			}
-		} else {
-			c.ErrorJson(-500, "token error", JsonData{})
-		}
-	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
-	}
-}
+//func (c *AccreditBindEmailController) Post() {
+//	if c.verifyAppId() {
+//		tempToken := c.GetString("temp_token")
+//		redirectUri := c.GetString("redirect_uri")
+//		appId := c.GetString("app_id")
+//		password := c.GetString("password")
+//
+//		//检测参数是否是空
+//		if tempToken == "" || appId == "" || password == "" {
+//			c.ErrorJson(-301, "parameter is nul", JsonData{})
+//			return
+//		}
+//
+//		tempTokenCache := bm.Get(tempToken)
+//		if value, ok := tempTokenCache.(string); ok == true {
+//			tempTokenUnUrlsEncode, _ := url.QueryUnescape(value)
+//			openId := utils.AesDecrypt(tempTokenUnUrlsEncode, "0888888888888880")
+//			aeasyAccount, e := models.FindAccountOpenId(openId)
+//			if e == nil {
+//				models.UpdateAccountOpenIdToEmailPassword(openId, "", password)
+//				unix := time.Now().UnixNano() / 1e6
+//				md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
+//				accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
+//				_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
+//				_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
+//				openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
+//				if valueOpenIdKey, ok := openIdKey.(string); ok == true {
+//					if valueOpenIdKey != "" {
+//						_ = bm.Put(valueOpenIdKey, "", 0)
+//						_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
+//					}
+//				}
+//				c.SuccessJson(map[string]string{
+//					"code":        md5OpenIdCode,
+//					"redirectUri": redirectUri,
+//				})
+//
+//			} else {
+//				c.ErrorJson(-500, e.Error(), JsonData{})
+//			}
+//		} else {
+//			c.ErrorJson(-500, "token error", JsonData{})
+//		}
+//	} else {
+//		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+//	}
+//}
 
 //创建订单
 func (c *AccreditCreateOrderController) Post() {

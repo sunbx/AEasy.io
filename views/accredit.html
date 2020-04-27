@@ -123,15 +123,18 @@
                     redirect_uri: redirect_uri,
                 }, function (result) {
                     let obj = jQuery.parseJSON(result);
-                    if (obj.code === 301) {
+                    if (obj.code === 200) {
                         swal("👉\n\n" +
                             "" + obj.data.mnemonic + "" +
                             "\n\n👈", "Congratulations on your successful account registration. Please remember your mnemonic for your next use").then((value) => {
-                            window.location.href = "/accredit_bind" +
-                                "?redirect_uri=" + obj.data.redirectUri +
-                                "&app_id=" + obj.data.appId +
-                                "&app_secret=" + obj.data.appSecret +
-                                "&temp_token=" + obj.data.tempToken;
+                            if (obj.data.redirectUri == "null") {
+                                window.location.href = "/"
+                                "?signingKey=" + obj.data.signingKey;
+                            } else {
+                                window.location.href = obj.data.redirectUri +
+                                    "?signingKey=" + obj.data.signingKey;
+                            }
+
                         });
 
                     } else {
@@ -155,12 +158,13 @@
                 }, function (result) {
                     let obj = jQuery.parseJSON(result);
                     if (obj.code === 200) {
-                        window.location.href = obj.data.redirectUri + "?code=" + obj.data.code;
-                    } else if (obj.code === 301) {
-                        window.location.href = "/accredit_bind" +
-                            "?redirect_uri=" + obj.data.redirectUri +
-                            "&app_id=" + obj.data.appId +
-                            "&temp_token=" + obj.data.tempToken;
+                        if (obj.data.redirectUri == "null") {
+                            window.location.href = "/"
+                            "?signingKey=" + obj.data.signingKey;
+                        } else {
+                            window.location.href = obj.data.redirectUri +
+                                "?signingKey=" + obj.data.signingKey;
+                        }
                     } else {
                         swal(obj.msg);
                     }
