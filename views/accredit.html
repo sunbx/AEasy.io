@@ -117,7 +117,7 @@
 
             setTimeout(function () {
 
-                $.post("/accredit/register", {
+                $.post("/api/user/register", {
                     app_id: app_id,
                     app_secret: app_secret,
                     redirect_uri: redirect_uri,
@@ -151,7 +151,7 @@
             let redirect_uri = getQueryString('redirect_uri');
             $.LoadingOverlay("show");
             setTimeout(function () {
-                $.post("/accredit/login", {
+                $.post("/api/user/login", {
                     mnemonic: mnemonic,
                     app_id: app_id,
                     redirect_uri: redirect_uri,

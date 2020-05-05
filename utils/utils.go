@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"github.com/shopspring/decimal"
 	"io"
 	"math"
 	"math/big"
@@ -91,7 +92,10 @@ func UniqueId(salt string) string {
 
 func FormatTokens(tokens float64) string {
 	if tokens > 0 {
-		str := strconv.FormatFloat(tokens/1000000000000000000, 'f', 5, 64)
+		decimalValue := decimal.NewFromFloat(tokens)
+		decimalValue = decimalValue.Div(decimal.NewFromInt(1000000000000000000))
+		f, _ := decimalValue.Float64()
+		str := strconv.FormatFloat(f, 'f', 5, 64)
 		return str
 	} else {
 		return "0"
@@ -99,7 +103,10 @@ func FormatTokens(tokens float64) string {
 }
 func FormatTokensP(tokens float64, p int) string {
 	if tokens > 0 {
-		str := strconv.FormatFloat(tokens/1000000000000000000, 'f', p, 64)
+		decimalValue := decimal.NewFromFloat(tokens)
+		decimalValue = decimalValue.Div(decimal.NewFromInt(1000000000000000000))
+		f, _ := decimalValue.Float64()
+		str := strconv.FormatFloat(f, 'f', p, 64)
 		return str
 	} else {
 		return "0"
@@ -197,7 +204,7 @@ func IsMobile(userAgent string) bool {
 //url:请求地址
 //response:请求返回的内容
 func Get(url string) (response string) {
-	client := http.Client{Timeout: 60 * time.Second}
+	client := http.Client{Timeout: 600 * time.Second}
 	resp, error := client.Get(url)
 	defer resp.Body.Close()
 	if error != nil {
@@ -217,3 +224,4 @@ func Get(url string) (response string) {
 	response = result.String()
 	return
 }
+

@@ -11,7 +11,7 @@ type TokenCreateController struct {
 	BaseController
 }
 
-type TransferController struct {
+type TokenTransferController struct {
 	BaseController
 }
 
@@ -72,7 +72,7 @@ func (c *TokenCreateController) Post() {
 	}
 }
 
-func (c *TransferController) Post() {
+func (c *TokenTransferController) Post() {
 	address := c.GetString("address")
 	countString := c.GetString("count")
 	if c.isLogin() {

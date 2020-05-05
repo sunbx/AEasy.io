@@ -5,6 +5,7 @@ import (
 	"ae/models"
 	"ae/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -31,9 +32,9 @@ type TestController struct {
 type TestController2 struct {
 	BaseController
 }
-type PayController struct {
-	BaseController
-}
+//type PayController struct {
+//	BaseController
+//}
 type TokenController struct {
 	BaseController
 }
@@ -49,6 +50,11 @@ type MetaInfo struct {
 }
 type Balance struct {
 	Some []float64 `json:"Some"`
+}
+
+
+func (c *TestController) Get() {
+
 }
 
 func (c *AccreditController) Get() {
@@ -97,7 +103,7 @@ func (c *TokenController) Get() {
 			//metaInfoJson, _ := json.Marshal(&metaInfoCall)
 			//totalSupplyJson, _ := json.Marshal(&totalSupplyCall)
 			balanceJson, _ := json.Marshal(&balanceCall)
-
+			fmt.Println(balanceCall)
 			//var metaInfo MetaInfo
 			//var totalSupply float64
 			var balance Balance
@@ -108,7 +114,7 @@ func (c *TokenController) Get() {
 
 			tokens, e := models.FindTokenUserId(c.getCurrentUserId())
 			if e != nil {
-				c.TplName = "error2.html"
+				c.TplName = "error.html"
 				return
 			}
 			count, _ := strconv.ParseFloat(tokens.Count, 64)
@@ -135,9 +141,6 @@ func (c *AccreditBindController) Get() {
 	}
 }
 func (c *LoginController) Get() {
-
-	//c.Data["Website"] = "beego.me"
-	//c.Data["Email"] = "astaxie@gmail.com"
 
 	if c.isLogin() {
 		c.Redirect("/user", 302)
@@ -210,29 +213,29 @@ func (c *MainController) Get() {
 
 	}
 }
-func (c *PayController) Get() {
-	orderNo := c.GetString("order_no")
-	redirectUri := c.GetString("redirect_uri")
-	if orderNo == "" || redirectUri == "" {
-		c.Data["myAddress"] = "-"
-		c.Data["address"] = "-"
-		c.Data["tokens"] = "0"
-		c.TplName = "pay.html"
-		return
-	}
-	order, e := models.FindOrderOrderNo(orderNo)
-	if e != nil {
-		c.Data["myAddress"] = "-"
-		c.Data["address"] = "-"
-		c.Data["tokens"] = "0"
-		c.TplName = "pay.html"
-		return
-	}
-	c.Data["myAddress"] = order.SendAddress
-	c.Data["address"] = order.ReceiveAddress
-	c.Data["tokens"] = order.Tokens
-	c.TplName = "pay.html"
-}
+//func (c *PayController) Get() {
+//	orderNo := c.GetString("order_no")
+//	redirectUri := c.GetString("redirect_uri")
+//	if orderNo == "" || redirectUri == "" {
+//		c.Data["myAddress"] = "-"
+//		c.Data["address"] = "-"
+//		c.Data["tokens"] = "0"
+//		c.TplName = "pay.html"
+//		return
+//	}
+//	order, e := models.FindOrderOrderNo(orderNo)
+//	if e != nil {
+//		c.Data["myAddress"] = "-"
+//		c.Data["address"] = "-"
+//		c.Data["tokens"] = "0"
+//		c.TplName = "pay.html"
+//		return
+//	}
+//	c.Data["myAddress"] = order.SendAddress
+//	c.Data["address"] = order.ReceiveAddress
+//	c.Data["tokens"] = order.Tokens
+//	c.TplName = "pay.html"
+//}
 
 func (c *ArticleInfoController) Get() {
 	articleId := c.GetString("article_id")

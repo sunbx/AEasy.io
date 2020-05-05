@@ -5,7 +5,6 @@ import (
 	"ae/utils"
 	_ "github.com/typa01/go-utils"
 	"strconv"
-	"time"
 )
 
 type AccreditLoginController struct {
@@ -19,19 +18,11 @@ type AccreditInfoController struct {
 	BaseController
 }
 
-type AccreditCreateOrderController struct {
-	BaseController
-}
-
-//发送邮箱验证码
-type AccreditBindEmailController struct {
-	BaseController
-}
-
-//获取access_token
-type AccreditAccessTokenController struct {
-	BaseController
-}
+//
+////获取access_token
+//type AccreditAccessTokenController struct {
+//	BaseController
+//}
 
 //订单支付
 type PayBuyController struct {
@@ -40,80 +31,40 @@ type PayBuyController struct {
 
 //用户信息
 func (c *AccreditInfoController) Post() {
-	token := c.GetString("access_token")
-	if token == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
-		return
-	}
-
-	openId := bm.Get(token)
-	if value, ok := openId.(string); ok == true {
-		if value == "" {
-			c.ErrorJson(-300, "access_token overdue", JsonData{})
+	if c.verifyAppId() {
+		signingKey := c.GetString("signingKey")
+		address := c.GetString("address")
+		if signingKey == "" && address == "" {
+			c.ErrorJson(-301, "parameter is nul", JsonData{})
 			return
 		}
-		aeasyAccount, e := models.FindAccountOpenId(value)
-		if e == nil {
-			accountNet, e := models.ApiGetAccount(aeasyAccount.Address)
-			if e != nil {
-				if e.Error() == "Error: Account not found" {
-					c.SuccessJson(map[string]string{
-						"balance": "0",
-						"address": aeasyAccount.Address,
-					})
-				} else {
-					c.ErrorJson(-500, e.Error(), JsonData{})
-				}
-				return
-			}
-			tokens, e := strconv.ParseFloat(accountNet.Balance.String(), 64)
+
+		if signingKey != ""{
+			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 			if e == nil {
-				models.UpdateAccountOpenIdToToken(value, tokens)
+				address = aeasyAccount.Address
+			}
+		}
+		accountNet, e := models.ApiGetAccount(address)
+		if e != nil {
+			if e.Error() == "Error: Account not found" {
 				c.SuccessJson(map[string]string{
-					"balance": accountNet.Balance.String(),
-					"address": aeasyAccount.Address,
+					"balance": "0",
+					"address": address,
 				})
 			} else {
 				c.ErrorJson(-500, e.Error(), JsonData{})
 			}
-		} else {
-			c.ErrorJson(-300, "access_token overdue", JsonData{})
+			return
 		}
+		c.SuccessJson(map[string]string{
+			"balance": accountNet.Balance.String(),
+			"address": address,
+		})
 	} else {
-		c.ErrorJson(-500, "access_token error", JsonData{})
+		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
 	}
-}
 
-//获取access_token
-func (c *AccreditAccessTokenController) Post() {
-	code := c.GetString("code")
-	if code == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
-		return
-	}
-	openIdKey := bm.Get(code)
-	if valueOpenIdKey, ok := openIdKey.(string); ok == true {
-		openId := bm.Get(valueOpenIdKey)
-		if value, ok := openId.(string); ok == true {
-			_, e := models.FindAccountOpenId(value)
-			if e == nil {
-				_ = bm.Put(code, "", 0)
-				_ = bm.Put(valueOpenIdKey, openId, 30*24*60*60*time.Second)
-				_ = bm.Put(value+"aeasy", valueOpenIdKey, 30*24*60*60*time.Second)
-
-				c.SuccessJson(map[string]string{
-					"access_token": valueOpenIdKey,
-					"expires_in":   strconv.FormatInt(30*24*60*60, 10),
-				})
-			} else {
-				c.ErrorJson(-500, "account There is no error", JsonData{})
-			}
-		} else {
-			c.ErrorJson(-500, "access_token error", JsonData{})
-		}
-	} else {
-		c.ErrorJson(-500, "code error", JsonData{})
-	}
 }
 
 //授权登录
@@ -128,7 +79,7 @@ func (c *AccreditLoginController) Post() {
 		account, e := models.MnemonicAccount(mnemonic)
 		if e == nil {
 			//查询数据库,获取ae账户
-			_, e := models.FindAccountSigningKey(utils.Md5V(account.SigningKeyToHexString()+"aeasy"))
+			_, e := models.FindAccountSigningKey(utils.Md5V(account.SigningKeyToHexString() + "aeasy"))
 			//没有错误,表示查到数据了,直接返回对接方
 			if e == nil {
 				c.SuccessJson(map[string]string{
@@ -180,115 +131,6 @@ func (c *AccreditRegisterController) Post() {
 				"mnemonic":    mnemonic,
 				"signingKey":  accountCreate.SigningKeyToHexString(),
 			})
-		} else {
-			c.ErrorJson(-500, e.Error(), JsonData{})
-		}
-	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
-	}
-}
-
-//绑定密码
-//func (c *AccreditBindEmailController) Post() {
-//	if c.verifyAppId() {
-//		tempToken := c.GetString("temp_token")
-//		redirectUri := c.GetString("redirect_uri")
-//		appId := c.GetString("app_id")
-//		password := c.GetString("password")
-//
-//		//检测参数是否是空
-//		if tempToken == "" || appId == "" || password == "" {
-//			c.ErrorJson(-301, "parameter is nul", JsonData{})
-//			return
-//		}
-//
-//		tempTokenCache := bm.Get(tempToken)
-//		if value, ok := tempTokenCache.(string); ok == true {
-//			tempTokenUnUrlsEncode, _ := url.QueryUnescape(value)
-//			openId := utils.AesDecrypt(tempTokenUnUrlsEncode, "0888888888888880")
-//			aeasyAccount, e := models.FindAccountOpenId(openId)
-//			if e == nil {
-//				models.UpdateAccountOpenIdToEmailPassword(openId, "", password)
-//				unix := time.Now().UnixNano() / 1e6
-//				md5OpenIdCode := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10))
-//				accessToken := utils.Md5V(aeasyAccount.OpenId + strconv.FormatInt(unix, 10) + "access_token")
-//				_ = bm.Put(md5OpenIdCode, accessToken, time.Minute)
-//				_ = bm.Put(accessToken, aeasyAccount.OpenId, time.Minute)
-//				openIdKey := bm.Get(aeasyAccount.OpenId + "aeasy")
-//				if valueOpenIdKey, ok := openIdKey.(string); ok == true {
-//					if valueOpenIdKey != "" {
-//						_ = bm.Put(valueOpenIdKey, "", 0)
-//						_ = bm.Put(aeasyAccount.OpenId+"aeasy", "", 0)
-//					}
-//				}
-//				c.SuccessJson(map[string]string{
-//					"code":        md5OpenIdCode,
-//					"redirectUri": redirectUri,
-//				})
-//
-//			} else {
-//				c.ErrorJson(-500, e.Error(), JsonData{})
-//			}
-//		} else {
-//			c.ErrorJson(-500, "token error", JsonData{})
-//		}
-//	} else {
-//		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
-//	}
-//}
-
-//创建订单
-func (c *AccreditCreateOrderController) Post() {
-	if c.verifySecret() {
-		appId := c.GetString("app_id")
-		appSecret := c.GetString("app_secret")
-		accessToken := c.GetString("access_token")
-		body := c.GetString("body")
-		data := c.GetString("data")
-		balance := c.GetString("amount")
-
-		if body == "" || accessToken == "" {
-			c.ErrorJson(-301, "parameter is nul", JsonData{})
-			return
-		}
-		if len(data) > 5000 {
-			c.ErrorJson(-100, "data len > 5000", JsonData{})
-			return
-		}
-		tokens, e := strconv.ParseFloat(balance, 64)
-		if e == nil {
-			if tokens < 1 || tokens > 100 {
-				c.ErrorJson(-100, "balance Minimum support 1ae ", JsonData{})
-				return
-			} else {
-				openId := bm.Get(accessToken)
-				if value, ok := openId.(string); ok == true {
-					if value == "" {
-						c.ErrorJson(-300, "access_token overdue", JsonData{})
-						return
-					}
-					aeasyAccount, e := models.FindAccountOpenId(value)
-					if e == nil {
-						secret, _ := models.FindSecretIdSecret(appId, appSecret)
-						////base64
-						//strBytes := []byte(data)
-						//encoded := base64.StdEncoding.EncodeToString(strBytes)
-						//入库
-						order, e := models.InsertOrder(body, data, tokens, appId, value, aeasyAccount.Address, secret.Address)
-						if e == nil {
-							c.SuccessJson(map[string]string{
-								"order_no": order.OrderNo,
-							})
-						} else {
-							c.ErrorJson(-500, e.Error(), JsonData{})
-						}
-					} else {
-						c.ErrorJson(-500, e.Error(), JsonData{})
-					}
-				} else {
-					c.ErrorJson(-500, "balance error", JsonData{})
-				}
-			}
 		} else {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}

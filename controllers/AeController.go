@@ -25,10 +25,8 @@ type ApiCreateAccountController struct {
 	BaseController
 }
 
-//创建账户
-type ApiBalanceController struct {
-	BaseController
-}
+
+
 
 //返回区块高度
 func (c *ApiBlocksTopController) Get() {
@@ -62,8 +60,8 @@ func (c *ApiThHashController) Get() {
 func (c *ApiTransferController) Post() {
 	data := c.GetString("data")
 	if c.verifySecret() {
-		if len(data) > 5000 {
-			c.ErrorJson(-100, "data len > 50000", JsonData{})
+		if len(data) > 5000 || len(data) == 0 {
+			c.ErrorJson(-100, "data len > 50000 or data len = 0", JsonData{})
 			return
 		}
 		account := c.GetSecretAeAccount()
@@ -94,22 +92,3 @@ func (c *ApiCreateAccountController) Post() {
 	})
 }
 
-//查询余额
-func (c *ApiBalanceController) Get() {
-	if c.verifyAppId() {
-		address := c.GetString("address")
-		if address == "" {
-			c.ErrorJson(-200, "address is nil", JsonData{})
-			return
-		}
-		account, e := models.ApiGetAccount(address)
-		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
-			return
-		}
-		c.SuccessJson(account)
-	} else {
-		c.ErrorJson(-100, "appId verify error", JsonData{})
-	}
-
-}

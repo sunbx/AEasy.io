@@ -6,7 +6,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="../static/css/login.css">
     <script src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
-    {{/*    <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js" ></script>*/}}
     <script type="text/javascript" src="http://www.gongjuji.net/Content/files/jquery.md5.js"></script>
     <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
     <script type="text/javascript"
@@ -22,7 +21,7 @@
     <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../static/js/dependancies/bootstrap-select-1.12.4/dist/js/bootstrap-select.min.js"></script>
     <script src="../static/js/countrypicker.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
         technology</title>
 </head>
@@ -134,12 +133,21 @@
     }
 </style>
 <body>
-<div class="logo">
-    <img src="../static/img/android-chrome-256x256.png" alt="">
+
+<div class="header  animated 1 fadeInDown delay-0s slow">
+    <img src="../static/img/login_header.png">
+</div>
+<div class="bg">
+    <img class="bg1 animated  flipInX delay-2s" src="../static/img/index_bg1.png" alt=""/>
+    <img class="bg2 animated  rotateIn delay-1s" src="../static/img/index_bg2.png" alt=""/>
+    <img class="bg3 animated  flipInX delay-2s" src="../static/img/index_bg3.png" alt=""/>
+    <img class="bg4 animated  rotateIn delay-1s" src="../static/img/index_bg4.png" alt=""/>
+
+    <div class="bg7 animated  flipInX delay-2s"></div>
+    <div class="bg8 animated  flipInX delay-2s"></div>
+
 </div>
 <div class="base">
-
-
     <div class="content">
         <div class="div-login">
 
@@ -167,7 +175,7 @@
                 <a id="go-forget" class="p-forget" href="#">Forgot password?</a>
             </div>
             <a id="login" class="login" href="#">Login</a>
-
+            <div style="height: 16px"></div>
 
         </div>
 
@@ -176,10 +184,10 @@
 
             <div><p class="p-register">Register</p></div>
             <div><p class="p-login">Existing account <a id="go-login" class="login" href="#">login</a></p></div>
+            <!--
+                       <select id="select" class="selectpicker countrypicker " style="display: none" data-live-search="true" data-default="0086"
+                                data-flag="false"></select> -->
 
-            <select id="select" class="selectpicker countrypicker" data-live-search="true" data-default="0086"
-                    data-flag="false"></select>
-            <p class="privacy" style="font-size: 12px;color: #6a7989;margin-top: 10px">Outside China, it is recommended to register by email</p>
             <div class="div-email">
 
 
@@ -189,6 +197,8 @@
                        placeholder="Phone or Email"
                        name="user">
             </div>
+            <p class="privacy" style="font-size: 12px;color: #6a7989;margin-top: 10px">Outside China, it is recommended
+                to register by email</p>
             <div class="div-captcha">
                 <input id="register-input-captcha"
                        class="input-captcha"
@@ -216,37 +226,40 @@
             <a id="go-privacy" class="privacy" href="#">privacy</a>
         </div>
     </div>
-    <div class="banner">
-        <div class="bg">
 
-        </div>
-    </div>
 
 </div>
+
 
 
 </body>
 <script>$(function () {
 
 
-//	============================================================
+        //	============================================================
 
         $('#go-register').on('click', function () {
             $('.div-login').hide();
             $('.div-register').show();
+            // const register =  document.querySelector('.div-register');
+            // register.classList.add('animated', 'flipInY');
+
+
         });
 
         $('#go-login').on('click', function () {
-            $('.div-register').hide();
             $('.div-login').show();
+            $('.div-register').hide();
+            // const login =  document.querySelector('.div-login');
+            // login.classList.add('animated', 'flipInY');
         });
         $.LoadingOverlaySetup({
             image: "../static/img/android-chrome-256x256.png",
             size: "15",
             background: "#ffffff",
-            color: "#ba0c55"
+            color: "#F83C92"
         });
-//	============================================================
+        //	============================================================
         let isCountDown = false;
         let goCaptcha = $('#go-captcha').on('click', function () {
 
@@ -293,7 +306,7 @@
                     goCaptcha.css("background-image", "linear-gradient(116deg, #DCDCDC 0%, #DCDCDC 10%)");
                     if (count === 0) {
                         $('#go-captcha').text('Get');//
-                        $("#go-captcha").css("background-image", "linear-gradient(116deg, #5E3AFF 0%, #F7296E 90%)");
+                        $("#go-captcha").css("background-image", "linear-gradient(116deg, #F83C92 0%, #F83C92 90%)");
                         // $('#putvf1').css('display', 'none');//修改状态
                         // $('#putvf').css('display', 'block');
                         clearInterval(down);//销毁计时器

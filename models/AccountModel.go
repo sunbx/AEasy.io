@@ -68,10 +68,10 @@ func FindAccountEmail(email string) (AeasyAccount, error) {
 }
 
 //更新token数量信息
-func UpdateAccountOpenIdToToken(openId string, token float64) {
+func UpdateAccountOpenIdToToken(address string, token float64) {
 	qs := orm.NewOrm().QueryTable("aea_account")
 	_, _ = qs.
-		Filter("open_id", openId).Update(orm.Params{
+		Filter("address", address).Update(orm.Params{
 		"tokens": token,
 	})
 }

@@ -4,135 +4,898 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/index.css">
     <script type="text/javascript" src="../static/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/ui.js"></script>
-    <script type="text/javascript"
-            src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
-    <script>
-        var _hmt = _hmt || [];
-        (function() {
-            var hm = document.createElement("script");
-            hm.src = "https://hm.baidu.com/hm.js?035a2b13b350a98102f14793f806503b";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(hm, s);
-        })();
-    </script>
-
+    <script type="text/javascript" src="../static/js/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/swal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <title>AEasy SDK official website | allows you to quickly, conveniently, complete the development of pp block chain
         technology</title>
 </head>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .w1280 {
+        width: 1280px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .header {
+        position: absolute;
+        height: 79px;
+        top: 0;
+        left: 50%;
+        z-index: 1;
+        margin-left: -640px;
+    }
+
+    .scrollNav {
+        position: fixed;
+        background: rgb(255, 255, 255)
+    }
+
+    .header .logo {
+        width: 252px;
+        float: left;
+        height: 79px;
+        margin-left: 106px;
+        background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+        border-radius: 0px 0px 100px 100px;
+        text-align: center;
+        line-height: 79px;
+    }
+
+
+    .header .logo .name {
+        font-family: Avenir-Heavy;
+        font-size: 26px;
+        color: #FFFFFF;
+        letter-spacing: 0.36px;
+    }
+
+    .header .menu {
+        height: 79px;
+        float: right;
+        margin-right: 75px;
+    }
+
+
+    .header .menu li {
+        float: left;
+        list-style-type: none;
+        height: 79px;
+        display: block;
+    }
+
+    .header .menu li > a {
+        text-align: center;
+        margin-left: 25px;
+        height: 40px;
+        padding-left: 15px;
+        padding-right: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        display: block;
+        line-height: 40px;
+        margin-top: 20px;
+        font-family: Roboto-Regular;
+        font-size: 14px;
+        color: #384655;
+        letter-spacing: 0;
+
+    }
+
+
+    .header .menu li > a:hover {
+        text-decoration: none;
+        color: #E51363;
+    }
+
+    .header .menu li .login {
+        border-radius: 25px;
+        color: #384655;
+        width: 60px;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .header .menu li .login:hover {
+        border-color: #E51363;
+        color: #FFFFFF;
+        background-color: #E51363;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+
+    .down-arrow-aepps {
+        background-image: url('../static/img/arrow-sort-down-small.png');
+        background-position: 96% 50%;
+        background-repeat: no-repeat;
+        outline: none;
+        background-size: 10px;
+        background-blend-mode: lighten;
+    }
+
+    .down-arrow-zoology {
+        background-image: url('../static/img/arrow-sort-down-small.png');
+        background-position: 100% 50%;
+        background-repeat: no-repeat;
+        outline: none;
+        background-size: 10px;
+        background-blend-mode: lighten;
+    }
+
+    .ui-search-select-list-aepps {
+        position: absolute;
+        text-align: center;
+        display: none;
+        flex-direction: column;
+        border-radius: 5px;
+        background-color: white;
+        overflow: hidden;
+        margin-left: 30px;
+        border-color: #384655;
+        color: #FFFFFF;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+
+    .ui-search-select-list-zoology {
+        position: absolute;
+        text-align: center;
+        display: none;
+        flex-direction: column;
+        border-radius: 5px;
+        background-color: white;
+        overflow: hidden;
+        margin-left: 30px;
+        border-style: solid;
+        border-color: #384655;
+        border-width: 1px;
+    }
+
+
+    .select-item {
+        flex: 1;
+        background-color: #ffffff;
+        color: #384655;
+        line-height: 55px;
+        text-decoration: none;
+        font-size: 20px;
+        padding-left: 15px;
+        padding-right: 15px;
+        display: block;
+        font-weight: bold;
+    }
+
+    .select-item:hover {
+        color: #E51363;
+        background-color: #f1f1f1;
+    }
+
+
+    .container {
+        position: relative;
+    }
+
+    .container .bg {
+        z-index: -1;
+
+        overflow: hidden;
+    }
+
+    .container .bg .bg1 {
+        width: 220px;
+        height: 130px;
+        z-index: -1;
+        right: 77px;
+        top: 108px;
+        position: absolute;
+    }
+
+
+    .container .bg .bg2 {
+        width: 45px;
+        height: 45px;
+        top: 150px;
+        left: 344px;
+        z-index: -1;
+        position: absolute;
+    }
+
+    .container .bg .bg3 {
+        width: 174px;
+        height: 174px;
+        z-index: -1;
+        top: 153px;
+        right: 509px;
+        position: absolute;
+    }
+
+    .container .bg .bg4 {
+        width: 25px;
+        height: 25px;
+        z-index: -1;
+        top: 376px;
+        right: 348px;
+        position: absolute;
+    }
+
+    .bg5 {
+        width: 589px;
+        height: 352px;
+        z-index: -1;
+        top: 301px;
+        right: -290px;
+        position: absolute;
+        background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+        border-radius: 83px 0px 0px 83px;
+    }
+
+    .bg6 {
+        width: 589px;
+        height: 352px;
+        z-index: -1;
+        top: 301px;
+        right: -290px;
+        position: absolute;
+        background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+        border-radius: 83px 0px 0px 83px;
+    }
+
+    .container .bg .bg6 {
+        width: 184px;
+        height: 17px;
+        z-index: -1;
+        opacity: 0.1;
+        top: 260px;
+        background-image: linear-gradient(-39deg, #FF498E 0%, #E513A6 100%);
+        left: 160px;
+        position: absolute;
+    }
+
+    .container .bg .bg7 {
+        width: 17px;
+        height: 17px;
+        z-index: -1;
+        top: 484px;
+        right: 614px;
+        opacity: 0.9;
+        transform: rotate(169deg);
+        background: #50E3C2;
+        border-radius: 17px;
+        position: absolute;
+    }
+
+    .container .bg .bg8 {
+        width: 32px;
+        height: 32px;
+        z-index: -1;
+        top: 539px;
+        right: 754px;
+        transform: rotate(169deg);
+        background: #19A3FF;
+        position: absolute;
+        border-radius: 32px;
+    }
+
+    .container .title {
+        font-family: Avenir-Black;
+        font-size: 57px;
+        color: #384654;
+        letter-spacing: 1.5px;
+        margin-top: 224px;
+        margin-left: 166px;
+
+
+    }
+
+    .container .title2 {
+        font-family: Avenir-Black;
+        font-size: 57px;
+        color: #384654;
+        letter-spacing: 1.5px;
+        margin-left: 166px;
+
+
+        /*font:bold 200% Consolas,Monaco,monospace;*/
+        border-right: .1em solid;
+        width: 650px;
+        /* fallback */
+        /*width:30ch;*/
+        /* # of chars */
+        /*margin:2em 1em;*/
+        white-space: nowrap;
+        overflow: hidden;
+        animation: typing 3s steps(30, end), /* # of steps = # of chars */ blink-caret .5s step-end infinite alternate;
+    }
+
+    @keyframes typing {
+        from {
+            width: 0;
+        }
+    }
+
+    @keyframes blink-caret {
+        50% {
+            border-color: transparent;
+        }
+    }
+
+    .container .content {
+        margin-left: 166px;
+        font-family: Avenir-Book;
+        font-size: 18px;
+        color: #384655;
+        margin-top: 10px;
+        letter-spacing: 0.24px;
+    }
+
+
+    .bgall {
+        width: 100%;
+        height: 710%;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .button {
+        width: 150px;
+        height: 45px;
+        background-image: linear-gradient(116deg, #F7296E 0%, #F7296E 90%);
+        border-radius: 23px;
+        line-height: 45px;
+        color: white;
+        font-size: 16px;
+        margin-left: 161px;
+        margin-top: 40px;
+        letter-spacing: 1.2px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .hint1 {
+        font-family: Avenir-Heavy;
+        font-size: 28px;
+        color: #384655;
+        letter-spacing: 0.36px;
+        text-align: center;
+        line-height: 37px;
+        margin-top: 310px;
+    }
+
+    .view1 {
+        opacity: 0.9;
+        background-image: linear-gradient(-39deg, #FF498E 0%, #E513A6 100%);
+        border-radius: 5px;
+        width: 37px;
+        height: 6px;
+        margin: 0 auto;
+    }
+
+    .hint2 {
+        font-family: Avenir-Book;
+        font-size: 15px;
+        color: #384655;
+        letter-spacing: 0.7px;
+        text-align: center;
+        line-height: 30px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .bg9 {
+        z-index: -1;
+        top: 601px;
+        left: 0px;
+        position: absolute;
+    }
+
+    .bg10 {
+        z-index: 1;
+        top: 1601px;
+        right: 0px;
+        position: absolute;
+    }
+
+    .bg11 {
+        z-index: 1;
+        top: 2610px;
+        right: 0px;
+        position: absolute;
+    }
+
+    .bg12 {
+        z-index: 1;
+        top: 3710px;
+        left: 0px;
+        position: absolute;
+    }
+
+    .bg13 {
+        z-index: 1;
+        top: 4487px;
+        left: 234px;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+    }
+
+
+    .page1 {
+        height: 500px;
+        margin-top: 100px;
+    }
+
+    .box1 {
+        float: left;
+        margin-top: 2%;
+        margin-left: 2.5%;
+        text-align: center;
+        width: 30%;
+    }
+
+    .box1-img {
+        width: 204px;
+        height: 274px;
+    }
+
+    .box1-p1 {
+        margin-top: -50px;
+        font-family: PingFangSC-Semibold;
+        font-size: 26px;
+        color: #384655;
+        letter-spacing: 0.36px;
+        text-align: center;
+    }
+
+    .box1-p2 {
+        font-family: PingFangSC-Regular;
+        font-size: 12px;
+        color: #878787;
+        text-align: center;
+        letter-spacing: 0.26px;
+        margin-top: 10px;
+        line-height: 20px;
+    }
+
+    .page2 {
+        margin-top: 100px;
+    }
+
+    .page3 {
+        margin-top: 300px;
+        position: relative;
+        text-align: center;
+    }
+
+    .page3 .content {
+        height: 933px;
+        background: rgba(251, 68, 149, 0.13);
+        border-radius: 40px;
+        margin: 0 auto;
+        position: relative;
+        width: 644px;
+    }
+
+    .page3 .content .pic1 {
+        width: 394px;
+        height: 561px;
+        border-radius: 10px;
+        background: url("http://img1.imgtn.bdimg.com/it/u=41575291,1968829815&fm=214&gp=0.jpg") no-repeat;
+        box-shadow: 0px 30px 30px rgba(251, 68, 149, 0.1);
+        right: 384px;
+        bottom: 493px;
+        background-size: 100% 100%;
+        background-position-x: center;
+        background-position-y: center;
+        position: absolute;
+    }
+
+    .page3 .content .pic2 {
+        width: 394px;
+        height: 561px;
+        border-radius: 10px;
+        background: #000000;
+        left: 384px;
+        box-shadow: 0px 30px 30px rgba(251, 68, 149, 0.1);
+        background: url("http://img.zcool.cn/community/014e105e1b3746a80120a895782c09.jpg@1280w_1l_2o_100sh.jpg") no-repeat;
+        top: 493px;
+        background-size: 100% 100%;
+        background-position-x: center;
+        background-position-y: center;
+        position: absolute;
+    }
+
+    .page3 .content .info {
+        position: absolute;
+        right: 82px;
+        width: 220px;
+        top: 100px;
+        text-align: left;
+
+    }
+
+    .page3 .content .info2 {
+        position: absolute;
+        left: 78px;
+        width: 220px;
+        bottom: 103px;
+        text-align: left;
+
+    }
+
+    .page3 .bg1 {
+        position: absolute;
+        left: 140px;
+        height: 120px;
+        top: 0;
+    }
+
+    .page3 .bg1-copy {
+        position: absolute;
+        right: 110px;
+        height: 120px;
+        top: 800px;
+    }
+
+    .page3 .bg2 {
+        position: absolute;
+        right: 250px;
+        top: -50px;
+        width: 106px;
+        height: 106px;
+    }
+
+    .page3 .bg3 {
+        position: absolute;
+        left: -70px;
+        bottom: 128px;
+
+    }
+
+
+    .footer {
+        height: 394px;
+        margin-top: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .footer .bg {
+        transform: rotate(-3deg);
+        background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+        height: 394px;
+        position: absolute;
+        width: 300%;
+        left: 50%;
+        margin-left: -150%;
+        -ms-transform: rotate(-3deg); /* IE 9 */
+        bottom: -100px;
+        -moz-transform: rotate(-3deg); /* Firefox */
+        -webkit-transform: rotate(-3deg); /* Safari 和 Chrome */
+        -o-transform: rotate(-3deg); /* Opera */
+    }
+
+
+    .foot-content {
+        width: 1200px;
+        height: 100%;
+        bottom: 50px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+
+    .footer .foot-content .icon img {
+        width: 38px;
+        height: 38px;
+        line-height: 42px;
+    }
+
+    .footer .foot-content .title {
+        font-family: Roboto-BoldCondensed, serif;
+        font-size: 16px;
+        color: #ffffff;
+        letter-spacing: 0.4px;
+    }
+
+    .footer .foot-content .sub {
+        font-family: Roboto-Condensed, serif;
+        font-size: 12px;
+        color: #ffffff;
+        letter-spacing: 0.31px;
+        text-align: center;
+        margin-top: 10px;
+        line-height: 27px;
+    }
+
+    .footer .foot-content .sub2 {
+        font-family: Roboto-Condensed, serif;
+        font-size: 12px;
+        color: #9B9B9B;
+        letter-spacing: 0.31px;
+        text-align: center;
+        line-height: 27px;
+    }
+
+    .footer .foot-content .about {
+        width: 350px;
+        float: left;
+        height: 120px;
+        bottom: 0;
+        position: absolute;
+        overflow: hidden;
+    }
+
+    .footer .foot-content .help {
+        width: 400px;
+        height: 120px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        bottom: 0;
+        overflow: hidden;
+    }
+
+    .footer .foot-content .contact {
+        width: 350px;
+        right: 0;
+        float: right;
+        overflow: hidden;
+        height: 120px;
+        position: absolute;
+        bottom: 0;
+    }
+</style>
+
 <body>
-
-<div class="bg"></div>
-<div class="dian">
-    <img src="../static/img/dian.png"/>
-</div>
-<div class="body">
-    <div class="header">
-        <div class="logo">
-            <img src="../static/img/android-chrome-256x256.png" alt="">
-        </div>
-        <div class="menu">
-            <ul>
-                <li><a href="#">HOME</a></li>
-                <li>
-                    <a class="down-arrow-aepps" href="#">ÆPPS</a>
-                    <div class="ui-search-select-list-aepps">
-                        <a class="select-item" href="https://base.aepps.com/">BASE AEPP</a>
-                        <a class="select-item" href="https://airgap.it/">AIRGAP</a>
-                    </div>
-                </li>
-                <li>
-                    <a class="down-arrow-zoology" href="#">ZOOLOGY</a>
-                    <div class="ui-search-select-list-zoology">
-                        <a class="select-item" href="https://www.aechina.io/">AECHNIA</a>
-                        <a class="select-item" href="https://www.aeknow.org/">AEKNOW</a>
-                    </div>
-                </li>
-                <li><a href="https://www.showdoc.cc/AEASY">DOCUMENT</a></li>
-                <li><a class="login" href="./login.html">LOGIN</a></li>
-            </ul>
-        </div>
+<div class="bgall">
+    <div class="bg5 animated  bounceInRight  delay-2s">
+        <img style="height :120px;right:190px;position: absolute ;top: 50%;opacity: 0.8;margin-top: -20px"
+             src="../static/img/index_dian_bai.png" alt=""/>
     </div>
-
-    <div class="content">
-        <div class="slogan-title">
-            AEasy is Convenient</br>
-            Aeternity Framework
-        </div>
-        <div class="slogan-content">
-            AEasy quickly, conveniently realize Aeternity aaepp development
-        </div>
-        <div class="start">
-            <a href="./login.html" target="_blank">Quick Start</a>
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="line"></div>
-        <div class="foot-content">
-            <div class="about">
-                <div class="icon">
-                    <img src="../static/img/about.png" alt="about">
-                </div>
-                <div class="title">About AEasy</div>
-                <div class="sub">We are passionate about designing more aepp</div>
-            </div>
-            <div class="help">
-                <div class="icon">
-                    <img src="../static/img/contact.png" alt="about">
-                </div>
-                <div class="title">Giving the address</div>
-                <div class="sub">ak_QyFYYpgJ1vUGk1Lnk8d79WJEVcAtcfuNHqquuP2ADfxsL6yKx</div>
-
-            </div>
-            <div class="contact">
-                <div class="icon">
-                    <img src="../static/img/help.png" alt="about">
-                </div>
-                <div class="title">Contact us</div>
-                <div class="sub">WeChat:s283122529 QQ:283122529</div>
-
-
-            </div>
-        </div>
-
-
-    </div>
-
+    <img class="bg9" src="../static/img/index_bg5.png" alt=""/>
+    <img class="bg10" src="../static/img/index_bg6.png" alt=""/>
+    <img class="bg11" src="../static/img/index_bg7.png" alt=""/>
+    <img class="bg12" src="../static/img/index_bg8.png" alt=""/>
+    <img class="bg13" src="../static/img/index_page3_bg3.png"/>
 
 </div>
+<div class="header w1280" id="navbg">
+    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+        <span class="name">AEASY</span>
+    </div>
+    <div class="menu">
+        <ul>
+            <li><a href="#">HOME</a></li>
+            <li>
+                <a class="down-arrow-aepps" target="_blank" href="http://wetrue.io">WETRUE</a>
+                <div class="ui-search-select-list-aepps">
+                    <a class="select-item" href="https://base.aepps.com/">BASE</a>
+                    <a class="select-item" href="https://airgap.it/">WETRUE</a>
+                </div>
+            </li>
+            <li>
+                <a class="down-arrow-zoology" target="_blank" href="http://aeknow.org">AEKNOW</a>
+                <div class="ui-search-select-list-zoology">
+                    <a class="select-item" href="https://www.aechina.io/">AECHNIA</a>
+                    <a class="select-item" href="https://www.aeknow.org/">AEKNOW</a>
+                </div>
+            </li>
+            <li><a href="https://www.showdoc.cc/AEASY">DOCUMENT</a></li>
+            <li><a class="login" href="./login.html">LOGIN</a></li>
+        </ul>
+    </div>
+</div>
+<div class="container w1280">
 
+
+    <div class="bg">
+        <img class="bg1" src="../static/img/index_bg1.png" alt=""/>
+        <img class="bg2 animated  rotateIn delay-1s" src="../static/img/index_bg2.png" alt=""/>
+        <img class="bg3" src="../static/img/index_bg3.png" alt=""/>
+        <img class="bg4 animated  rotateIn delay-1s" src="../static/img/index_bg4.png" alt=""/>
+
+        <div class="bg6"></div>
+        <div class="bg7"></div>
+        <div class="bg8"></div>
+
+    </div>
+
+    <p class="title">AEasy is Convenient
+    </p>
+    <p class="title2"> Aeternity Framework
+    </p>
+    <p class="content">AEasy quickly, conveniently realize Aeternity aaepp<br> development</p>
+    <div>
+        <a class="button animated 1 bounceIn delay-2s" href="./login.html" target="_blank">Quick Start</a>
+    </div>
+    <p class="hint1">We will support more features for you</p>
+    <div style="height: 16px"></div>
+    <div class="view1"></div>
+    <p class="hint2">
+        Provide you with a rich API to complete the development of aepp<br>so that you can quickly have decentralized
+        software</p>
+
+    <div class="page1">
+        <div class="box1">
+            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <p class="box1-p1">Quick learning</p>
+            <p class="box1-p2">AEASY allows developers to get <br>
+                started quickly.Can quickly use the<br>
+                API to call node data, you do not<br>
+                need to relationship blockchain<br>
+                internal is how to achieve</p>
+        </div>
+        <div class="box1">
+            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <p class="box1-p1">Security</p>
+            <p class="box1-p2">Benefit from security, trust, and<br>
+                transparency Fully centralized, AEASY<br>
+                does not retain any of your information<br>
+
+        </div>
+        <div class="box1">
+            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <p class="box1-p1">Assets</p>
+            <p class="box1-p2">Simple editing to quickly own assets<br>
+                Quick compilation and use of the <br>
+                smart contract, you can directly request<br>
+                the API to create aex9 tokens</p>
+        </div>
+    </div>
+
+    <p class="hint1" style="margin-top: 0px">Wonderful Video</p>
+    <div style="height: 16px"></div>
+    <div class="view1" style="background: #1F9CFF"></div>
+
+    <div class="page2" style="text-align: center">
+        <a onclick="onVideo()" href="javascript:void(0);">
+            <img width="1040" src="../static/img/index_page2.png" alt=""/>
+        </a>
+    </div>
+
+    <p class="hint1" style="margin-top: 100px">Strong development team for maintenance</p>
+    <div style="height: 16px"></div>
+    <div class="view1"></div>
+    <p class="hint2">
+        We have a world class team to maintain aeasy, so that you have no worries..</p>
+    <div class="page3">
+        <img class="bg1" src="../static/img/index_dian_bai.png"/>
+
+        <img class="bg2" src="../static/img/index_profile_bg2.png"/>
+        <img class="bg1-copy" src="../static/img/index_dian_bai.png"/>
+        <div class="content">
+            <div class="pic1"></div>
+            <div class="pic2"></div>
+            <img class="bg3" src="../static/img/index_page3_bg3.png"/>
+            <div class="info">
+                <div style="position: absolute;width: 71px;height: 8px;background: #1F9CFF;opacity: 0.2;top: 10px"></div>
+                <p style="font-family: Avenir-Medium;font-size: 26px;color: #384655;letter-spacing: 0.36px;line-height: 26px;">
+                    Baixin - Harley
+                </p>
+                <p style="opacity: 0.7;font-family: Avenir-Book;font-size: 16px;color: #384655;margin-top: 20px;letter-spacing: 0.22px;line-height: 22px;">
+                    I used to work in a first-tier Internet company, and I have a deep understanding of the block chain
+                    field. I invested in users of AE currency in the early stage, with the original intention of making
+                    my own contribution to the AE community
+                </p>
+            </div>
+
+            <div class="info2">
+                <div style="position: absolute;width: 71px;height: 8px;background: #1F9CFF;opacity: 0.2;top: 10px"></div>
+                <p style="font-family: Avenir-Medium;font-size: 26px;color: #384655;letter-spacing: 0.36px;line-height: 26px;">
+                    An Yu
+                </p>
+                <p style="opacity: 0.7;font-family: Avenir-Book;font-size: 16px;color: #384655;margin-top: 20px;letter-spacing: 0.22px;line-height: 22px;">
+                    I used to work in a first-tier Internet company, and I have a deep understanding of the block chain
+                    field. I invested in users of AE currency in the early stage, with the original intention of making
+                    my own contribution to the AE community
+                </p>
+            </div>
+        </div>
+        <div style="height: 200px"></div>
+        <div class="page2" style="text-align: center">
+            <img width="640" src="../static/img/index_icons.png" alt=""/>
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="footer">
+    <div class="bg"></div>
+    <div class="foot-content">
+        <div class="about">
+            <div class="icon">
+                <img src="../static/img/index_guanyu.png" alt="about">
+            </div>
+            <div class="title">About AEasy</div>
+            <div class="sub">We are passionate about designing more aepp</div>
+        </div>
+        <div class="help">
+            <div class="icon">
+                <img src="../static/img/index_juanzeng.png" alt="about">
+            </div>
+            <div class="title">Giving the address</div>
+            <div class="sub">ak_QyFYYpgJ1vUGk1Lnk8d79WJEVcAtcfuNHqquuP2ADfxsL6yKx</div>
+
+        </div>
+        <div class="contact">
+            <div class="icon">
+                <img src="../static/img/index_lianxi.png" alt="about">
+            </div>
+            <div class="title">Contact us</div>
+            <div class="sub">WeChat:s283122529 QQ:283122529</div>
+
+
+        </div>
+    </div>
+</div>
 
 </body>
 
 <script>
+    function onVideo() {
+        swal("The introduction video is being recorded and we are looking forward to it. Thank you for your understanding and supportThe introduction video is being recorded and we are looking forward to it. Thank you for your understanding and support");
+    }
 
-    $('.down-arrow-aepps').hover(function () {
-        $('.ui-search-select-list-aepps').show();
-    }, function () {
-        $('.ui-search-select-list-aepps').hide();
+    $(document).ready(function () {
+        var topH = $("#top").height();//获取头部高度，top指导航栏上面的部分
+        var navbg = $("#navbg");//获取导航栏对象
+        var logo = $("#logo");//获取导航栏对象
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > 100) {//对比滚动的距离与导航栏上面部分的高度大小来动态添加css样式
+                navbg.addClass("scrollNav")//对导航栏添加样式
+                $('#logo').hide();
+            } else {
+                navbg.removeClass("scrollNav")//去掉导航栏添加的样式
+                $('#logo').show();
+            }
+        });
     });
-
-    $('.ui-search-select-list-aepps').hover(function () {
-        $('.ui-search-select-list-aepps').show();
-    }, function () {
-        $('.ui-search-select-list-aepps').hide();
-    });
-
-    $('.down-arrow-zoology').hover(function () {
-        $('.ui-search-select-list-zoology').show();
-    }, function () {
-        $('.ui-search-select-list-zoology').hide();
-    });
-
-    $('.ui-search-select-list-zoology').hover(function () {
-        $('.ui-search-select-list-zoology').show();
-    }, function () {
-        $('.ui-search-select-list-zoology').hide();
-    });
+    //    $('.down-arrow-aepps').hover(function () {
+    //        $('.ui-search-select-list-aepps').show();
+    //    }, function () {
+    //        $('.ui-search-select-list-aepps').hide();
+    //    });
+    //
+    //    $('.ui-search-select-list-aepps').hover(function () {
+    //        $('.ui-search-select-list-aepps').show();
+    //    }, function () {
+    //        $('.ui-search-select-list-aepps').hide();
+    //    });
+    //
+    //    $('.down-arrow-zoology').hover(function () {
+    //        $('.ui-search-select-list-zoology').show();
+    //    }, function () {
+    //        $('.ui-search-select-list-zoology').hide();
+    //    });
+    //
+    //    $('.ui-search-select-list-zoology').hover(function () {
+    //        $('.ui-search-select-list-zoology').show();
+    //    }, function () {
+    //        $('.ui-search-select-list-zoology').hide();
+    //    });
 
 </script>
-
 </html>

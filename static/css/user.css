@@ -6,9 +6,118 @@
 
 body {
     width: 100%;
+}
+
+.bg {
+    width: 100%;
     height: 100%;
+    z-index: -1;
     overflow: hidden;
 }
+
+.bg .bg1 {
+    height: 110px;
+    z-index: -1;
+    left: 177px;
+    top: 388px;
+    position: absolute;
+}
+
+
+.bg .bg2 {
+    width: 45px;
+    height: 45px;
+    top: 150px;
+    left: 544px;
+    z-index: -1;
+    position: absolute;
+}
+
+.bg .bg3 {
+    width: 174px;
+    height: 174px;
+    z-index: -1;
+    top: 203px;
+    right:189px;
+    position: absolute;
+}
+
+.bg .bg4 {
+    width: 25px;
+    height: 25px;
+    z-index: -1;
+    top: 506px;
+    right: 348px;
+    position: absolute;
+}
+
+.bg5 {
+    width: 589px;
+    height: 352px;
+    z-index: -1;
+    top: 301px;
+    right: -290px;
+    position: absolute;
+    background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+    border-radius: 83px 0px 0px 83px;
+}
+
+.bg6 {
+    width: 589px;
+    height: 352px;
+    z-index: -1;
+    top: 301px;
+    right: -290px;
+    position: absolute;
+    background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+    border-radius: 83px 0px 0px 83px;
+}
+
+.bg .bg6 {
+    width: 184px;
+    height: 17px;
+    z-index: -1;
+    opacity: 0.1;
+    top: 260px;
+    background-image: linear-gradient(-39deg, #FF498E 0%, #E513A6 100%);
+    left: 160px;
+    position: absolute;
+}
+
+.bg .bg7 {
+    width: 17px;
+    height: 17px;
+    z-index: -1;
+    top: 434px;
+    right: 614px;
+    opacity: 0.9;
+    transform: rotate(169deg);
+    background: #50E3C2;
+    border-radius: 17px;
+    position: absolute;
+}
+
+.bg .bg8 {
+    width: 32px;
+    height: 32px;
+    z-index: -1;
+    top: 589px;
+    right: 754px;
+    transform: rotate(169deg);
+    background: #19A3FF;
+    position: absolute;
+    border-radius: 32px;
+}
+
+
+.header{
+    z-index: 999;
+}
+
+.header img{
+    width: 100%;
+}
+
 
 /*中间的过度的横线*/
 .line {
@@ -18,34 +127,15 @@ body {
 }
 
 
-.bg {
-    transform: rotate(-40deg);
-    background-image: linear-gradient(116deg, #5E3AFF 0%, #F7296E 50%);
-    border-radius: 463px;
-    width: 100%;
-    height: 100%;
-
-    position: absolute;
-    right: -40%;
-    top: -65%;
-    z-index: -1;
-    box-shadow: -30px 0px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-
-}
 
 
 .body {
-    width: 1200px;
+    width: 100%;
     height: 100%;
     margin: auto;
+
 }
 
-.header {
-    width: 100%;
-    height: 80px;
-    overflow: hidden;
-}
 
 .header .logo {
     width: 200px;
@@ -67,15 +157,18 @@ body {
 
 
 .header .menu {
-    height: 80px;
+    height: 150px;
     float: right;
+    position: absolute;
+    right: 100px;
+    top: 0;
 }
 
 
 .header .menu li {
     float: left;
     list-style-type: none;
-    height: 80px;
+    height: 150px;
     display: block;
 }
 
@@ -92,7 +185,7 @@ body {
     font-weight: bold;
     display: block;
     line-height: 30px;
-    margin-top: 25px;
+    margin-top: 45px;
 
 }
 
@@ -122,15 +215,9 @@ body {
 .card {
     width: 100%;
     height: 100%;
-    background: rgb(255, 255, 255);
     overflow: hidden;
-    border-radius: 20px;
     /*水平居中*/
     position: relative;
-    box-shadow: 10px 10px 10px 10px rgba(0.1, 0.1, 0.1, 0.1);
-    font-weight: 500;
-    letter-spacing: -.5px;
-    padding-bottom: 50px;
 }
 
 .card .left {
@@ -228,7 +315,7 @@ body {
 .card .right .start > a {
     width: 150px;
     height: 45px;
-    background-image: linear-gradient(116deg, #5E3AFF 0%, #f72a6f 90%);
+    background-image: linear-gradient(116deg, #F83C92 0%, #F83C92 90%);
     border-radius: 23px;
     line-height: 45px;
     color: white;
@@ -236,6 +323,7 @@ body {
     margin-top: 20px;
     letter-spacing: 1.2px;
     text-align: center;
+    border:1px dashed #F83C92;
     text-decoration: none;
     display: block;
 }
@@ -244,7 +332,7 @@ body {
 .card .right .start2 > a {
     width: 150px;
     height: 45px;
-    background-image: linear-gradient(116deg, #f72a6f 0%, #f72a6f 90%);
+    background-image: linear-gradient(116deg, #F83C92 0%, #F83C92 90%);
     border-radius: 23px;
     line-height: 45px;
     color: white;
@@ -274,6 +362,5 @@ body {
     text-align: center;
     margin-top: 30px;
 }
-
 
 

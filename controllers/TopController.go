@@ -6,35 +6,33 @@ import (
 	"encoding/json"
 )
 
-type WealthListController struct {
+type WalletListController struct {
 	BaseController
 }
 type BaseDataController struct {
 	BaseController
 }
 
-func (c *WealthListController) Get() {
-	page, _ := c.GetInt("page", 0)
-	tops, err := models.GetTopAll(page)
-	if err != nil {
-		c.ErrorJson(-200, err.Error(), JsonData{})
-		return
-	}
-	var topJsons []models.Top500Json
-	for i := 0; i < len(tops); i++ {
-		content := utils.FormatTokensP(tops[i].Balance, 5)
-		//tops[i].Tokens = content + " AE"
-		var top models.Top500Json
-		top.Id = tops[i].Id
-		top.Balance = content + " AE"
-		top.Ak = tops[i].Ak
-		top.Per = tops[i].Per
-		top.LastUpdate = tops[i].LastUpdate
-
-		topJsons = append(topJsons, top)
+func (c *WalletListController) Post() {
+	addresses, e := models.FindAddressBalanceTopList()
+	if e != nil {
 
 	}
-	c.SuccessJson(topJsons)
+
+	var walletList []map[string]interface{}
+	for i := 0; i < len(addresses); i++ {
+		var balanceStr = utils.FormatTokens(addresses[i].Balance)
+		addresses[i].BalanceStr = balanceStr
+		var wallet = map[string]interface{}{}
+		wallet["address"] = addresses[i].Address
+		wallet["balance"] = balanceStr
+		wallet["update_time"] = addresses[i].UpdateTime
+		wallet["percentage"] = utils.FormatTokensP(addresses[i].Balance/355005806*100, 2)
+
+		walletList = append(walletList, wallet)
+	}
+
+	c.SuccessJson(walletList)
 }
 
 type AeKnowAPI struct {
