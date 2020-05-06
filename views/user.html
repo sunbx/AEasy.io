@@ -25,15 +25,26 @@
     <div class="bg8 animated  flipInX delay-2s"></div>
 
 </div>
-<div class="header  animated 1 fadeInDown delay-0s slow">
-    <img src="../static/img/login_header.png">
-
+<div class="header-base" style="  display: flex;
+    align-items: center; /*定义body的元素垂直居中*/
+    justify-content: center; /*定义body的里的元素水平居中*/
+    background: white;
+    height: 79px;
+    position: absolute;
+    width: 100%;">
+<div class="header" id="navbg">
+    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+        <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
+        <span class="name">AEASY</span>
+    </div>
     <div class="menu">
         <ul>
-            <li><a href="https://www.showdoc.cc/AEASY" target="_blank">DOCUMENT</a></li>
-            <li><a id="go-logout" class="login" href="#">LOGOUT</a></li>
+
+            <li><a href="https://www.showdoc.cc/AEASY">DOCUMENT</a></li>
+            <li><a class="login" id="go-logout" href="#">LOGOUT</a></li>
         </ul>
     </div>
+</div>
 </div>
 <div class="body">
 

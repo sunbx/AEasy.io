@@ -18,13 +18,13 @@
         margin: 0;
     }
 
-    body {
+    html, body {
         width: 100%;
         height: 100%;
     }
 
     .w1280 {
-        width: 1280px;
+        width: 1250px;
         margin: 0 auto;
         overflow: hidden;
     }
@@ -33,10 +33,13 @@
         position: absolute;
         height: 79px;
         top: 0;
-        left: 50%;
-        z-index: 1;
         margin-left: -640px;
+        width: 1280px;
+        left: 50%;
+        background: white;
+        z-index: 1;
     }
+
 
     .scrollNav {
         position: fixed;
@@ -59,6 +62,9 @@
         font-family: Avenir-Heavy;
         font-size: 26px;
         color: #FFFFFF;
+        line-height: 80px;
+        text-align: center;
+        margin-left: 10px;
         letter-spacing: 0.36px;
     }
 
@@ -295,7 +301,7 @@
         font-size: 57px;
         color: #384654;
         letter-spacing: 1.5px;
-        margin-top: 224px;
+        margin-top: 18%;
         margin-left: 166px;
 
 
@@ -345,7 +351,7 @@
 
     .bgall {
         width: 100%;
-        height: 710%;
+        height: 4690px;
         overflow: hidden;
         position: absolute;
         z-index: -1;
@@ -450,12 +456,11 @@
     }
 
     .box1-img {
-        width: 204px;
-        height: 274px;
+        width: 234px;
+        height: 234px;
     }
 
     .box1-p1 {
-        margin-top: -50px;
         font-family: PingFangSC-Semibold;
         font-size: 26px;
         color: #384655;
@@ -513,7 +518,7 @@
         background: #000000;
         left: 384px;
         box-shadow: 0px 30px 30px rgba(251, 68, 149, 0.1);
-        background: url("http://img.zcool.cn/community/014e105e1b3746a80120a895782c09.jpg@1280w_1l_2o_100sh.jpg") no-repeat;
+        background: url("http://imgsrc.baidu.com/forum/w=580/sign=577339886509c93d07f20effaf3cf8bb/341ac81349540923433010f89058d109b2de4902.jpg") no-repeat;
         top: 493px;
         background-size: 100% 100%;
         background-position-x: center;
@@ -680,31 +685,39 @@
     <img class="bg13" src="../static/img/index_page3_bg3.png"/>
 
 </div>
-<div class="header w1280" id="navbg">
-    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
-        <span class="name">AEASY</span>
+
+<div style="height: 79px; width: 100%;background: white;z-index:1;position: fixed" class="scrollNav" id="navbg" >
+
+    <div style="position: absolute;width: 100%;height: 79px;background: white;"></div>
+    <div class="header">
+
+        <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+            <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
+            <span class="name">AEASY</span>
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="#">HOME</a></li>
+                <li>
+                    <a class="down-arrow-aepps" target="_blank" href="http://wetrue.io">WETRUE</a>
+                    <div class="ui-search-select-list-aepps">
+                        <a class="select-item" href="https://base.aepps.com/">BASE</a>
+                        <a class="select-item" href="https://airgap.it/">WETRUE</a>
+                    </div>
+                </li>
+                <li>
+                    <a class="down-arrow-zoology" target="_blank" href="http://aeknow.org">AEKNOW</a>
+                    <div class="ui-search-select-list-zoology">
+                        <a class="select-item" href="https://www.aechina.io/">AECHNIA</a>
+                        <a class="select-item" href="https://www.aeknow.org/">AEKNOW</a>
+                    </div>
+                </li>
+                <li><a href="https://www.showdoc.cc/AEASY">DOCUMENT</a></li>
+                <li><a class="login" href="./login.html">LOGIN</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="menu">
-        <ul>
-            <li><a href="#">HOME</a></li>
-            <li>
-                <a class="down-arrow-aepps" target="_blank" href="http://wetrue.io">WETRUE</a>
-                <div class="ui-search-select-list-aepps">
-                    <a class="select-item" href="https://base.aepps.com/">BASE</a>
-                    <a class="select-item" href="https://airgap.it/">WETRUE</a>
-                </div>
-            </li>
-            <li>
-                <a class="down-arrow-zoology" target="_blank" href="http://aeknow.org">AEKNOW</a>
-                <div class="ui-search-select-list-zoology">
-                    <a class="select-item" href="https://www.aechina.io/">AECHNIA</a>
-                    <a class="select-item" href="https://www.aeknow.org/">AEKNOW</a>
-                </div>
-            </li>
-            <li><a href="https://www.showdoc.cc/AEASY">DOCUMENT</a></li>
-            <li><a class="login" href="./login.html">LOGIN</a></li>
-        </ul>
-    </div>
+
 </div>
 <div class="container w1280">
 
@@ -738,7 +751,7 @@
 
     <div class="page1">
         <div class="box1">
-            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <img class="box1-img" src="../static/img/icon1.png" alt=""/>
             <p class="box1-p1">Quick learning</p>
             <p class="box1-p2">AEASY allows developers to get <br>
                 started quickly.Can quickly use the<br>
@@ -747,7 +760,7 @@
                 internal is how to achieve</p>
         </div>
         <div class="box1">
-            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <img class="box1-img" src="../static/img/icon2.png" alt=""/>
             <p class="box1-p1">Security</p>
             <p class="box1-p2">Benefit from security, trust, and<br>
                 transparency Fully centralized, AEASY<br>
@@ -755,7 +768,7 @@
 
         </div>
         <div class="box1">
-            <img class="box1-img" src="../static/img/index_page1_box1.png" alt=""/>
+            <img class="box1-img" src="../static/img/icon3.png" alt=""/>
             <p class="box1-p1">Assets</p>
             <p class="box1-p2">Simple editing to quickly own assets<br>
                 Quick compilation and use of the <br>
@@ -803,12 +816,12 @@
             <div class="info2">
                 <div style="position: absolute;width: 71px;height: 8px;background: #1F9CFF;opacity: 0.2;top: 10px"></div>
                 <p style="font-family: Avenir-Medium;font-size: 26px;color: #384655;letter-spacing: 0.36px;line-height: 26px;">
-                    An Yu
+                    Arvin
                 </p>
                 <p style="opacity: 0.7;font-family: Avenir-Book;font-size: 16px;color: #384655;margin-top: 20px;letter-spacing: 0.22px;line-height: 22px;">
-                    I used to work in a first-tier Internet company, and I have a deep understanding of the block chain
-                    field. I invested in users of AE currency in the early stage, with the original intention of making
-                    my own contribution to the AE community
+                    Top Chinese designer, from the Chinese Internet giant, contact design since childhood, very rich
+                    experience, is the early digital currency investors block chain believers, and BaiXin together to
+                    create aeasy-io to serve more developers to develop aepp.
                 </p>
             </div>
         </div>
@@ -864,7 +877,7 @@
         var navbg = $("#navbg");//获取导航栏对象
         var logo = $("#logo");//获取导航栏对象
         $(window).scroll(function () {
-            if ($(window).scrollTop() > 100) {//对比滚动的距离与导航栏上面部分的高度大小来动态添加css样式
+            if ($(window).scrollTop() > 200) {//对比滚动的距离与导航栏上面部分的高度大小来动态添加css样式
                 navbg.addClass("scrollNav")//对导航栏添加样式
                 $('#logo').hide();
             } else {

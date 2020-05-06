@@ -4,17 +4,21 @@
     margin: 0;
 }
 
-body {
+
+html,body {
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
+
 
 .bg {
     width: 100%;
     height: 100%;
     z-index: -1;
     overflow: hidden;
-    background: #1F9CFF;
+    position: absolute;
 }
 
 .bg .bg1 {
@@ -23,6 +27,7 @@ body {
     left: 47px;
     top: 588px;
     position: absolute;
+
 }
 
 
@@ -113,12 +118,149 @@ body {
 
 
 .header {
-    z-index: 999;
+    position: absolute;
+    height: 79px;
+    top: 0;
+    width: 1280px;
+    z-index: 1;
 }
 
-.header img {
-    width: 100%;
+.scrollNav {
+    position: fixed;
+    background: rgb(255, 255, 255)
 }
+
+.header .logo {
+    width: 252px;
+    float: left;
+    height: 79px;
+    margin-left: 106px;
+    background-image: linear-gradient(129deg, #E71766 0%, #FF4D90 100%);
+    border-radius: 0px 0px 100px 100px;
+    text-align: center;
+    line-height: 79px;
+}
+
+
+.header .logo .name {
+    font-family: Avenir-Heavy;
+    font-size: 26px;
+    color: #FFFFFF;
+    line-height: 80px;
+    text-align: center;
+    margin-left: 10px;
+    letter-spacing: 0.36px;
+}
+
+.header .menu {
+    height: 79px;
+    float: right;
+    margin-right: 75px;
+}
+
+
+.header .menu li {
+    float: left;
+    list-style-type: none;
+    height: 79px;
+    display: block;
+}
+
+.header .menu li > a {
+    text-align: center;
+    margin-left: 25px;
+    height: 40px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    line-height: 40px;
+    margin-top: 20px;
+    font-family: Roboto-Regular;
+    font-size: 14px;
+    color: #384655;
+    letter-spacing: 0;
+
+}
+
+
+.header .menu li > a:hover {
+    text-decoration: none;
+    color: #E51363;
+}
+
+.header .menu li .login {
+    border-radius: 25px;
+    color: #384655;
+    width: 60px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.header .menu li .login:hover {
+    border-color: #E51363;
+    color: #FFFFFF;
+    background-color: #E51363;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+
+.ui-search-select-list-aepps {
+    position: absolute;
+    text-align: center;
+    display: none;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+    overflow: hidden;
+    margin-left: 30px;
+    border-color: #384655;
+    color: #FFFFFF;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+.ui-search-select-list-zoology {
+    position: absolute;
+    text-align: center;
+    display: none;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+    overflow: hidden;
+    margin-left: 30px;
+    border-style: solid;
+    border-color: #384655;
+    border-width: 1px;
+}
+.w1280 {
+    width: 1230px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.select-item {
+    flex: 1;
+    background-color: #ffffff;
+    color: #384655;
+    line-height: 55px;
+    text-decoration: none;
+    font-size: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: block;
+    font-weight: bold;
+}
+
+.select-item:hover {
+    color: #E51363;
+    background-color: #f1f1f1;
+}
+
 
 .div-bg {
     overflow: hidden;
@@ -137,87 +279,9 @@ body {
 }
 
 
-.header .logo {
-    width: 200px;
-    line-height: 80px;
-    float: left;
-    font-size: 22px;
-    z-index: 1;
-    font-weight: bold;
-    margin-left: 5px;
-    font-family: Roboto-Black, serif;
-}
-
-.header .logo img {
-    width: 100px;
-    height: 100px;
-    margin-top: -10px;
-    margin-left: -20px;
-}
-
-
-.header .menu {
-    height: 150px;
-    float: right;
-    position: absolute;
-    right: 100px;
-    top: 0;
-}
-
-
-.header .menu li {
-    float: left;
-    list-style-type: none;
-    height: 150px;
-    display: block;
-}
-
-.header .menu li > a {
-    font-family: PingFangSC-Regular, serif;
-    font-size: 14px;
-    text-align: center;
-    margin-left: 25px;
-    height: 30px;
-    padding-left: 15px;
-    padding-right: 15px;
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    display: block;
-    line-height: 30px;
-    margin-top: 45px;
-
-}
-
-
-.header .menu li > a:hover {
-    text-decoration: none;
-    color: #fff;
-}
-
-.header .menu li .login {
-    border-radius: 15px;
-    border-color: #fff;
-    border-style: solid;
-    border-width: 1px;
-}
-
-.header .menu li .login:hover {
-    border-radius: 15px;
-    border-color: white;
-    color: #F83C92;
-    background-color: white;
-    border-style: solid;
-    border-width: 1px;
-}
 
 
 
-
-
-.card {
-    /*水平居中*/
-}
 
 .card .left {
     width: 45%;
@@ -229,14 +293,23 @@ body {
 .card .left .title {
     padding-top: 40px;
 }
-
 .body {
-    width: 100%;
+    display: flex;
+    align-items: center; /*定义body的元素垂直居中*/
+    justify-content: center; /*定义body的里的元素水平居中*/
     height: 100%;
-    margin: auto;
-
 }
 
+
+
+
+.card {
+    width: 1280px;
+    overflow: hidden;
+    /*水平居中*/
+    position: relative;
+
+}
 .card .left .p-receive {
     font-family: Inter, sans-serif;
     font-size: 1.875rem;
