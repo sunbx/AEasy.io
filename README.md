@@ -47,3 +47,52 @@
 
 
 #####Your address on this page you can see a qr code and address string and appId and appSecret, but is invisible to the appId and appSecret, because the new user need to change the address to your account to make more than 1 ae , can obtain appId and appSecret is stolen brush. In order to prevent hackers appId and appSecret is very important, please careful custody, appId and appSecret later introduction to use
+
+
+
+
+
+# Based Introduce
+
+### What can the basic API do ?
+
+The basic API can provide some basic queries of the node, and quickly implement the data chain operation, the chain operation will deduct the account ae as a handling fee, almost no money, if you have the demand for data chain and is free to the user can use this interface is the best choice
+
+- Gets the current block height interface,This interface can be used to obtain the latest block height of ae
+- Obtain the specific contents of the specific information on the chain, including address information, and the data on the chain, transfer amount, etc., can use the interface to obtain the data on the chain.
+- Gets the balance of the account under the corresponding address
+- Get the wallet list top 500
+- Obtain some basic data such as ae price and quantity
+- The data is passed into the block link port, and the data below 50000 length can be stored into the block chain. The block chain data can be saved permanently, which only needs to pay 0.0001ae of fuel fee, which is equivalent to no cost 😆😆😆
+
+If you want to make money , check out the advanced API, which will meet your needs
+
+
+
+# Advanced Introduce
+### What can advanced apis do?
+Advanced API can provide some middleware data and aens domain name data, so that aepp can quickly access the transfer records, etc., can quickly register aens, transfer, update
+
+- Login by mnemonic
+- Register by mnemonic
+- Transfers between wallets
+- A record of transfers between wallets
+- Get the account balance
+- Acquire aens in auction - near the end of the auction
+- Get aens auction - the most expensive domain name
+- Gets the domain name that aens is about to expire
+- Get aens my-registered domain name
+- Get aens my - about to expire domain name
+- Update the domain name
+- Domain name details
+- Domain name registration
+- The domain name transfer
+
+Information about AEX9 API operations will be added later
+
+
+
+
+
+
+
