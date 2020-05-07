@@ -42,8 +42,9 @@
 ![](https://www.showdoc.cc/server/api/common/visitfile/sign/20e1f67ba9e812a8838892fe9934091d?showdoc=.jpg)
 
 ##### 3. If you do not have an account, please use the email account to register. After successful registration, you will enter the user center page
--
-![](https://www.showdoc.cc/server/api/common/visitfile/sign/29e96c591dd74cb34d3c4cbf60cd5d08?showdoc=.jpg)
+
+![](https://www.showdoc.cc/server/api/common/visitfile/sign/ccebe40f796ac8f0b5f4f210ff22fada?showdoc=.jpg)
+
 
 
 #####Your address on this page you can see a qr code and address string and appId and appSecret, but is invisible to the appId and appSecret, because the new user need to change the address to your account to make more than 1 ae , can obtain appId and appSecret is stolen brush. In order to prevent hackers appId and appSecret is very important, please careful custody, appId and appSecret later introduction to use
