@@ -138,6 +138,25 @@ func FindMicroBlockBlockNameorData(name string) (AeaMiddleMicroBlock, error) {
 	return aeaMiddleMicroBlock[0], err
 }
 
+func FindMicroBlockBlockNameorDatas(name string) ([]AeaMiddleMicroBlock, error) {
+	var aeaMiddleMicroBlock []AeaMiddleMicroBlock
+	o := orm.NewOrm()
+	_, err := o.Raw("select * from `aea_middle_micro_block` WHERE `name` ='" + name + "' order by block_height desc limit 100").QueryRows(&aeaMiddleMicroBlock)
+	return aeaMiddleMicroBlock, err
+}
+
+func FindMicroBlockBlockList(address string, page int, t string) ([]AeaMiddleMicroBlock, error) {
+	var aeaMiddleMicroBlock []AeaMiddleMicroBlock
+	o := orm.NewOrm()
+	if t == "all" {
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = ? or sender_id=? or recipient_id = ?) order by time desc limit ?,?", address, address, address, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		return aeaMiddleMicroBlock, err
+	} else {
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = '?' or sender_id='?' or recipient_id = '?') and type=? order by time desc limit ?,?", address, address, address, t, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		return aeaMiddleMicroBlock, err
+	}
+}
+
 func RegisterAeaMiddleBlockDB() {
 	orm.RegisterModel(new(AeaMiddleBlock))
 }

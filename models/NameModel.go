@@ -75,12 +75,25 @@ func FindNameMyOverIng(address string, page int, height int) ([]AeaMiddleNames, 
 	return aeaMiddleNames, err
 }
 
-//通过id 获取用户信息
+//通过id 获取信息
 func FindNameId(nameId string) (AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
 	_, err := o.Raw("select * from aea_middle_names where name_id = ? limit 1", nameId).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames[0], err
+}
+
+//通过name 获取信息
+func FindNameName(name string) (AeaMiddleNames, error) {
+	var aeaMiddleNames []AeaMiddleNames
+	o := orm.NewOrm()
+	_, err := o.Raw("select * from aea_middle_names where name = ? limit 1", name).QueryRows(&aeaMiddleNames)
+	if len(aeaMiddleNames)>0{
+		return aeaMiddleNames[0], err
+	}else{
+		return AeaMiddleNames{}, err
+	}
+
 }
 
 func UpdateNameOwner(nameId string, owner string) error {

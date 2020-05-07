@@ -13,6 +13,7 @@ import (
 	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/tyler-smith/go-bip39"
 	"io/ioutil"
+	"math/big"
 	"strconv"
 )
 
@@ -66,7 +67,6 @@ func CreateAccountUtils() (mnemonic string, signingKey string, address string) {
 	entropy, _ := bip39.NewEntropy(128)
 	mne, _ := bip39.NewMnemonic(entropy)
 
-	//mnemonic := "tail disagree oven fit state cube rule test economy claw nice stable"
 	seed, _ := account.ParseMnemonic(mne)
 
 	_, _ = bip39.EntropyFromMnemonic(mne)
@@ -218,7 +218,7 @@ func CallContractFunction(account *account.Account, ctID string, function string
 	return decodeResult, err
 }
 
-func TransferAENS(account *account.Account, recipientAddress string, name string) ( *aeternity.TxReceipt, error) {
+func TransferAENS(account *account.Account, recipientAddress string, name string) (*aeternity.TxReceipt, error) {
 	client := naet.NewNode(nodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
 	// Transfer the name to a recipient
@@ -227,7 +227,54 @@ func TransferAENS(account *account.Account, recipientAddress string, name string
 		return nil, err
 	}
 	fmt.Println("Transfer")
-	txReceipt, err := ctxAlice.SignBroadcastWait(transferTx, config.Client.WaitBlocks)
+	txReceipt, err := ctxAlice.SignBroadcast(transferTx, config.Client.WaitBlocks)
+	if err != nil {
+		return nil, err
+	}
+	return txReceipt, err
+}
+
+func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, error) {
+	client := naet.NewNode(nodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+	// Transfer the name to a recipient
+	alicesAddress, err := transactions.NewNamePointer("account_pubkey", account.Address)
+	if err != nil {
+		return nil, err
+	}
+	updateTx, err := transactions.NewNameUpdateTx(account.Address, name, []*transactions.NamePointer{alicesAddress}, config.Client.Names.ClientTTL+10000, ctxAlice.TTLNoncer())
+	if err != nil {
+		return nil, err
+	}
+	updateTx.NameTTL = 50000
+	fmt.Println("Update")
+	txReceipt, err := ctxAlice.SignBroadcast(updateTx, config.Client.WaitBlocks)
+	if err != nil {
+		return nil, err
+	}
+	return txReceipt, err
+}
+
+func ClaimAENS(account *account.Account, name string, fee *big.Int) (*aeternity.TxReceipt, error) {
+	client := naet.NewNode(nodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+
+	// Preclaim the name
+	preclaimTx, nameSalt, err := transactions.NewNamePreclaimTx(account.Address, name, ctxAlice.TTLNoncer())
+	if err != nil {
+		return nil, err
+	}
+	_, err = ctxAlice.SignBroadcastWait(preclaimTx, config.Client.WaitBlocks)
+	if err != nil {
+		return nil, err
+	}
+
+	claimTx, err := transactions.NewNameClaimTx(account.Address, name, nameSalt, fee, ctxAlice.TTLNoncer())
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Claim")
+	txReceipt, err := ctxAlice.SignBroadcast(claimTx, config.Client.WaitBlocks)
 	if err != nil {
 		return nil, err
 	}

@@ -32,6 +32,7 @@ type TestController struct {
 type TestController2 struct {
 	BaseController
 }
+
 //type PayController struct {
 //	BaseController
 //}
@@ -51,7 +52,6 @@ type MetaInfo struct {
 type Balance struct {
 	Some []float64 `json:"Some"`
 }
-
 
 func (c *TestController) Get() {
 
@@ -213,6 +213,7 @@ func (c *MainController) Get() {
 
 	}
 }
+
 //func (c *PayController) Get() {
 //	orderNo := c.GetString("order_no")
 //	redirectUri := c.GetString("redirect_uri")

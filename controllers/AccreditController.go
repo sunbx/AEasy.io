@@ -18,12 +18,6 @@ type AccreditInfoController struct {
 	BaseController
 }
 
-//
-////获取access_token
-//type AccreditAccessTokenController struct {
-//	BaseController
-//}
-
 //订单支付
 type PayBuyController struct {
 	BaseController
@@ -120,8 +114,7 @@ func (c *AccreditRegisterController) Post() {
 		appId := c.GetString("app_id")
 
 		accountCreate, mnemonic := models.CreateAccount()
-		//accountGet := c.GetSecretAeAccount()
-		//txHash, e := models.ApiSpend(accountGet, accountCreate.Address, 0.00001, "")
+
 		secret, _ := models.FindSecretId(appId)
 		_, e := models.InsertAccount(secret.UserId, utils.Md5V(accountCreate.SigningKeyToHexString()+"aeasy"), accountCreate.Address)
 		if e == nil {

@@ -61,7 +61,7 @@ func init() {
 	beego.Router("/api/article/list", &controllers.ArticleListController{})
 
 	//钱包排行榜
-	beego.Router("/api/wallet/list", &controllers.WalletListController{})//改
+	beego.Router("/api/wallet/list", &controllers.WalletListController{})
 
 	//ae 价格等一些基础数据
 	beego.Router("/api/base/data", &controllers.BaseDataController{})
@@ -75,6 +75,11 @@ func init() {
 	//助记词注册
 	beego.Router("/api/user/register", &controllers.AccreditRegisterController{})
 
+	//转账
+	beego.Router("/api/wallet/transfer", &controllers.WalletTransferController{})
+
+	//转账记录
+	beego.Router("/api/wallet/transfer/record", &controllers.WalletTransferRecordController{})
 
 	//获取account账户余额
 	beego.Router("/api/user/info", &controllers.AccreditInfoController{})
@@ -94,26 +99,23 @@ func init() {
 	//我的 - 即将过期的域名
 	beego.Router("/api/names/my/over", &controllers.NamesMyOverController{})
 
-	//注册域名
-
 	//更新域名
+	beego.Router("/api/names/update", &controllers.NamesUpdateController{})
 
-	//转账
+	//域名详细信息
+	beego.Router("/api/names/info", &controllers.NamesInfoController{})
 
-	//转账记录
+	//域名注册
+	beego.Router("/api/names/add", &controllers.NamesAddController{})
 
+	//域名转移
+	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
 
-
+	
 	//====================定时任务====================
 
-
-	//抓取数据
 	//文章数据抓取
 	beego.Router("/article/data", &controllers.ArticleDataController{})
-
-
-
-
 
 	beego.Router("/test", &controllers.TestController{})
 }
