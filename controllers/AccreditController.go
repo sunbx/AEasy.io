@@ -78,7 +78,6 @@ func (c *AccreditLoginController) Post() {
 			if e == nil {
 				c.SuccessJson(map[string]string{
 					"redirectUri": redirectUri,
-					"appId":       appId,
 					"mnemonic":    mnemonic,
 					"signingKey":  account.SigningKeyToHexString(),
 				})
@@ -90,7 +89,6 @@ func (c *AccreditLoginController) Post() {
 				if e == nil {
 					c.SuccessJson(map[string]string{
 						"redirectUri": redirectUri,
-						"appId":       appId,
 						"mnemonic":    mnemonic,
 						"signingKey":  account.SigningKeyToHexString(),
 					})
@@ -120,7 +118,6 @@ func (c *AccreditRegisterController) Post() {
 		if e == nil {
 			c.SuccessJson(map[string]string{
 				"redirectUri": redirectUri,
-				"appId":       appId,
 				"mnemonic":    mnemonic,
 				"signingKey":  accountCreate.SigningKeyToHexString(),
 			})

@@ -1,3 +1,4 @@
+
 package routers
 
 import (
@@ -52,7 +53,7 @@ func init() {
 	beego.Router("/api/ae/block_data", &controllers.ApiTransferController{})
 
 	//查询当前区块高度
-	beego.Router("/api/ae/blocks_top", &controllers.ApiBlocksTopController{})
+	beego.Router("/api/ae/block_top", &controllers.ApiBlocksTopController{})
 
 	//查询th_hash
 	beego.Router("/api/ae/th_hash", &controllers.ApiThHashController{})
@@ -88,7 +89,7 @@ func init() {
 	beego.Router("/api/names/auctions", &controllers.NamesAuctionsActiveController{})
 
 	//拍卖中 - 价格最贵的域名
-	beego.Router("/api/names/price", &controllers.NamesPriceController{})
+	beego.Router("/api/nam/names/my/overes/price", &controllers.NamesPriceController{})
 
 	//即将过期 未续费的域名
 	beego.Router("/api/names/over", &controllers.NamesOverController{})
@@ -111,7 +112,7 @@ func init() {
 	//域名转移
 	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
 
-	
+
 	//====================定时任务====================
 
 	//文章数据抓取

@@ -14,25 +14,30 @@ type BaseDataController struct {
 }
 
 func (c *WalletListController) Post() {
-	addresses, e := models.FindAddressBalanceTopList()
-	if e != nil {
+	if c.verifyAppId() {
+		addresses, e := models.FindAddressBalanceTopList()
+		if e != nil {
+			c.ErrorJson(-500, e.Error(), JsonData{})
+			return
+		}
 
+		var walletList []map[string]interface{}
+		for i := 0; i < len(addresses); i++ {
+			var balanceStr = utils.FormatTokens(addresses[i].Balance)
+			addresses[i].BalanceStr = balanceStr
+			var wallet = map[string]interface{}{}
+			wallet["address"] = addresses[i].Address
+			wallet["balance"] = balanceStr
+			wallet["update_time"] = addresses[i].UpdateTime
+			wallet["percentage"] = utils.FormatTokensP(addresses[i].Balance/355005806*100, 2)
+
+			walletList = append(walletList, wallet)
+		}
+
+		c.SuccessJson(walletList)
+	} else {
+		c.ErrorJson(-100, "appId verify error", JsonData{})
 	}
-
-	var walletList []map[string]interface{}
-	for i := 0; i < len(addresses); i++ {
-		var balanceStr = utils.FormatTokens(addresses[i].Balance)
-		addresses[i].BalanceStr = balanceStr
-		var wallet = map[string]interface{}{}
-		wallet["address"] = addresses[i].Address
-		wallet["balance"] = balanceStr
-		wallet["update_time"] = addresses[i].UpdateTime
-		wallet["percentage"] = utils.FormatTokensP(addresses[i].Balance/355005806*100, 2)
-
-		walletList = append(walletList, wallet)
-	}
-
-	c.SuccessJson(walletList)
 }
 
 type AeKnowAPI struct {
@@ -50,12 +55,16 @@ type AeKnowAPI struct {
 }
 
 func (c *BaseDataController) Post() {
-	response := utils.Get("https://www.aeknow.org/api")
-	var knowApi AeKnowAPI
-	err := json.Unmarshal([]byte(response), &knowApi)
-	if err != nil {
-		c.ErrorJson(500, "Umarshal failed", JsonData{})
-		return
+	if c.verifyAppId() {
+		response := utils.Get("https://www.aeknow.org/api")
+		var knowApi AeKnowAPI
+		err := json.Unmarshal([]byte(response), &knowApi)
+		if err != nil {
+			c.ErrorJson(500, "Umarshal failed", JsonData{})
+			return
+		}
+		c.SuccessJson(knowApi)
+	} else {
+		c.ErrorJson(-100, "appId verify error", JsonData{})
 	}
-	c.SuccessJson(knowApi)
 }

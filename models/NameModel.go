@@ -55,7 +55,7 @@ func FindNameOver(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner='?' and end_height<?  limit ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<?  limit ?,?", address, height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -63,7 +63,7 @@ func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames,
 func FindNameMyRegisterIng(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner='?' and end_height>?  limit ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height>?  limit ?,?", address,height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -71,7 +71,7 @@ func FindNameMyRegisterIng(address string, page int, height int) ([]AeaMiddleNam
 func FindNameMyOverIng(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner='?'  and end_height<? order by over_height  limit  ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=?  and end_height<? order by over_height  limit  ?,?", address,height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -88,9 +88,9 @@ func FindNameName(name string) (AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
 	_, err := o.Raw("select * from aea_middle_names where name = ? limit 1", name).QueryRows(&aeaMiddleNames)
-	if len(aeaMiddleNames)>0{
+	if len(aeaMiddleNames) > 0 {
 		return aeaMiddleNames[0], err
-	}else{
+	} else {
 		return AeaMiddleNames{}, err
 	}
 
