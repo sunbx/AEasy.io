@@ -26,7 +26,6 @@ type Resp struct {
 	data interface{} `json:"object"`
 }
 
-
 /**
 * @des 时间转换函数
 * @param atime string 要转换的时间戳（秒）
@@ -113,6 +112,38 @@ func FormatTokensP(tokens float64, p int) string {
 	}
 }
 
+func GetAENSPalce(name string) string {
+	var price string
+	if len(name)-6 == 1 {
+		price = "570288700000000000000"
+	} else if len(name)-6 == 2 {
+		price = "352457800000000000000"
+	} else if len(name)-6 == 3 {
+		price = "217830900000000000000"
+	} else if len(name)-6 == 4 {
+		price = "134626900000000000000"
+	} else if len(name)-6 == 5 {
+		price = "83204000000000000000"
+	} else if len(name)-6 == 6 {
+		price = "51422900000000000000"
+	} else if len(name)-6 == 7 {
+		price = "31781100000000000000"
+	} else if len(name)-6 == 8 {
+		price = "19641800000000000000"
+	} else if len(name)-6 == 9 {
+		price = "12139300000000000000"
+	} else if len(name)-6 == 10 {
+		price = "7502500000000000000"
+	} else if len(name)-6 == 11 {
+		price = "4636800000000000000"
+	} else if len(name)-6 == 12 {
+		price = "2865700000000000000"
+	} else if len(name)-6 >= 13 {
+		price = "2865700000000000000"
+	}
+	return price
+}
+
 func GetRealAebalanceBigInt(amount float64) *big.Int {
 	newFloat := big.NewFloat(amount)
 	basefloat := big.NewFloat(1000000000000000000)
@@ -194,7 +225,7 @@ func IsEmail(email string) bool {
 //检测是不是手机访问
 func IsMobile(userAgent string) bool {
 	mobileRe, _ := regexp.Compile("(?i:Mobile|iPod|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP)")
-	if mobileRe.FindString(userAgent) == ""{
+	if mobileRe.FindString(userAgent) == "" {
 		return false
 	}
 	return true
@@ -224,4 +255,3 @@ func Get(url string) (response string) {
 	response = result.String()
 	return
 }
-

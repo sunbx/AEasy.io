@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/aeternity/aepp-sdk-go/transactions"
+	"github.com/aeternity/aepp-sdk-go/aeternity"
 	"github.com/shopspring/decimal"
 	"math/big"
 	"strconv"
@@ -89,7 +89,7 @@ func (c *NamesAuctionsActiveController) Post() {
 
 			names = append(names, name)
 		}
-		if names == nil{
+		if names == nil {
 			c.SuccessJson([]JsonData{})
 			return
 		}
@@ -117,12 +117,12 @@ func (c *NamesPriceController) Post() {
 			name["over_height"] = namesDb[i].OverHeight
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
-			name["current_price"] =  utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
 		}
-		if names == nil{
+		if names == nil {
 			c.SuccessJson([]JsonData{})
 			return
 		}
@@ -150,12 +150,12 @@ func (c *NamesOverController) Post() {
 			name["over_height"] = namesDb[i].OverHeight
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
-			name["current_price"] =  utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
 		}
-		if names == nil{
+		if names == nil {
 			c.SuccessJson([]JsonData{})
 			return
 		}
@@ -193,12 +193,12 @@ func (c *NamesMyRegisterController) Post() {
 			name["over_height"] = namesDb[i].OverHeight
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
-			name["current_price"] =  utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
 		}
-		if names == nil{
+		if names == nil {
 			c.SuccessJson([]JsonData{})
 			return
 		}
@@ -236,12 +236,12 @@ func (c *NamesMyOverController) Post() {
 			name["over_height"] = namesDb[i].OverHeight
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
-			name["current_price"] =  utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
 		}
-		if names == nil{
+		if names == nil {
 			c.SuccessJson([]JsonData{})
 			return
 		}
@@ -383,7 +383,9 @@ func (c *NamesAddController) Post() {
 
 		var nameFee *big.Int
 		if nameDb.CurrentPrice == 0 {
-			nameFee = transactions.CalculateMinNameFee(name)
+			palce := utils.GetAENSPalce(name)
+			decimalValue, _ := decimal.NewFromString(palce)
+			nameFee = decimalValue.BigInt()
 		} else {
 			nameFee = decimal.NewFromFloat(nameDb.CurrentPrice).BigInt()
 		}
@@ -393,27 +395,35 @@ func (c *NamesAddController) Post() {
 		decimalValue = decimalValue.Add(decimalValueMul)
 
 		accountNet, e := models.ApiGetAccount(account.Address)
+		var tokens float64
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
-			return
+			tokens = 0
+		} else {
+			tokens, err = strconv.ParseFloat(accountNet.Balance.String(), 64)
+			if err != nil {
+				c.ErrorJson(-500, err.Error(), JsonData{})
+				return
+			}
 		}
-		tokens, err := strconv.ParseFloat(accountNet.Balance.String(), 64)
-		if err != nil {
-			c.ErrorJson(-500, err.Error(), JsonData{})
-			return
-		}
+
 		f, _ := decimalValue.Float64()
 		if tokens < f {
-			c.ErrorJson(-500, "Lack of balance >"+utils.FormatTokens(f), JsonData{})
+			c.ErrorJson(-500, "Lack of balance greater than "+utils.FormatTokens(f)+"AE", JsonData{})
 			return
 		}
-
-		receipt, err := models.ClaimAENS(account, name, decimalValue.BigInt())
-
-		if err != nil {
-			c.ErrorJson(-500, err.Error(), JsonData{})
-			return
+		var isUpdate bool
+		if nameDb.CurrentPrice > 0 && nameDb.EndHeight > aeHeight {
+			isUpdate = true
 		}
+		var receipt *aeternity.TxReceipt
+		if nameDb.CurrentPrice == 0 {
+			receipt, _ = models.ClaimAENS(account, name, decimalValue.BigInt(), isUpdate)
+			fmt.Println("a", "-", nameFee, "---", decimal.NewFromBigInt(nameFee, 0).BigInt())
+		} else {
+			receipt, _ = models.ClaimAENS(account, name, decimalValue.BigInt(), isUpdate)
+			fmt.Println("b", decimalValue.BigInt())
+		}
+
 		c.SuccessJson(receipt)
 	} else {
 		c.ErrorJson(-100, "appId or secret verify error", JsonData{})

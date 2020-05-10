@@ -3,6 +3,7 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
+	"github.com/shopspring/decimal"
 	_ "github.com/typa01/go-utils"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func (c *AccreditInfoController) Post() {
 			return
 		}
 
-		if signingKey != ""{
+		if signingKey != "" {
 			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 			if e == nil {
 				address = aeasyAccount.Address
@@ -51,8 +52,10 @@ func (c *AccreditInfoController) Post() {
 			}
 			return
 		}
+		decimalValue, _ := decimal.NewFromString(accountNet.Balance.String())
+		f, _ := decimalValue.Float64()
 		c.SuccessJson(map[string]string{
-			"balance": accountNet.Balance.String(),
+			"balance": utils.FormatTokens(f),
 			"address": address,
 		})
 	} else {
@@ -79,6 +82,7 @@ func (c *AccreditLoginController) Post() {
 				c.SuccessJson(map[string]string{
 					"redirectUri": redirectUri,
 					"mnemonic":    mnemonic,
+					"address":    account.Address,
 					"signingKey":  account.SigningKeyToHexString(),
 				})
 			} else {
@@ -90,6 +94,7 @@ func (c *AccreditLoginController) Post() {
 					c.SuccessJson(map[string]string{
 						"redirectUri": redirectUri,
 						"mnemonic":    mnemonic,
+						"address":    account.Address,
 						"signingKey":  account.SigningKeyToHexString(),
 					})
 				} else {
@@ -119,6 +124,7 @@ func (c *AccreditRegisterController) Post() {
 			c.SuccessJson(map[string]string{
 				"redirectUri": redirectUri,
 				"mnemonic":    mnemonic,
+				"address":    accountCreate.Address,
 				"signingKey":  accountCreate.SigningKeyToHexString(),
 			})
 		} else {

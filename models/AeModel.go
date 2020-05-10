@@ -255,26 +255,37 @@ func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, er
 	return txReceipt, err
 }
 
-func ClaimAENS(account *account.Account, name string, fee *big.Int) (*aeternity.TxReceipt, error) {
+func ClaimAENS(account *account.Account, name string, fee *big.Int, isUpdate bool) (*aeternity.TxReceipt, error) {
 	client := naet.NewNode(nodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
-
 	// Preclaim the name
-	preclaimTx, nameSalt, err := transactions.NewNamePreclaimTx(account.Address, name, ctxAlice.TTLNoncer())
-	if err != nil {
-		return nil, err
-	}
-	_, err = ctxAlice.SignBroadcastWait(preclaimTx, config.Client.WaitBlocks)
+	preclaimTx, salt, err := transactions.NewNamePreclaimTx(account.Address, name, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
 	}
 
-	claimTx, err := transactions.NewNameClaimTx(account.Address, name, nameSalt, fee, ctxAlice.TTLNoncer())
+	p, err := ctxAlice.SignBroadcastWait(preclaimTx, config.Client.WaitBlocks)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Claim")
+	fmt.Println("fee -> ",fee)
+
+	claimTx, err := transactions.NewNameClaimTx(account.Address, name, salt, fee, ctxAlice.TTLNoncer())
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("claimTx -> ",claimTx)
+
+	if isUpdate {
+		claimTx.NameSalt = new(big.Int)
+		claimTx.TTL = 0
+	}
+	fmt.Println("Claim salt -> ",salt)
+	fmt.Println("p -> ",p)
 	txReceipt, err := ctxAlice.SignBroadcast(claimTx, config.Client.WaitBlocks)
+
+	fmt.Println("Claim salt -> ",salt)
+	fmt.Println("txReceipt -> ",txReceipt)
 	if err != nil {
 		return nil, err
 	}
