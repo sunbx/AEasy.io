@@ -39,6 +39,7 @@ func MnemonicAccount(mnemonic string) (*account.Account, error) {
 		return nil, err
 	}
 
+
 	// Deriving the aeternity Account from a BIP32 Key is a destructive process
 	alice, err := account.BIP32KeyToAeKey(key)
 	if err != nil {
@@ -72,9 +73,11 @@ func CreateAccountUtils() (mnemonic string, signingKey string, address string) {
 	_, _ = bip39.EntropyFromMnemonic(mne)
 	// Derive the subaccount m/44'/457'/3'/0'/1'
 	key, _ := account.DerivePathFromSeed(seed, 0, 0)
-
 	// Deriving the aeternity Account from a BIP32 Key is a destructive process
 	alice, _ := account.BIP32KeyToAeKey(key)
+	//alice.SigningKey.Seed()
+
+
 	return mne, alice.SigningKeyToHexString(), alice.Address
 }
 

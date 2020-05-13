@@ -10,6 +10,7 @@ import (
 	"github.com/shopspring/decimal"
 	"math/big"
 	"strconv"
+	"strings"
 )
 
 type NamesAuctionsActiveController struct {
@@ -259,6 +260,12 @@ func (c *NamesUpdateController) Post() {
 			c.ErrorJson(-500, "parameter is nul", JsonData{})
 			return
 		}
+		n := strings.Split(name, ".")
+		n[0] = strings.Replace(n[0], " ", "", -1)
+		if n[0] == "" {
+			c.ErrorJson(-500, "name chian error", JsonData{})
+			return
+		}
 		aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 
 		if e != nil {
@@ -346,6 +353,12 @@ func (c *NamesTransferController) Post() {
 			c.ErrorJson(-500, "parameter is nul", JsonData{})
 			return
 		}
+		n := strings.Split(name, ".")
+		n[0] = strings.Replace(n[0], " ", "", -1)
+		if n[0] == "" {
+			c.ErrorJson(-500, "name chian error", JsonData{})
+			return
+		}
 		account, _ := models.SigningKeyHexStringAccount(signingKey)
 		receipt, err := models.TransferAENS(account, recipientAddress, name)
 
@@ -368,7 +381,12 @@ func (c *NamesAddController) Post() {
 			c.ErrorJson(-500, "parameter is nul", JsonData{})
 			return
 		}
-
+		n := strings.Split(name, ".")
+		n[0] = strings.Replace(n[0], " ", "", -1)
+		if n[0] == "" {
+			c.ErrorJson(-500, "name chian error", JsonData{})
+			return
+		}
 		account, _ := models.SigningKeyHexStringAccount(signingKey)
 		nameDb, err := models.FindNameName(name)
 		if err != nil {
