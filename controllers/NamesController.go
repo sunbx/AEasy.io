@@ -43,6 +43,9 @@ type NamesAddController struct {
 type NamesTransferController struct {
 	BaseController
 }
+type NamesBaseController struct {
+	BaseController
+}
 
 type Names struct {
 	Name           string `json:"name"`
@@ -73,7 +76,7 @@ func (c *NamesAuctionsActiveController) Post() {
 		height := int(models.ApiBlocksTop())
 		namesDb, e := models.FindNameAuctionOver(page, height)
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
+			c.ErrorJson(-500, e.Error(), []JsonData{})
 		}
 		var names []map[string]interface{}
 		for i := 0; i < len(namesDb); i++ {
@@ -86,6 +89,7 @@ func (c *NamesAuctionsActiveController) Post() {
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
 			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["price"] = utils.FormatTokens(namesDb[i].Price)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
@@ -96,7 +100,7 @@ func (c *NamesAuctionsActiveController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
 	}
 }
 
@@ -106,7 +110,7 @@ func (c *NamesPriceController) Post() {
 		height := int(models.ApiBlocksTop())
 		namesDb, e := models.FindNameAuctionPrice(page, height)
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
+			c.ErrorJson(-500, e.Error(), []JsonData{})
 		}
 		var names []map[string]interface{}
 		for i := 0; i < len(namesDb); i++ {
@@ -119,6 +123,7 @@ func (c *NamesPriceController) Post() {
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
 			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["price"] = utils.FormatTokens(namesDb[i].Price)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
@@ -129,7 +134,7 @@ func (c *NamesPriceController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
 	}
 }
 
@@ -139,7 +144,7 @@ func (c *NamesOverController) Post() {
 		height := int(models.ApiBlocksTop())
 		namesDb, e := models.FindNameOver(page, height)
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
+			c.ErrorJson(-500, e.Error(), []JsonData{})
 		}
 		var names []map[string]interface{}
 		for i := 0; i < len(namesDb); i++ {
@@ -152,6 +157,7 @@ func (c *NamesOverController) Post() {
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
 			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["price"] = utils.FormatTokens(namesDb[i].Price)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
@@ -162,27 +168,36 @@ func (c *NamesOverController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
 	}
 }
 
 func (c *NamesMyRegisterController) Post() {
 	if c.verifyAppId() {
+
+		address := c.GetString("address")
 		signingKey := c.GetString("signingKey")
 		page, _ := c.GetInt("page", 1)
-		if signingKey == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+		if signingKey == "" && address == "" {
+			c.ErrorJson(-500, "parameter is nul", []JsonData{})
 			return
 		}
-		aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
-		if e != nil {
-			c.ErrorJson(-500, "Account signingKey error", e.Error())
-			return
+		var addressStr string
+		if address == "" {
+			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
+			if e != nil {
+				c.ErrorJson(-500, "Account signingKey error", []JsonData{})
+				return
+			}
+			addressStr = aeasyAccount.Address
+		} else {
+			addressStr = address
 		}
+
 		height := int(models.ApiBlocksTop())
-		namesDb, e := models.FindNameMyRegister(aeasyAccount.Address, page, height)
+		namesDb, e := models.FindNameMyRegister(addressStr, page, height)
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
+			c.ErrorJson(-500, e.Error(), []JsonData{})
 		}
 		var names []map[string]interface{}
 		for i := 0; i < len(namesDb); i++ {
@@ -195,6 +210,7 @@ func (c *NamesMyRegisterController) Post() {
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
 			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["price"] = utils.FormatTokens(namesDb[i].Price)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
@@ -211,21 +227,29 @@ func (c *NamesMyRegisterController) Post() {
 
 func (c *NamesMyOverController) Post() {
 	if c.verifyAppId() {
+		address := c.GetString("address")
 		signingKey := c.GetString("signingKey")
 		page, _ := c.GetInt("page", 1)
-		if signingKey == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+		if signingKey == "" && address == "" {
+			c.ErrorJson(-500, "parameter is nul", []JsonData{})
 			return
 		}
-		aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
-		if e != nil {
-			c.ErrorJson(-500, "Account signingKey error", e.Error())
-			return
+		var addressStr string
+		if address == "" {
+			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
+			if e != nil {
+				c.ErrorJson(-500, "Account signingKey error", []JsonData{})
+				return
+			}
+			addressStr = aeasyAccount.Address
+		} else {
+			addressStr = address
 		}
+
 		height := int(models.ApiBlocksTop())
-		namesDb, e := models.FindNameMyRegisterIng(aeasyAccount.Address, page, height)
+		namesDb, e := models.FindNameMyRegisterIng(addressStr, page, height)
 		if e != nil {
-			c.ErrorJson(-500, e.Error(), JsonData{})
+			c.ErrorJson(-500, e.Error(), []JsonData{})
 		}
 		var names []map[string]interface{}
 		for i := 0; i < len(namesDb); i++ {
@@ -238,6 +262,7 @@ func (c *NamesMyOverController) Post() {
 			name["current_height"] = height
 			name["owner"] = namesDb[i].Owner
 			name["current_price"] = utils.FormatTokens(namesDb[i].CurrentPrice)
+			name["price"] = utils.FormatTokens(namesDb[i].Price)
 			name["th_hash"] = namesDb[i].ThHash
 
 			names = append(names, name)
@@ -247,6 +272,18 @@ func (c *NamesMyOverController) Post() {
 			return
 		}
 		c.SuccessJson(names)
+	} else {
+		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
+	}
+}
+
+func (c *NamesBaseController) Post() {
+	if c.verifyAppId() {
+		data, e := models.FindNameBase()
+		if e != nil {
+			c.ErrorJson(-500, e.Error(), JsonData{})
+		}
+		c.SuccessJson(data)
 	} else {
 		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
 	}
@@ -270,6 +307,20 @@ func (c *NamesUpdateController) Post() {
 
 		if e != nil {
 			c.ErrorJson(-500, "Account signingKey error", e.Error())
+			return
+		}
+
+		var balance string
+		accountNet, err := models.ApiGetAccount(aeasyAccount.Address)
+		if err != nil {
+			balance = "0"
+		} else {
+			balance = accountNet.Balance.String()
+		}
+		tokens, _ := strconv.ParseFloat(balance, 64)
+
+		if tokens/1000000000000000000 < 1 {
+			c.ErrorJson(-500, "The balance is insufficient, please keep the number of ae greater than 1", JsonData{})
 			return
 		}
 
@@ -313,6 +364,7 @@ func (c *NamesInfoController) Post() {
 		nameMap["owner"] = nameDb.Owner
 
 		nameMap["current_price"] = utils.FormatTokens(nameDb.CurrentPrice)
+		nameMap["price"] = utils.FormatTokens(nameDb.Price)
 		nameMap["th_hash"] = nameDb.ThHash
 
 		blocksDb, err := models.FindMicroBlockBlockNameorDatas(name)
@@ -334,6 +386,10 @@ func (c *NamesInfoController) Post() {
 			}
 			f, _ := mapObj["name_fee"].(json.Number).Float64()
 			mapObj["name_fee"] = utils.FormatTokens(f)
+			mapObj["time"] = blocksDb[i].Time
+			mapObj["block_height"] = blocksDb[i].BlockHeight
+			mapObj["block_height"] = blocksDb[i].BlockHeight
+			mapObj["hash"] = blocksDb[i].Hash
 			txs = append(txs, mapObj)
 		}
 
@@ -359,7 +415,26 @@ func (c *NamesTransferController) Post() {
 			c.ErrorJson(-500, "name chian error", JsonData{})
 			return
 		}
-		account, _ := models.SigningKeyHexStringAccount(signingKey)
+		account, err := models.SigningKeyHexStringAccount(signingKey)
+		if err != nil {
+			c.ErrorJson(-500, err.Error(), JsonData{})
+			return
+		}
+
+		var balance string
+		accountNet, err := models.ApiGetAccount(account.Address)
+		if err != nil {
+			balance = "0"
+		} else {
+			balance = accountNet.Balance.String()
+		}
+		tokens, _ := strconv.ParseFloat(balance, 64)
+
+		if tokens/1000000000000000000 < 1 {
+			c.ErrorJson(-500, "The balance is insufficient, please keep the number of ae greater than 1", JsonData{})
+			return
+		}
+
 		receipt, err := models.TransferAENS(account, recipientAddress, name)
 
 		if err != nil {

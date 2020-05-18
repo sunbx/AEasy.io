@@ -3,6 +3,7 @@ package main
 import (
 	"ae/models"
 	"ae/utils"
+	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/shopspring/decimal"
 	"strings"
 
@@ -21,10 +22,13 @@ func SynAeBlock() {
 	//获取AE的最新高度
 	aeHeight, _ := strconv.Atoi(strconv.FormatUint(models.ApiBlocksTop(), 10))
 
+	updateNameIdBlock(int(dbHeight))
+
 	if dbHeight >= int64(aeHeight) {
 		fmt.Println(aeHeight, "最新区块,没有产生新区块")
 		return
 	}
+
 	fmt.Println(aeHeight, "---", dbHeight)
 	for i := dbHeight; i <= int64(aeHeight); i++ {
 		//从 node 当前高度的区块
@@ -156,7 +160,47 @@ func SynAeBlock() {
 	if dbHeight == int64(aeHeight) {
 		fmt.Println(aeHeight, "最新区块,没有产生新区块")
 	}
+
 	fmt.Println("Sucess+" + strconv.Itoa(int(dbHeight)))
+}
+
+func updateNameIdBlock(height int) {
+
+	middleNames, e := models.FindNameIdIsNull(height)
+
+	if e != nil || len(middleNames) == 0 {
+		fmt.Println("没有nameid 为空的 name")
+		return
+	}
+
+	for i := 0; i < len(middleNames); i++ {
+
+		nm, _ := transactions.NameID(middleNames[i].Name)
+
+		var overHeight int64
+		var owner string
+		names, _ := models.FindNameName(middleNames[i].Name)
+		blockT, err := models.FindMicroBlockNameIdData(nm)
+		if err != nil {
+			owner = names.Owner
+		} else {
+			owner = blockT.RecipientId
+		}
+
+		blockU, err := models.FindMicroBlockNameIdUpdate(nm)
+		if err != nil {
+			overHeight = int64(names.OverHeight)
+		} else {
+			overHeight = blockU.BlockHeight + 50000
+		}
+
+		err = models.UpdateNameOwnerAndIdAndTTL(middleNames[i].Name, nm, owner, overHeight)
+		if err != nil {
+			fmt.Println("err->", err.Error())
+		}
+
+		fmt.Println("name 高度更新成功->", middleNames[i].Name, "---", nm, "---", names.Owner)
+	}
 }
 
 func updateNameOwnerBlock(mapObj map[string]interface{}) bool {

@@ -22,7 +22,7 @@ var nodeURL = "http://node.aechina.io:3013"
 
 //var nodeURL = nodeURL
 //根据助记词返回用户
-func MnemonicAccount(mnemonic string) (*account.Account, error) {
+func MnemonicAccount(mnemonic string, addressIndex uint32) (*account.Account, error) {
 
 	seed, err := account.ParseMnemonic(mnemonic)
 	if err != nil {
@@ -34,11 +34,12 @@ func MnemonicAccount(mnemonic string) (*account.Account, error) {
 		return nil, err
 	}
 	// Derive the subaccount m/44'/457'/3'/0'/1'
-	key, err := account.DerivePathFromSeed(seed, 0, 0)
+	key, err := account.DerivePathFromSeed(seed, 0, addressIndex-1)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Printf("key.ChildNumber=>", key.ChildNumber)
 
 	// Deriving the aeternity Account from a BIP32 Key is a destructive process
 	alice, err := account.BIP32KeyToAeKey(key)
@@ -76,7 +77,6 @@ func CreateAccountUtils() (mnemonic string, signingKey string, address string) {
 	// Deriving the aeternity Account from a BIP32 Key is a destructive process
 	alice, _ := account.BIP32KeyToAeKey(key)
 	//alice.SigningKey.Seed()
-
 
 	return mne, alice.SigningKeyToHexString(), alice.Address
 }
@@ -271,24 +271,24 @@ func ClaimAENS(account *account.Account, name string, fee *big.Int, isUpdate boo
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("fee -> ",fee)
+	fmt.Println("fee -> ", fee)
 
 	claimTx, err := transactions.NewNameClaimTx(account.Address, name, salt, fee, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("claimTx -> ",claimTx)
+	fmt.Println("claimTx -> ", claimTx)
 
 	if isUpdate {
 		claimTx.NameSalt = new(big.Int)
 		claimTx.TTL = 0
 	}
-	fmt.Println("Claim salt -> ",salt)
-	fmt.Println("p -> ",p)
+	fmt.Println("Claim salt -> ", salt)
+	fmt.Println("p -> ", p)
 	txReceipt, err := ctxAlice.SignBroadcast(claimTx, config.Client.WaitBlocks)
 
-	fmt.Println("Claim salt -> ",salt)
-	fmt.Println("txReceipt -> ",txReceipt)
+	fmt.Println("Claim salt -> ", salt)
+	fmt.Println("txReceipt -> ", txReceipt)
 	if err != nil {
 		return nil, err
 	}

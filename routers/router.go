@@ -89,7 +89,7 @@ func init() {
 	beego.Router("/api/names/auctions", &controllers.NamesAuctionsActiveController{})
 
 	//拍卖中 - 价格最贵的域名
-	beego.Router("/api/nam/names/my/overes/price", &controllers.NamesPriceController{})
+	beego.Router("/api/names/price", &controllers.NamesPriceController{})
 
 	//即将过期 未续费的域名
 	beego.Router("/api/names/over", &controllers.NamesOverController{})
@@ -111,6 +111,9 @@ func init() {
 
 	//域名转移
 	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
+
+	//所有域名基础信息
+	beego.Router("/api/names/base", &controllers.NamesBaseController{})
 
 
 	//====================定时任务====================

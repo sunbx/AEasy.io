@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -24,14 +25,31 @@ func (a *AeaMiddleNames) TableName() string {
 }
 
 func InsertName(names AeaMiddleNames) {
+	middleNames, e := FindNameName(names.Name)
+	if e == nil {
+		if middleNames.CurrentPrice < names.CurrentPrice {
+			_, _ = orm.NewOrm().InsertOrUpdate(&names)
+		}
+		return
+	}
 	_, _ = orm.NewOrm().InsertOrUpdate(&names)
+
+}
+
+//拍卖中 - 即将拍卖结束
+func FindNameIdIsNull(height int) ([]AeaMiddleNames, error) {
+	var aeaMiddleNames []AeaMiddleNames
+	o := orm.NewOrm()
+	//_, err := o.Raw("SELECT * FROM `aea_middle_names` where   ? > end_height", height).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where name_id = '' and ? > end_height", height).QueryRows(&aeaMiddleNames)
+	return aeaMiddleNames, err
 }
 
 //拍卖中 - 即将拍卖结束
 func FindNameAuctionOver(page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where name_id = '' and end_height>? order by end_height limit ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where name_id = '' and end_height>? order by end_height limit ?,?", height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -39,7 +57,7 @@ func FindNameAuctionOver(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameAuctionPrice(page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where name_id = '' and end_height>? order by current_price desc limit ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where name_id = '' and end_height>? order by current_price desc limit ?,?", height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -47,7 +65,7 @@ func FindNameAuctionPrice(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameOver(page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where over_height>? order by over_height  limit ?,?", height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where over_height>? order by over_height  limit ?,?", height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -55,7 +73,7 @@ func FindNameOver(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? order by over_height  limit ?,?", address, height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? order by over_height  limit ?,?", address, height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
@@ -63,16 +81,37 @@ func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames,
 func FindNameMyRegisterIng(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height>? order by end_height  limit ?,?", address,height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height>? order by end_height  limit ?,?", address, height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 
-//我的 - 即将过期的域名
-func FindNameMyOverIng(address string, page int, height int) ([]AeaMiddleNames, error) {
-	var aeaMiddleNames []AeaMiddleNames
+type NameBase struct {
+	Count    int       `json:"count"`
+	Sum      int       `json:"sum"`
+	SumPrice float64   `json:"sum_price"`
+	Ranking  []Ranking `json:"ranking"`
+}
+type Ranking struct {
+	Owner    string  `json:"owner"`
+	NameNum  int     `json:"name_num"`
+	SumPrice float64 `json:"sum_price"`
+}
+
+//域名基础数据
+func FindNameBase() (NameBase, error) {
+	var data NameBase
+	var ranking []Ranking
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=?  and end_height<? order by over_height  limit  ?,?", address,height, (page-1)*20, page*20).QueryRows(&aeaMiddleNames)
-	return aeaMiddleNames, err
+	err := o.Raw("select count(distinct(owner)) as count from aea_middle_names").QueryRow(&data)
+	fmt.Println("data=>", data)
+	err = o.Raw("SELECT SUM(current_price/1000000000000000000) as sum_price FROM aea_middle_names").QueryRow(&data)
+	fmt.Println("data=>", data)
+	err = o.Raw("SELECT COUNT(*) as sum FROM aea_middle_names").QueryRow(&data)
+	fmt.Println("data=>", data)
+	_, err = o.Raw("SELECT `owner`,count(OWNER) AS name_num,SUM(current_price/1000000000000000000) AS sum_price FROM aea_middle_names GROUP BY `owner` ORDER BY sum_price DESC LIMIT 20").QueryRows(&ranking)
+	fmt.Println("data=>", data)
+	data.Ranking = ranking
+	return data, err
 }
 
 //通过id 获取信息
@@ -100,6 +139,25 @@ func UpdateNameOwner(nameId string, owner string) error {
 	o := orm.NewOrm()
 	_, err := o.QueryTable("aea_middle_names").Filter("name_id", nameId).Update(orm.Params{
 		"owner": owner,
+	})
+	return err
+}
+
+func UpdateNameOwnerAndIdAndTTL(name string, nameId string, owner string, overHeight int64) error {
+	o := orm.NewOrm()
+	_, err := o.QueryTable("aea_middle_names").Filter("name", name).Update(orm.Params{
+		"owner":       owner,
+		"name_id":     nameId,
+		"over_height": overHeight,
+	})
+	return err
+}
+
+func UpdateNameAndIdAndTTL(name string, nameId string, overHeight int64) error {
+	o := orm.NewOrm()
+	_, err := o.QueryTable("aea_middle_names").Filter("name", name).Update(orm.Params{
+		"name_id":     nameId,
+		"over_height": overHeight,
 	})
 	return err
 }

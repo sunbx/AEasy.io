@@ -72,8 +72,9 @@ func (c *AccreditLoginController) Post() {
 		redirectUri := c.GetString("redirect_uri")
 		appId := c.GetString("app_id")
 		mnemonic := c.GetString("mnemonic")
+		indexAddress, _ := c.GetUint32("index_address", 1)
 		//验证助记词
-		account, e := models.MnemonicAccount(mnemonic)
+		account, e := models.MnemonicAccount(mnemonic, indexAddress)
 		if e == nil {
 			//查询数据库,获取ae账户
 			_, e := models.FindAccountSigningKey(utils.Md5V(account.SigningKeyToHexString() + "aeasy"))
@@ -82,7 +83,7 @@ func (c *AccreditLoginController) Post() {
 				c.SuccessJson(map[string]string{
 					"redirectUri": redirectUri,
 					"mnemonic":    mnemonic,
-					"address":    account.Address,
+					"address":     account.Address,
 					"signingKey":  account.SigningKeyToHexString(),
 				})
 			} else {
@@ -94,7 +95,7 @@ func (c *AccreditLoginController) Post() {
 					c.SuccessJson(map[string]string{
 						"redirectUri": redirectUri,
 						"mnemonic":    mnemonic,
-						"address":    account.Address,
+						"address":     account.Address,
 						"signingKey":  account.SigningKeyToHexString(),
 					})
 				} else {
@@ -124,7 +125,7 @@ func (c *AccreditRegisterController) Post() {
 			c.SuccessJson(map[string]string{
 				"redirectUri": redirectUri,
 				"mnemonic":    mnemonic,
-				"address":    accountCreate.Address,
+				"address":     accountCreate.Address,
 				"signingKey":  accountCreate.SigningKeyToHexString(),
 			})
 		} else {

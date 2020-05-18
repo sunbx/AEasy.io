@@ -122,6 +122,22 @@ func FindMicroBlockBlockTimeUpdate() ([]AeaMiddleMicroBlock, error) {
 	return aeaMiddleMicroBlock, err
 }
 
+//通过nameid 获取name 注册成功后的信息并且是转移域名的信息
+func FindMicroBlockNameIdData(nameId string) (AeaMiddleMicroBlock, error) {
+	var aeaMiddleMicroBlock AeaMiddleMicroBlock
+	o := orm.NewOrm()
+	err := o.Raw("SELECT * FROM `aea_middle_micro_block` where  `recipient_id` !='' and type = 'NameTransferTx' and `name_id` =? order by `time` desc", nameId).QueryRow(&aeaMiddleMicroBlock)
+	return aeaMiddleMicroBlock, err
+}
+
+//通过nameid 获取name 注册成功后的信息并且是更新域名的信息
+func FindMicroBlockNameIdUpdate(nameId string) (AeaMiddleMicroBlock, error) {
+	var aeaMiddleMicroBlock AeaMiddleMicroBlock
+	o := orm.NewOrm()
+	err := o.Raw("SELECT * FROM `aea_middle_micro_block` where  type = 'NameUpdateTx' and `name_id` =? order by `time` desc", nameId).QueryRow(&aeaMiddleMicroBlock)
+	return aeaMiddleMicroBlock, err
+}
+
 //通过id 获取用户信息
 func FindMicroBlockBlockNames() ([]AeaMiddleMicroBlock, error) {
 	var aeaMiddleMicroBlock []AeaMiddleMicroBlock
