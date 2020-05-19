@@ -92,20 +92,15 @@ func (c *ApiTransferController) Post() {
 }
 
 func (c *WalletTransferRecordController) Post() {
-	signingKey := c.GetString("signingKey")
+	address := c.GetString("address")
 	page, _ := c.GetInt("page", 1)
-	if signingKey == "" {
+	if address == "" {
 		c.ErrorJson(-100, "address = nil", JsonData{})
 		return
 	}
 	if c.verifyAppId() {
 
-		account, err := models.SigningKeyHexStringAccount(signingKey)
-		if err != nil {
-			c.ErrorJson(-500, err.Error(), JsonData{})
-			return
-		}
-		blocksDb, err := models.FindMicroBlockBlockList(account.Address, page, "all")
+		blocksDb, err := models.FindMicroBlockBlockList(address, page, "all")
 
 		if err != nil {
 			c.ErrorJson(-500, err.Error(), JsonData{})

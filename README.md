@@ -11,7 +11,7 @@
 
 |url|doc|
  |:---   |:---   |
-|http://aeasy.io  | https://www.showdoc.cc/AEASY |
+|http://aeasy.io  | https://aeasy.gitbook.io/aeasy/ |
 
 
 > AEasy is Convenient Aeternity Framework . AEasy quickly, conveniently realize Aeternity aepp development
