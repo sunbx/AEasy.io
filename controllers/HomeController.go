@@ -7,9 +7,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type MainController struct {
+	BaseController
+}
+type LanguageController struct {
 	BaseController
 }
 type LoginController struct {
@@ -33,9 +37,6 @@ type TestController2 struct {
 	BaseController
 }
 
-//type PayController struct {
-//	BaseController
-//}
 type TokenController struct {
 	BaseController
 }
@@ -208,10 +209,27 @@ func (c *MainController) Get() {
 		if utils.IsMobile(c.Ctx.Input.Header("user-agent")) {
 			c.TplName = "index_mobile.html"
 		} else {
+
+			c.Data["bye"] = c.Tr("bye")
 			c.TplName = "index.html"
 		}
-
 	}
+}
+
+func (c *LanguageController) Get() {
+
+	var language = c.Ctx.GetCookie("language")
+	if strings.Contains(language, "zh-CN") || strings.Contains(language, "zh-cn") {
+		c.Lang = "en-US"
+	} else {
+		c.Lang = "zh-CN"
+	}
+
+	fmt.Printf("language", language)
+	fmt.Printf("c.Lang", c.Lang)
+
+	c.Ctx.SetCookie("language", c.Lang)
+	c.Redirect("/", 302)
 }
 
 //func (c *PayController) Get() {

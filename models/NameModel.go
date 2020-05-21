@@ -119,7 +119,12 @@ func FindNameId(nameId string) (AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
 	_, err := o.Raw("select * from aea_middle_names where name_id = ? limit 1", nameId).QueryRows(&aeaMiddleNames)
-	return aeaMiddleNames[0], err
+	if len(aeaMiddleNames) > 0 {
+		return aeaMiddleNames[0], err
+	} else {
+		return AeaMiddleNames{}, err
+	}
+
 }
 
 //通过name 获取信息

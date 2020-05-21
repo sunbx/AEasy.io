@@ -686,7 +686,7 @@
 
 </div>
 
-<div style="height: 79px; width: 100%;background: white;z-index:1;position: fixed" class="scrollNav" id="navbg" >
+<div style="height: 79px; width: 100%;background: white;z-index:1;position: fixed" class="scrollNav" id="navbg">
 
     <div style="position: absolute;width: 100%;height: 79px;background: white;"></div>
     <div class="header">
@@ -697,23 +697,27 @@
         </div>
         <div class="menu">
             <ul>
-                <li><a href="#">HOME</a></li>
+
+                <li><a href="#">{{i18n .Lang "nav_home"}}</a></li>
                 <li>
-                    <a class="down-arrow-aepps" target="_blank" href="https://wetrue.io">WETRUE</a>
+                    <a class="down-arrow-aepps" target="_blank" href="https://wetrue.io">{{i18n .Lang "nav_wetrue"}}</a>
                     <div class="ui-search-select-list-aepps">
                         <a class="select-item" href="https://base.aepps.com/">BASE</a>
                         <a class="select-item" href="https://airgap.it/">WETRUE</a>
                     </div>
                 </li>
                 <li>
-                    <a class="down-arrow-zoology" target="_blank" href="https://aeknow.org">AEKNOW</a>
+                    <a class="down-arrow-zoology" target="_blank"
+                       href="https://aeknow.org">{{i18n .Lang "nav_aeknow"}}</a>
                     <div class="ui-search-select-list-zoology">
                         <a class="select-item" href="https://www.aechina.io/">AECHNIA</a>
                         <a class="select-item" href="https://www.aeknow.org/">AEKNOW</a>
                     </div>
                 </li>
-                <li><a target="_blank" href="https://aeasy.gitbook.io/aeasy/">DOCUMENT</a></li>
-                <li><a class="login" href="./login.html">LOGIN</a></li>
+                <li><a target="_blank" href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
+                <li><a href="/language">{{i18n .Lang "nav_language"}}</a></li>
+                <li><a class="login" href="./login.html">{{i18n .Lang "nav_login"}}</a></li>
+
             </ul>
         </div>
     </div>
@@ -734,50 +738,52 @@
 
     </div>
 
-    <p class="title">AEasy is Convenient
+    <p class="title">{{i18n .Lang "AEasy is Convenient"}}
     </p>
-    <p class="title2"> Aeternity Framework
+    <p class="title2"> {{i18n .Lang "Aeternity Framework"}}
     </p>
-    <p class="content">AEasy quickly, conveniently realize Aeternity aaepp<br> development</p>
+    <p class="content">{{i18n .Lang "AEasy quickly, conveniently realize Aeternity aaepp"}}<br>
+        {{i18n .Lang "development"}}</p>
     <div>
-        <a class="button animated 1 bounceIn delay-2s" href="./login.html" target="_blank">Quick Start</a>
+        <a class="button animated 1 bounceIn delay-2s" href="./login.html"
+           target="_blank">{{i18n .Lang "Quick Start"}}</a>
     </div>
-    <p class="hint1">We will support more features for you</p>
+    <p class="hint1">{{i18n .Lang "We will support more features for you"}}</p>
     <div style="height: 16px"></div>
     <div class="view1"></div>
     <p class="hint2">
-        Provide you with a rich API to complete the development of aepp<br>so that you can quickly have decentralized
-        software</p>
+        {{i18n .Lang "Provide you with a rich API to complete the development of aepp"}}<br>
+        {{i18n .Lang "so that you can quickly have decentralized software"}}</p>
 
     <div class="page1">
         <div class="box1">
             <img class="box1-img" src="../static/img/icon1.png" alt=""/>
-            <p class="box1-p1">Quick learning</p>
-            <p class="box1-p2">AEASY allows developers to get <br>
-                started quickly.Can quickly use the<br>
-                API to call node data, you do not<br>
-                need to relationship blockchain<br>
-                internal is how to achieve</p>
+            <p class="box1-p1">{{i18n .Lang "Quick learning"}}</p>
+            <p class="box1-p2">{{i18n .Lang "AEASY allows developers to get"}} <br>
+                {{i18n .Lang "started quickly Can quickly use the"}}<br>
+                {{i18n .Lang "API to call node data, you do not"}}<br>
+                {{i18n .Lang "need to relationship blockchain"}} <br>
+                {{i18n .Lang "internal is how to achieve"}}</p>
         </div>
         <div class="box1">
             <img class="box1-img" src="../static/img/icon2.png" alt=""/>
-            <p class="box1-p1">Security</p>
-            <p class="box1-p2">Benefit from security, trust, and<br>
-                transparency Fully centralized, AEASY<br>
-                does not retain any of your information<br>
+            <p class="box1-p1">{{i18n .Lang "Security"}}</p>
+            <p class="box1-p2">{{i18n .Lang "Benefit from security, trust, and"}}<br>
+                {{i18n .Lang "transparency Fully centralized, AEASY"}}<br>
+                {{i18n .Lang "does not retain any of your information"}}<br>
 
         </div>
         <div class="box1">
             <img class="box1-img" src="../static/img/icon3.png" alt=""/>
-            <p class="box1-p1">Assets</p>
-            <p class="box1-p2">Simple editing to quickly own assets<br>
-                Quick compilation and use of the <br>
-                smart contract, you can directly request<br>
-                the API to create aex9 tokens</p>
+            <p class="box1-p1">{{i18n .Lang "Assets"}}</p>
+            <p class="box1-p2">{{i18n .Lang "Simple editing to quickly own assets"}}<br>
+                {{i18n .Lang "Quick compilation and use of the"}} <br>
+                {{i18n .Lang "smart contract, you can directly request"}}<br>
+                {{i18n .Lang "the API to create aex9 tokens"}}</p>
         </div>
     </div>
 
-    <p class="hint1" style="margin-top: 0px">Wonderful Video</p>
+    <p class="hint1" style="margin-top: 0px">{{i18n .Lang "Wonderful Video"}}</p>
     <div style="height: 16px"></div>
     <div class="view1" style="background: #1F9CFF"></div>
 
@@ -787,11 +793,11 @@
         </a>
     </div>
 
-    <p class="hint1" style="margin-top: 100px">Strong development team for maintenance</p>
+    <p class="hint1" style="margin-top: 100px">{{i18n .Lang "Strong development team for maintenance"}}</p>
     <div style="height: 16px"></div>
     <div class="view1"></div>
     <p class="hint2">
-        We have a world class team to maintain aeasy, so that you have no worries..</p>
+        {{i18n .Lang "We have a world class team to maintain aeasy, so that you have no worries.."}}</p>
     <div class="page3">
         <img class="bg1" src="../static/img/index_dian_bai.png"/>
 
@@ -807,9 +813,7 @@
                     Baixin - Harley
                 </p>
                 <p style="opacity: 0.7;font-family: Avenir-Book;font-size: 16px;color: #384655;margin-top: 20px;letter-spacing: 0.22px;line-height: 22px;">
-                    I used to work in a first-tier Internet company, and I have a deep understanding of the block chain
-                    field. I invested in users of AE currency in the early stage, with the original intention of making
-                    my own contribution to the AE community
+                    {{i18n .Lang "baixin"}}
                 </p>
             </div>
 
@@ -819,9 +823,7 @@
                     Arvin
                 </p>
                 <p style="opacity: 0.7;font-family: Avenir-Book;font-size: 16px;color: #384655;margin-top: 20px;letter-spacing: 0.22px;line-height: 22px;">
-                    Top Chinese designer, from the Chinese Internet giant, contact design since childhood, very rich
-                    experience, is the early digital currency investors block chain believers, and BaiXin together to
-                    create aeasy-io to serve more developers to develop aepp.
+                    {{i18n .Lang "anyu"}}
                 </p>
             </div>
         </div>
@@ -842,14 +844,14 @@
             <div class="icon">
                 <img src="../static/img/index_guanyu.png" alt="about">
             </div>
-            <div class="title">About AEasy</div>
-            <div class="sub">We are passionate about designing more aepp</div>
+            <div class="title">{{i18n .Lang "About AEasy"}}</div>
+            <div class="sub">{{i18n .Lang "We are passionate about designing more aepp"}}</div>
         </div>
         <div class="help">
             <div class="icon">
                 <img src="../static/img/index_juanzeng.png" alt="about">
             </div>
-            <div class="title">Giving the address</div>
+            <div class="title">{{i18n .Lang "Giving the address"}}</div>
             <div class="sub">ak_QyFYYpgJ1vUGk1Lnk8d79WJEVcAtcfuNHqquuP2ADfxsL6yKx</div>
 
         </div>
@@ -857,7 +859,7 @@
             <div class="icon">
                 <img src="../static/img/index_lianxi.png" alt="about">
             </div>
-            <div class="title">Contact us</div>
+            <div class="title">{{i18n .Lang "Contact us"}}</div>
             <div class="sub">WeChat:s283122529 QQ:283122529</div>
 
 
@@ -878,10 +880,10 @@
         var logo = $("#logo");//获取导航栏对象
         $(window).scroll(function () {
             if ($(window).scrollTop() > 200) {//对比滚动的距离与导航栏上面部分的高度大小来动态添加css样式
-                navbg.addClass("scrollNav")//对导航栏添加样式
+                navbg.addClass("scrollNav");//对导航栏添加样式
                 $('#logo').hide();
             } else {
-                navbg.removeClass("scrollNav")//去掉导航栏添加的样式
+                navbg.removeClass("scrollNav");//去掉导航栏添加的样式
                 $('#logo').show();
             }
         });

@@ -106,10 +106,10 @@ func SynAeBlock() {
 					}
 					//更新address表,发送和接收的用户都更新一下
 					if InsertAddressBlock(senderId.(string), blockHeader) {
-						return
+						continue
 					}
 					if InsertAddressBlock(recipientId.(string), blockHeader) {
-						return
+						continue
 					}
 
 				} else if inter.(string) == "NameClaimTx" {
@@ -316,6 +316,7 @@ func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) boo
 
 func InsertAddressBlock(senderId string, blockHeader BlocksHeader) bool {
 	if strings.Contains(senderId, "nm_") {
+		fmt.Println("FindNameId - ", senderId)
 		names, e := models.FindNameId(senderId)
 		if e != nil {
 			fmt.Println("FindNameId - ", e.Error())

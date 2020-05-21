@@ -152,30 +152,30 @@
     <div class="content">
         <div class="div-login">
 
-            <div><p class="p-login">Login</p></div>
-            <div><p class="p-register">No Aeasy account <a id="go-register" class="register" href="#">register</a></p>
+            <div><p class="p-login">{{i18n .Lang "Login"}}</p></div>
+            <div><p class="p-register">{{i18n .Lang "No Aeasy account"}} <a id="go-register" class="register" href="#">{{i18n .Lang "register"}}</a></p>
             </div>
 
             <div class="div-email">
                 <input id="login-input-email"
                        class="input-email"
-                       placeholder="Email and Phone"
+                       placeholder="{{i18n .Lang "Email and Phone"}}"
                        type="tel"
                        name="user">
             </div>
 
             <div class="div-password">
                 <input id="login-input-password"
-                       placeholder="Password"
+                       placeholder="{{i18n .Lang "Password"}}"
                        class="input-password"
                        type="password"
                        name="pwd">
             </div>
 
             <div>
-                <a id="go-forget" class="p-forget" href="#">Forgot password?</a>
+                <a id="go-forget" class="p-forget" href="#">{{i18n .Lang "Forgot password?"}}</a>
             </div>
-            <a id="login" class="login" href="#">Login</a>
+            <a id="login" class="login" href="#">{{i18n .Lang "Login"}}</a>
             <div style="height: 16px"></div>
 
         </div>
@@ -183,8 +183,8 @@
 
         <div class="div-register display-none">
 
-            <div><p class="p-register">Register</p></div>
-            <div><p class="p-login">Existing account <a id="go-login" class="login" href="#">login</a></p></div>
+            <div><p class="p-register">{{i18n .Lang "Register"}}</p></div>
+            <div><p class="p-login">{{i18n .Lang "Existing account"}} <a id="go-login" class="login" href="#">{{i18n .Lang "login"}}</a></p></div>
             <!--
                        <select id="select" class="selectpicker countrypicker " style="display: none" data-live-search="true" data-default="0086"
                                 data-flag="false"></select> -->
@@ -195,20 +195,19 @@
                 <input id="register-input-email"
                        class="input-email"
                        type="tel"
-                       placeholder="Phone or Email"
+                       placeholder="{{i18n .Lang "Phone or Email"}}"
                        name="user">
             </div>
-            <p class="privacy" style="font-size: 12px;color: #6a7989;margin-top: 10px">Outside China, it is recommended
-                to register by email</p>
+            <p class="privacy" style="font-size: 12px;color: #6a7989;margin-top: 10px">{{i18n .Lang "login_hint"}}</p>
             <div class="div-captcha">
                 <input id="register-input-captcha"
                        class="input-captcha"
                        type="tel"
                        onkeyup="this.value=this.value.replace(/\D/g,'')"
-                       placeholder="Verification code"
+                       placeholder="{{i18n .Lang "Verification code"}}"
                        maxlength="6"
                        name="user">
-                <a id="go-captcha" class="a-captcha" href="#">Get</a>
+                <a id="go-captcha" class="a-captcha" href="#">{{i18n .Lang "Get"}}</a>
             </div>
 
             <div class="div-password">
@@ -216,15 +215,15 @@
                        class="input-password"
                        type="password"
                        maxlength="20"
-                       placeholder="Set the password"
+                       placeholder="{{i18n .Lang "Set the password"}}"
                        name="pwd">
             </div>
 
 
-            <a id="register" class="register" href="#">Register / Login</a>
+            <a id="register" class="register" href="#">{{i18n .Lang "Register / Login"}}</a>
 
 
-            <a id="go-privacy" class="privacy" href="#">privacy</a>
+            <a id="go-privacy" class="privacy" href="#">{{i18n .Lang "privacy"}}</a>
         </div>
     </div>
 
@@ -327,7 +326,7 @@
             let password = $('#register-input-password').val();
 
             if (!isPasswd(password)) {
-                swal('Only 6-20 letters, Numbers, and underscores can be entered');
+                swal('{{i18n .Lang "Only 6-20 letters, Numbers, and underscores can be entered"}}');
                 return;
             }
 
@@ -360,17 +359,17 @@
                     }
                 });
             } else {
-                swal('Only 6-20 letters, Numbers, and underscores can be entered');
+                swal('{{i18n .Lang "Only 6-20 letters, Numbers, and underscores can be entered"}}');
             }
         });
 
 
         $('#go-forget').on('click', function () {
-            swal('Please contact customer service to retrieve the password')
+            swal('{{i18n .Lang "Please contact customer service to retrieve the password"}}')
         });
         $('#go-privacy').on('click', function () {
 
-            swal('This website is used for development and learning, if the abnormal situation is not responsible, the final right of interpretation belongs to this website')
+            swal('{{i18n .Lang "This website is used for development and learning, if the abnormal situation is not responsible, the final right of interpretation belongs to this website"}}')
         });
         $('#go-logout').on('click', function () {
             $.post("/user/logout", function (result) {

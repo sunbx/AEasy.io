@@ -40,8 +40,8 @@
     <div class="menu">
         <ul>
 
-            <li><a href="https://aeasy.gitbook.io/aeasy/">DOCUMENT</a></li>
-            <li><a class="login" id="go-logout" href="#">LOGOUT</a></li>
+            <li><a href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
+            <li><a class="login" id="go-logout" href="#">{{i18n .Lang "nav_logout"}}</a></li>
         </ul>
     </div>
 </div>
@@ -53,43 +53,38 @@
         <div class="left">
             <div class="title">
                 <p class="p-receive">
-                    <span class="span-receive">Receive</span>
-                    tokens
+                    <span class="span-receive">{{i18n .Lang "Receive"}}</span>
+                    {{i18n .Lang "tokens"}}
                 </p>
-                <p class="p-qraddress">Let others scan your QR code or share your address</p>
+                <p class="p-qraddress">{{i18n .Lang "Let others scan your QR code or share your address"}}</p>
             </div>
             <div class="code">
                 <div id="qrcode" class="qrcode"></div>
             </div>
 
             <div class="div-address">
-                <p class="p-address-title">Address 👆👇</p>
+                <p class="p-address-title">{{i18n .Lang "Address"}} 👆👇</p>
                 <p id="address" class="p-address">{{.Address}}</p>
             </div>
         </div>
 
         <div class="right">
-            <p class="p-balance">Balance Token : <span class="span-balance">{{.Token}}</span> ae</p>
+            <p class="p-balance">{{i18n .Lang "Balance Token"}} : <span class="span-balance">{{.Token}}</span> ae</p>
             <div class="div-id-secret">
                 <p class="p-id">appId: {{.AppId}}</p>
                 <p class="p-secret">appSecret: {{.AppSecret}}</p>
             </div>
             <div style="overflow:hidden;">
                 <div class="start" style="float: left">
-                    <a href="https://aeasy.gitbook.io/aeasy/" target="_blank">Document</a>
+                    <a href="https://aeasy.gitbook.io/aeasy/" target="_blank">{{i18n .Lang "Document"}}</a>
                 </div>
                 <div class="start2" style="float: left;margin-left: 20px">
-                    <a href="/token" target="_blank">Tokens</a>
+                    <a href="/token" target="_blank">{{i18n .Lang "Tokens"}}</a>
                 </div>
             </div>
 
-            <p class="p-explain">Explain:</p>
-            <p class="p-explain-doc">&nbsp&nbsp&nbsp&nbspWelcome to use AEasy SDK development, make aeternity block
-                chain faster and easier to develop more aepps. Now that you have successfully registered, you can
-                only
-                use the development API interface in the last step, and you only need to pay 1ae(for later
-                transaction
-                use) to your account address to get the appId and appSecret.</p>
+            <p class="p-explain">{{i18n .Lang "Explain"}}:</p>
+            <p class="p-explain-doc">&nbsp&nbsp&nbsp&nbsp{{i18n .Lang "user_hint"}}</p>
         </div>
 
 

@@ -1,4 +1,3 @@
-
 package routers
 
 import (
@@ -10,6 +9,9 @@ func init() {
 	//====================网站静态页====================
 	//首页
 	beego.Router("/", &controllers.MainController{})
+
+	//切换语言
+	beego.Router("/language", &controllers.LanguageController{})
 
 	//登录页面
 	beego.Router("/login", &controllers.LoginController{})
@@ -46,7 +48,6 @@ func init() {
 	//合约token转账 AEX9
 	beego.Router("/token/transfer", &controllers.TokenTransferController{})
 
-
 	//====================API基础接口====================
 
 	//数据上链
@@ -66,7 +67,6 @@ func init() {
 
 	//ae 价格等一些基础数据
 	beego.Router("/api/base/data", &controllers.BaseDataController{})
-
 
 	//====================API高级接口====================
 
@@ -114,7 +114,6 @@ func init() {
 
 	//所有域名基础信息
 	beego.Router("/api/names/base", &controllers.NamesBaseController{})
-
 
 	//====================定时任务====================
 

@@ -59,19 +59,18 @@
     height: 79px;
     position: absolute;
     width: 100%;">
-<div class="header" id="navbg">
-    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
-        <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
-        <span class="name">AEASY</span>
+    <div class="header" id="navbg">
+        <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+            <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
+            <span class="name">AEASY</span>
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
+                <li><a class="login" id="go-logout" href="#">{{i18n .Lang "nav_logout"}}</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="menu">
-        <ul>
-
-            <li><a href="https://aeasy.gitbook.io/aeasy/">DOCUMENT</a></li>
-            <li><a class="login" id="go-logout" href="#">LOGOUT</a></li>
-        </ul>
-    </div>
-</div>
 
 </div>
 <div class="body">
@@ -79,31 +78,29 @@
 
     <div class="card">
         <div class="left">
-            <p class="p-h1" style="margin-top: 40px">CREATE YOUR TOKENS</p>
-            <p class="p-title" style="margin-top: 10px">Name</p>
+            <p class="p-h1" style="margin-top: 40px">{{i18n .Lang "CREATE YOUR TOKENS"}}</p>
+            <p class="p-title" style="margin-top: 10px">{{i18n .Lang "Name"}}</p>
             <div>
                 <label>
                     <input id="name" class="input" type="text" maxlength="5"
                            onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/>
                 </label>
             </div>
-            <p class="p-hint">This option is the name of the published currency</p>
-            <p class="p-title">Count</p>
+            <p class="p-hint">{{i18n .Lang "This option is the name of the published currency"}}</p>
+            <p class="p-title">{{i18n .Lang "Count"}}</p>
             <div>
                 <input id="count" class="input" type="tel" maxlength="12"
                        onkeyup="this.value=this.value.replace(/\D/g,'')">
             </div>
-            <p class="p-hint">This option is the number of published currencies</p>
-            <p class="p-balance">Balance Token : <span class="span-balance">{{.Token}}</span> ae</p>
+            <p class="p-hint">{{i18n .Lang "This option is the number of published currencies"}}</p>
+            <p class="p-balance">{{i18n .Lang "Balance Token"}} : <span class="span-balance">{{.Token}}</span> ae</p>
             <div id="create-token" class="start">
-                <a href="#">CREATE</a>
+                <a href="#">{{i18n .Lang "CREATE"}}</a>
             </div>
-
         </div>
-
-        </div>
-
     </div>
+
+</div>
 
 
 </div>
@@ -143,10 +140,7 @@
                                     }
                                     $.LoadingOverlay("hide");
                                 });
-
-
                             }, 1500);
-
                             break;
                     }
                 });

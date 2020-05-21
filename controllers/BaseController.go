@@ -6,10 +6,12 @@ import (
 	"github.com/aeternity/aepp-sdk-go/account"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
+	"github.com/beego/i18n"
 	"time"
 )
 
 type BaseController struct {
+	i18n.Locale
 	beego.Controller
 }
 
@@ -21,6 +23,17 @@ type ReturnMsg struct {
 }
 
 type JsonData struct {
+}
+
+func (this *BaseController) Prepare() {
+
+	var languageCookie = this.Ctx.GetCookie("language")
+	if languageCookie == "zh-CN" {
+		this.Lang = "zh-CN"
+	} else {
+		this.Lang = "en-US"
+	}
+	this.Data["Lang"] = this.Lang
 }
 
 var bm, _ = cache.NewCache("file", `{"CachePath":"./cache","FileSuffix":".cache","DirectoryLevel":"2","EmbedExpiry":"120"}`)

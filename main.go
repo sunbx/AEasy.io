@@ -10,6 +10,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/toolbox"
+	"github.com/beego/i18n"
 	_ "github.com/go-sql-driver/mysql" // import your used driver
 	"github.com/shopspring/decimal"
 	"strconv"
@@ -19,6 +20,7 @@ import (
 //引入数据模型
 func init() {
 	orm.Debug = false
+
 
 	//注册驱动
 	orm.RegisterDriver("mysql", orm.DRMySQL)
@@ -54,6 +56,11 @@ func main() {
 
 	beego.BConfig.WebConfig.Session.SessionProvider = "file"
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
+	i18n.SetMessage("zh-CN", "conf/locale_zh-CN.ini")
+	i18n.SetMessage("en-US", "conf/locale_en-US.ini")
+
+	beego.AddFuncMap("i18n", i18n.Tr)
+
 	task()
 	beego.Run()
 	task()

@@ -59,19 +59,19 @@
     justify-content: center; /*定义body的里的元素水平居中*/
     width: 100%;">
 
-<div class="header" id="navbg">
-    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
-        <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
-        <span class="name">AEASY</span>
-    </div>
-    <div class="menu">
-        <ul>
+    <div class="header" id="navbg">
+        <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+            <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
+            <span class="name">AEASY</span>
+        </div>
+        <div class="menu">
+            <ul>
 
-            <li><a href="https://aeasy.gitbook.io/aeasy/">DOCUMENT</a></li>
-            <li><a class="login" id="go-logout" href="#">LOGOUT</a></li>
-        </ul>
+                <li><a href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
+                <li><a class="login" id="go-logout" href="#">{{i18n .Lang "nav_logout"}}</a></li>
+            </ul>
+        </div>
     </div>
-</div>
 
 
 </div>
@@ -80,30 +80,34 @@
 
     <div class="card">
         <div class="left">
-            <p class="p-h1" style="margin-top: 40px">YOUR TOKENS</p>
+            <p class="p-h1" style="margin-top: 40px">{{i18n .Lang "YOUR TOKENS"}}</p>
 
 
-            <p class="p-title" style="margin-top: 10px">Name : <span
+            <p class="p-title" style="margin-top: 10px">{{i18n .Lang "Name"}} : <span
                         style="color: #2f3238 ;text-align: right;width: 100%">{{.name}}</span></p>
-            <p class="p-title" style="margin-top: 10px">Count : <span style="color: #2f3238">{{.total_supply}}</span>
+            <p class="p-title" style="margin-top: 10px">{{i18n .Lang "Count"}} : <span
+                        style="color: #2f3238">{{.total_supply}}</span>
             </p>
-            <p class="p-title" style="margin-top: 10px">Decimals : <span style="color: #2f3238">{{.decimals}}</span></p>
+            <p class="p-title" style="margin-top: 10px">{{i18n .Lang "Decimals"}} : <span
+                        style="color: #2f3238">{{.decimals}}</span></p>
             <div style=" height: 1px;background: #eeeeee;width: 460px; margin: 20px auto"></div>
 
             <div class="contracts" style="margin-top: 30px">
-                <p class="p-title" style="margin-top: 10px ; line-height: 30px; height: 30px">Contracts : </p>
+                <p class="p-title" style="margin-top: 10px ; line-height: 30px; height: 30px">{{i18n .Lang "Contracts"}}
+                    : </p>
                 <p style="color: #2f3238;font-size: 14px;line-height: 14px ;float: left">
                     {{.contracts}}</p>
 
-                <p class="p-title" style="margin-top: 30px ; line-height: 30px; height: 30px">Owner : </p>
+                <p class="p-title" style="margin-top: 30px ; line-height: 30px; height: 30px">{{i18n .Lang "Owner"}}
+                    : </p>
                 <p style="color: #2f3238;font-size: 14px;line-height: 14px ;float: left">
                     {{.address}}</p>
             </div>
 
         </div>
         <div class="right">
-            <p class="p-h1" style="margin-top: 40px">TRANSFER</p>
-            <p class="p-title">Address</p>
+            <p class="p-h1" style="margin-top: 40px">{{i18n .Lang "TRANSFER"}}</p>
+            <p class="p-title">{{i18n .Lang "Address"}}</p>
             <div>
                 <label>
                     <textarea class="input"
@@ -118,8 +122,8 @@
                               type="text" spellcheck="false" maxlength="100"></textarea>
                 </label>
             </div>
-            <p class="p-hint">Enter the address where you want to send the token</p>
-            <p class="p-title">Count</p>
+            <p class="p-hint">{{i18n .Lang "Enter the address where you want to send the token"}}</p>
+            <p class="p-title">{{i18n .Lang "Count"}}</p>
             <div>
                 <label>
                     <input class="input" id="count" type=text t_value="" o_value=""
@@ -128,11 +132,12 @@
                            onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
                 </label>
             </div>
-            <p class="p-hint">How many tokens are currently ready to send</p>
-            <p class="p-balance">Balance Token : <span id='balance' class="span-balance">{{.balance}}</span> {{.name}}
+            <p class="p-hint">{{i18n .Lang "How many tokens are currently ready to send"}}</p>
+            <p class="p-balance">{{i18n .Lang "Balance Token"}} : <span id='balance'
+                                                                        class="span-balance">{{.balance}}</span> {{.name}}
             </p>
             <div id="transfer-token" class="start">
-                <a href="#">TRANSFER</a>
+                <a href="#">{{i18n .Lang "TRANSFER"}}</a>
             </div>
 
         </div>
@@ -149,7 +154,8 @@
             let count = $('#count').val();
             let balance = $('#balance').html();
 
-            swal("Confirm to transfer " + count + " " + "{{.name}}" + "?", {
+
+            swal("{{i18n .Lang "TRANSFER"}}" + count + "{{.name}}" + "?", {
                 buttons: {
                     cancel: "Cancel",
                     catch: {
@@ -167,7 +173,7 @@
                                 $.post("/token/transfer", {address: address, count: count}, function (result) {
                                     let obj = jQuery.parseJSON(result);
                                     if (obj.code === 200) {
-                                        swal("Token sucess!", "transfer on your successful tokens!", "success", {
+                                        swal("{{i18n .Lang "Token sucess"}}", "{{i18n .Lang "transfer on your successful tokens"}}", "success", {
                                             button: "OK!",
                                         }).then((value) => {
                                             // window.location.href = '/token';
@@ -187,22 +193,6 @@
                     }
                 });
         });
-
-        function getData() {
-            $.post("/token/info", {address: address, count: count}, function (result) {
-                let obj = jQuery.parseJSON(result);
-                if (obj.code === 200) {
-                    swal("Token sucess!", "transfer on your successful tokens!", "success", {
-                        button: "OK!",
-                    }).then((value) => {
-                    });
-                } else {
-                    swal(obj.msg);
-                }
-                $.LoadingOverlay("hide");
-            });
-        }
-
     });
 
 
