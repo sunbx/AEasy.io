@@ -34,6 +34,9 @@ func (this *BaseController) Prepare() {
 		this.Lang = "en-US"
 	}
 	this.Data["Lang"] = this.Lang
+	//fmt.Println("4",this.Ctx.Request.URL.Path)
+
+
 }
 
 var bm, _ = cache.NewCache("file", `{"CachePath":"./cache","FileSuffix":".cache","DirectoryLevel":"2","EmbedExpiry":"120"}`)

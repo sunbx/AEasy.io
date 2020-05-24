@@ -23,6 +23,9 @@ type LoginController struct {
 type UserController struct {
 	BaseController
 }
+type ShowController struct {
+	BaseController
+}
 type AccreditController struct {
 	BaseController
 }
@@ -31,9 +34,6 @@ type AccreditBindController struct {
 }
 
 type TestController struct {
-	BaseController
-}
-type TestController2 struct {
 	BaseController
 }
 
@@ -151,6 +151,17 @@ func (c *LoginController) Get() {
 
 }
 
+func (c *ShowController) Get() {
+	isShow := c.Ctx.GetCookie("isShow")
+	if isShow == "show" {
+		c.Ctx.SetCookie("isShow", "")
+	} else {
+		c.Ctx.SetCookie("isShow", "show")
+	}
+	c.Redirect("/user", 302)
+}
+
+
 func (c *UserController) Get() {
 	if c.isLogin() {
 		v := c.GetSession("user_id")
@@ -187,9 +198,21 @@ func (c *UserController) Get() {
 					if secret.IsShow == 0 {
 						c.Data["AppId"] = "**** **** **** ****"
 						c.Data["AppSecret"] = "**** **** **** **** **** **** **** ****"
+						c.Data["is_zhegyan"] = "display: none;"
+						c.Data["is_biyan"] = "display: none;"
 					} else {
-						c.Data["AppId"] = secret.AppId
-						c.Data["AppSecret"] = secret.AppSecret
+
+						isShow := c.Ctx.GetCookie("isShow")
+						if isShow == "show"{
+							c.Data["AppId"] = secret.AppId
+							c.Data["AppSecret"] = secret.AppSecret
+							c.Data["BY"] = "display: none"
+						}else {
+							c.Data["AppId"] = "**** **** **** ****"
+							c.Data["AppSecret"] = "**** **** **** **** **** **** **** ****"
+							c.Data["ZY"] = "display: none"
+						}
+
 					}
 				}
 			}

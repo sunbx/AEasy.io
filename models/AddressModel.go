@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -8,7 +9,7 @@ type AeaMiddleAddress struct {
 	Id         int64   `orm:"column(id)"`
 	Address    string  `orm:"column(address)" json:"address"`
 	Balance    float64 `orm:"column(balance)"`
-	BalanceStr string `json:"balance"`
+	BalanceStr string  `orm:"-" json:"balance"`
 	UpdateTime int64   `orm:"column(update_time)" json:"time"`
 }
 
@@ -18,7 +19,10 @@ func (a *AeaMiddleAddress) TableName() string {
 }
 
 func InsertAddress(aeaMiddleAddress AeaMiddleAddress) {
-	_, _ = orm.NewOrm().InsertOrUpdate(&aeaMiddleAddress)
+	_, e := orm.NewOrm().InsertOrUpdate(&aeaMiddleAddress)
+	if e != nil {
+		fmt.Println("error->", e.Error())
+	}
 }
 
 //获取 balance top 500

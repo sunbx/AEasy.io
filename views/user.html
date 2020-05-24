@@ -32,19 +32,19 @@
     height: 79px;
     position: absolute;
     width: 100%;">
-<div class="header" id="navbg">
-    <div class="logo animated 1 fadeInDown delay-0s" id="logo">
-        <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
-        <span class="name">AEASY</span>
-    </div>
-    <div class="menu">
-        <ul>
+    <div class="header" id="navbg">
+        <div class="logo animated 1 fadeInDown delay-0s" id="logo">
+            <img style="width: 40px;position: relative;top: 10px" src="../static/img/logo_bai.png"/>
+            <span class="name">AEASY</span>
+        </div>
+        <div class="menu">
+            <ul>
 
-            <li><a href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
-            <li><a class="login" id="go-logout" href="#">{{i18n .Lang "nav_logout"}}</a></li>
-        </ul>
+                <li><a href="https://aeasy.gitbook.io/aeasy/">{{i18n .Lang "nav_doc"}}</a></li>
+                <li><a class="login" id="go-logout" href="#">{{i18n .Lang "nav_logout"}}</a></li>
+            </ul>
+        </div>
     </div>
-</div>
 </div>
 <div class="body">
 
@@ -70,9 +70,16 @@
 
         <div class="right">
             <p class="p-balance">{{i18n .Lang "Balance Token"}} : <span class="span-balance">{{.Token}}</span> ae</p>
-            <div class="div-id-secret">
+            <div class="div-id-secret" style="position: relative">
                 <p class="p-id">appId: {{.AppId}}</p>
                 <p class="p-secret">appSecret: {{.AppSecret}}</p>
+                <a href="/show">
+                    <img src="../static/img/ic_zhengyan.png"
+                         style="position: absolute; top: 25px;right: 20px;width: 30px;height: 30px; {{.ZY}}">
+                    <img src="../static/img/ic_biyan.png"
+                         style="position: absolute; top: 25px;right: 20px;width: 30px;height: 30px; {{.BY}}">
+                </a>
+
             </div>
             <div style="overflow:hidden;">
                 <div class="start" style="float: left">
@@ -86,12 +93,14 @@
             <p class="p-explain">{{i18n .Lang "Explain"}}:</p>
             <p class="p-explain-doc">&nbsp&nbsp&nbsp&nbsp{{i18n .Lang "user_hint"}}</p>
         </div>
-
-
     </div>
 
 
 </div>
 
 </body>
+<script>
+
+
+</script>
 </html>

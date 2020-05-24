@@ -44,6 +44,7 @@ func (c *ApiBlocksTopController) Get() {
 		height := models.ApiBlocksTop()
 		var data = map[string]uint64{}
 		data["height"] = height
+
 		c.SuccessJson(data)
 	} else {
 		c.ErrorJson(-100, "appId verify error", JsonData{})

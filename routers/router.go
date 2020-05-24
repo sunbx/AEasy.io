@@ -18,6 +18,7 @@ func init() {
 
 	//个人页面
 	beego.Router("/user", &controllers.UserController{})
+	beego.Router("/show", &controllers.ShowController{})
 
 	//授权页面
 	beego.Router("/accredit", &controllers.AccreditController{})

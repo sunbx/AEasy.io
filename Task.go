@@ -320,7 +320,7 @@ func InsertAddressBlock(senderId string, blockHeader BlocksHeader) bool {
 		names, e := models.FindNameId(senderId)
 		if e != nil {
 			fmt.Println("FindNameId - ", e.Error())
-			return true
+			return false
 		}
 		senderId = names.Owner
 	}
@@ -328,7 +328,7 @@ func InsertAddressBlock(senderId string, blockHeader BlocksHeader) bool {
 	account, e := models.ApiGetAccount(senderId)
 	if e != nil {
 		fmt.Println(e.Error())
-		return true
+		return false
 	}
 
 	var address models.AeaMiddleAddress
