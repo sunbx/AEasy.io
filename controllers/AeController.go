@@ -39,7 +39,7 @@ type WalletTransferRecordController struct {
 }
 
 //返回区块高度
-func (c *ApiBlocksTopController) Get() {
+func (c *ApiBlocksTopController) Post() {
 	if c.verifyAppId() {
 		height := models.ApiBlocksTop()
 		var data = map[string]uint64{}
@@ -52,7 +52,7 @@ func (c *ApiBlocksTopController) Get() {
 }
 
 //查询th
-func (c *ApiThHashController) Get() {
+func (c *ApiThHashController) Post() {
 	if c.verifyAppId() {
 		th := c.GetString("th")
 		if th == "" {
