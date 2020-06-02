@@ -308,7 +308,7 @@ func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) boo
 	aeaMiddleName.Owner = accountId
 	aeaMiddleName.Price = priceFloat
 	aeaMiddleName.CurrentPrice = priceFloat2
-	models.InsertName(aeaMiddleName)
+	models.InsertName(block.Transactions[k].BlockHeight,aeaMiddleName)
 	fmt.Println("aea_middle_names AENS插入成功->", name)
 
 	return false

@@ -24,10 +24,10 @@ func (a *AeaMiddleNames) TableName() string {
 	return "aea_middle_names"
 }
 
-func InsertName(names AeaMiddleNames) {
+func InsertName(blockHeight int64, names AeaMiddleNames) {
 	middleNames, e := FindNameName(names.Name)
 	if e == nil {
-		if middleNames.CurrentPrice < names.CurrentPrice {
+		if middleNames.CurrentPrice < names.CurrentPrice || int(blockHeight) > middleNames.EndHeight {
 			_, _ = orm.NewOrm().InsertOrUpdate(&names)
 		}
 		return

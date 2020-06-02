@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -126,7 +127,7 @@ func (c *WalletTransferRecordController) Post() {
 		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
 	}
 }
-
+var lock sync.Mutex
 func (c *WalletTransferController) Post() {
 	data := c.GetString("data")
 	address := c.GetString("address")
@@ -146,9 +147,10 @@ func (c *WalletTransferController) Post() {
 			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
 		}
-
+		lock.Lock()
 		tx, e := models.ApiSpend(account, address, amount, data)
 		time.Sleep(3 * time.Second)
+		lock.Unlock()
 		if e == nil {
 			c.SuccessJson(map[string]interface{}{"tx": tx})
 		} else {
