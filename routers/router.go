@@ -18,7 +18,6 @@ func init() {
 
 	//个人页面
 	beego.Router("/user", &controllers.UserController{})
-	beego.Router("/show", &controllers.ShowController{})
 
 	//授权页面
 	beego.Router("/accredit", &controllers.AccreditController{})
@@ -30,6 +29,9 @@ func init() {
 	beego.Router("/article/info", &controllers.ArticleInfoController{})
 
 	//====================网站相关接口====================
+
+	//设置token 是否隐藏和显示
+	beego.Router("/show", &controllers.ShowController{})
 
 	//验证码发送
 	beego.Router("/mail/send", &controllers.MailSendController{})

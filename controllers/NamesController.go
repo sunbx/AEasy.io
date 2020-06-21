@@ -462,6 +462,12 @@ func (c *NamesAddController) Post() {
 			c.ErrorJson(-500, "name chian error", JsonData{})
 			return
 		}
+
+		if !strings.Contains(name, ".chain") {
+			c.ErrorJson(-500, "Please keep the.chain end ", JsonData{})
+			return
+		}
+
 		account, _ := models.SigningKeyHexStringAccount(signingKey)
 		nameDb, err := models.FindNameName(name)
 		if err != nil {
@@ -500,7 +506,11 @@ func (c *NamesAddController) Post() {
 		}
 
 		f, _ := decimalValue.Float64()
-		if tokens < f {
+
+		println("f", utils.FormatTokensInt(f))
+		println("name", name)
+		println("tokens", utils.FormatTokensInt(tokens))
+		if utils.FormatTokensInt(tokens) <= utils.FormatTokensInt(f) {
 			c.ErrorJson(-500, "Lack of balance greater than "+utils.FormatTokens(f)+"AE", JsonData{})
 			return
 		}

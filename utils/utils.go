@@ -100,6 +100,19 @@ func FormatTokens(tokens float64) string {
 		return "0"
 	}
 }
+func FormatTokensInt(tokens float64) int {
+	if tokens > 0 {
+		decimalValue := decimal.NewFromFloat(tokens)
+		decimalValue = decimalValue.Div(decimal.NewFromInt(1000000000000000000))
+		f, _ := decimalValue.Float64()
+		str := strconv.FormatFloat(f, 'f', 5, 64)
+		v2, _ := strconv.Atoi(str)
+		return v2
+	} else {
+		return 0
+	}
+}
+
 func FormatTokensP(tokens float64, p int) string {
 	if tokens > 0 {
 		decimalValue := decimal.NewFromFloat(tokens)
