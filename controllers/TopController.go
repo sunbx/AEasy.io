@@ -4,6 +4,7 @@ import (
 	"ae/models"
 	"ae/utils"
 	"encoding/json"
+	"github.com/beego/i18n"
 )
 
 type WalletListController struct {
@@ -36,7 +37,7 @@ func (c *WalletListController) Post() {
 
 		c.SuccessJson(walletList)
 	} else {
-		c.ErrorJson(-100, "appId verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
 	}
 }
 
@@ -65,6 +66,6 @@ func (c *BaseDataController) Post() {
 		}
 		c.SuccessJson(knowApi)
 	} else {
-		c.ErrorJson(-100, "appId verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
 	}
 }

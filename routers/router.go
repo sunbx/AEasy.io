@@ -62,8 +62,8 @@ func init() {
 	//查询th_hash
 	beego.Router("/api/ae/th_hash", &controllers.ApiThHashController{})
 
-	//ae china文章列表
-	beego.Router("/api/article/list", &controllers.ArticleListController{})
+	////ae china文章列表
+	//beego.Router("/api/article/list", &controllers.ArticleListController{})
 
 	//钱包排行榜
 	beego.Router("/api/wallet/list", &controllers.WalletListController{})

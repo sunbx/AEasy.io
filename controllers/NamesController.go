@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aeternity/aepp-sdk-go/aeternity"
+	"github.com/beego/i18n"
 	"github.com/shopspring/decimal"
 	"math/big"
 	"strconv"
@@ -100,7 +101,7 @@ func (c *NamesAuctionsActiveController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), []JsonData{})
 	}
 }
 
@@ -134,7 +135,7 @@ func (c *NamesPriceController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), []JsonData{})
 	}
 }
 
@@ -168,7 +169,7 @@ func (c *NamesOverController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), []JsonData{})
 	}
 }
 
@@ -179,14 +180,14 @@ func (c *NamesMyRegisterController) Post() {
 		signingKey := c.GetString("signingKey")
 		page, _ := c.GetInt("page", 1)
 		if signingKey == "" && address == "" {
-			c.ErrorJson(-500, "parameter is nul", []JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), []JsonData{})
 			return
 		}
 		var addressStr string
 		if address == "" {
 			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 			if e != nil {
-				c.ErrorJson(-500, "Account signingKey error", []JsonData{})
+				c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), []JsonData{})
 				return
 			}
 			addressStr = aeasyAccount.Address
@@ -221,7 +222,7 @@ func (c *NamesMyRegisterController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -231,14 +232,14 @@ func (c *NamesMyOverController) Post() {
 		signingKey := c.GetString("signingKey")
 		page, _ := c.GetInt("page", 1)
 		if signingKey == "" && address == "" {
-			c.ErrorJson(-500, "parameter is nul", []JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), []JsonData{})
 			return
 		}
 		var addressStr string
 		if address == "" {
 			aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 			if e != nil {
-				c.ErrorJson(-500, "Account signingKey error", []JsonData{})
+				c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), []JsonData{})
 				return
 			}
 			addressStr = aeasyAccount.Address
@@ -273,7 +274,7 @@ func (c *NamesMyOverController) Post() {
 		}
 		c.SuccessJson(names)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", []JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), []JsonData{})
 	}
 }
 
@@ -285,7 +286,7 @@ func (c *NamesBaseController) Post() {
 		}
 		c.SuccessJson(data)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -294,19 +295,19 @@ func (c *NamesUpdateController) Post() {
 		signingKey := c.GetString("signingKey")
 		name := c.GetString("name")
 		if signingKey == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 			return
 		}
 		n := strings.Split(name, ".")
 		n[0] = strings.Replace(n[0], " ", "", -1)
 		if n[0] == "" {
-			c.ErrorJson(-500, "name chian error", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "name chian error"), JsonData{})
 			return
 		}
 		aeasyAccount, e := models.SigningKeyHexStringAccount(signingKey)
 
 		if e != nil {
-			c.ErrorJson(-500, "Account signingKey error", e.Error())
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), e.Error())
 			return
 		}
 
@@ -320,17 +321,17 @@ func (c *NamesUpdateController) Post() {
 		tokens, _ := strconv.ParseFloat(balance, 64)
 
 		if tokens/1000000000000000000 < 1 {
-			c.ErrorJson(-500, "The balance is insufficient, please keep the number of ae greater than 1", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance is insufficient please keep the number of ae greater than 1"), JsonData{})
 			return
 		}
 
 		receipt, e := models.UpdateAENS(aeasyAccount, name)
 		if e != nil {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 		}
 		c.SuccessJson(receipt)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -339,7 +340,7 @@ func (c *NamesInfoController) Post() {
 
 		name := c.GetString("name")
 		if name == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 			return
 		}
 
@@ -380,10 +381,7 @@ func (c *NamesInfoController) Post() {
 			d := json.NewDecoder(bytes.NewReader([]byte(blocksDb[i].Tx)))
 			d.UseNumber()
 			err = d.Decode(&mapObj)
-			if err != nil {
-				// 错误处理
-				fmt.Println("Decode", "error.")
-			}
+
 			f, _ := mapObj["name_fee"].(json.Number).Float64()
 			mapObj["name_fee"] = utils.FormatTokens(f)
 			mapObj["time"] = blocksDb[i].Time
@@ -396,7 +394,7 @@ func (c *NamesInfoController) Post() {
 		nameMap["claim"] = txs
 		c.SuccessJson(nameMap)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -406,13 +404,13 @@ func (c *NamesTransferController) Post() {
 		signingKey := c.GetString("signingKey")
 		recipientAddress := c.GetString("recipientAddress")
 		if name == "" || signingKey == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 			return
 		}
 		n := strings.Split(name, ".")
 		n[0] = strings.Replace(n[0], " ", "", -1)
 		if n[0] == "" {
-			c.ErrorJson(-500, "name chian error", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "name chian error"), JsonData{})
 			return
 		}
 		account, err := models.SigningKeyHexStringAccount(signingKey)
@@ -431,7 +429,7 @@ func (c *NamesTransferController) Post() {
 		tokens, _ := strconv.ParseFloat(balance, 64)
 
 		if tokens/1000000000000000000 < 1 {
-			c.ErrorJson(-500, "The balance is insufficient, please keep the number of ae greater than 1", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance is insufficient please keep the number of ae greater than 1"), JsonData{})
 			return
 		}
 
@@ -443,7 +441,7 @@ func (c *NamesTransferController) Post() {
 		}
 		c.SuccessJson(receipt)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -453,18 +451,18 @@ func (c *NamesAddController) Post() {
 		name := c.GetString("name")
 		signingKey := c.GetString("signingKey")
 		if name == "" || signingKey == "" {
-			c.ErrorJson(-500, "parameter is nul", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 			return
 		}
 		n := strings.Split(name, ".")
 		n[0] = strings.Replace(n[0], " ", "", -1)
 		if n[0] == "" {
-			c.ErrorJson(-500, "name chian error", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "name chian error"), JsonData{})
 			return
 		}
 
 		if !strings.Contains(name, ".chain") {
-			c.ErrorJson(-500, "Please keep the.chain end ", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Please keep the chain end"), JsonData{})
 			return
 		}
 
@@ -476,7 +474,7 @@ func (c *NamesAddController) Post() {
 		}
 		aeHeight, _ := strconv.Atoi(strconv.FormatUint(models.ApiBlocksTop(), 10))
 		if nameDb.CurrentPrice > 0 && nameDb.EndHeight < aeHeight {
-			c.ErrorJson(-500, "names Has been registered ", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "names Has been registered"), JsonData{})
 			return
 		}
 
@@ -511,7 +509,7 @@ func (c *NamesAddController) Post() {
 		println("name", name)
 		println("tokens", utils.FormatTokensInt(tokens))
 		if utils.FormatTokensInt(tokens) <= utils.FormatTokensInt(f) {
-			c.ErrorJson(-500, "Lack of balance greater than "+utils.FormatTokens(f)+"AE", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Lack of balance greater than")+utils.FormatTokens(f)+"AE", JsonData{})
 			return
 		}
 		var isUpdate bool
@@ -529,6 +527,6 @@ func (c *NamesAddController) Post() {
 
 		c.SuccessJson(receipt)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }

@@ -25,18 +25,26 @@ type ReturnMsg struct {
 type JsonData struct {
 }
 
-func (this *BaseController) Prepare() {
+func (c *BaseController) Prepare() {
 
-	var languageCookie = this.Ctx.GetCookie("language")
+	var languageCookie = c.Ctx.GetCookie("language")
 	if languageCookie == "zh-CN" {
-		this.Lang = "zh-CN"
+		c.Lang = "zh-CN"
 	} else {
-		this.Lang = "en-US"
+		c.Lang = "en-US"
 	}
-	this.Data["Lang"] = this.Lang
+	c.Data["Lang"] = c.Lang
 	//fmt.Println("4",this.Ctx.Request.URL.Path)
 
+}
 
+func (c *BaseController) getHeaderLanguage() string {
+	var language = c.Ctx.Input.Header("Aeasy-Language")
+	if language == "zh-CN" {
+		return "zh-CN"
+	} else {
+		return "en-US"
+	}
 }
 
 var bm, _ = cache.NewCache("file", `{"CachePath":"./cache","FileSuffix":".cache","DirectoryLevel":"2","EmbedExpiry":"120"}`)
@@ -110,8 +118,8 @@ func (c *BaseController) GetSecretAeAccount() *account.Account {
 	appSecret = c.GetString("app_secret")
 
 	if appId == "" || appSecret == "" {
-		appId = c.Ctx.Input.Header("aeasy-APP-ID")
-		appSecret = c.Ctx.Input.Header("aeasy-APP-SECRET")
+		appId = c.Ctx.Input.Header("Aeasy-App-Id")
+		appSecret = c.Ctx.Input.Header("Aeasy-App-Secret")
 	}
 
 	if appId == "" || appSecret == "" {
@@ -136,8 +144,8 @@ func (c *BaseController) verifySecret() bool {
 	appSecret = c.GetString("app_secret")
 
 	if appId == "" || appSecret == "" {
-		appId = c.Ctx.Input.Header("aeasy-APP-ID")
-		appSecret = c.Ctx.Input.Header("aeasy-APP-SECRET")
+		appId = c.Ctx.Input.Header("Aeasy-App-Id")
+		appSecret = c.Ctx.Input.Header("Aeasy-App-Secret")
 	}
 
 	if appId == "" || appSecret == "" {

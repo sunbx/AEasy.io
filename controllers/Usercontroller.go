@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ae/models"
+	"github.com/beego/i18n"
 )
 
 type UserRegisterController struct {
@@ -21,7 +22,7 @@ func (c *UserRegisterController) Post() {
 	addr := c.Ctx.Request.RemoteAddr
 
 	if email == "" || captcha == "" || password == "" || addr == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 
@@ -57,7 +58,7 @@ func (c *UserLoginController) Post() {
 	addr := c.Ctx.Request.RemoteAddr
 
 	if email == "" || password == "" || addr == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 

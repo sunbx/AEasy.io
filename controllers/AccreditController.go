@@ -3,6 +3,7 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
+	"github.com/beego/i18n"
 	"github.com/shopspring/decimal"
 	_ "github.com/typa01/go-utils"
 	"strconv"
@@ -30,7 +31,7 @@ func (c *AccreditInfoController) Post() {
 		signingKey := c.GetString("signingKey")
 		address := c.GetString("address")
 		if signingKey == "" && address == "" {
-			c.ErrorJson(-301, "parameter is nul", JsonData{})
+			c.ErrorJson(-301,  i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 			return
 		}
 
@@ -59,7 +60,7 @@ func (c *AccreditInfoController) Post() {
 			"address": address,
 		})
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 
 }
@@ -107,7 +108,7 @@ func (c *AccreditLoginController) Post() {
 		}
 
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -132,7 +133,7 @@ func (c *AccreditRegisterController) Post() {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -141,7 +142,7 @@ func (c *PayBuyController) Post() {
 	orderNo := c.GetString("order_no")
 	password := c.GetString("password")
 	if orderNo == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 	order, e := models.FindOrderOrderNo(orderNo)

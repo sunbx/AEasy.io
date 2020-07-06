@@ -3,6 +3,7 @@ package controllers
 import (
 	"ae/models"
 	"fmt"
+	"github.com/beego/i18n"
 	"strconv"
 )
 
@@ -21,7 +22,7 @@ func (c *TokenCreateController) Post() {
 	name := c.GetString("name")
 	countString := c.GetString("count")
 	if countString == "" || name == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 	if len(name) < 2 || len(name) > 5 {
@@ -55,7 +56,7 @@ func (c *TokenCreateController) Post() {
 	//}
 
 	if !models.Is1AE(stringAccount.Address) {
-		c.ErrorJson(-301, "The balance should be greater than 1ae", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"The balance should be greater than 1ae"), JsonData{})
 		return
 	}
 
@@ -77,7 +78,7 @@ func (c *TokenTransferController) Post() {
 	countString := c.GetString("count")
 	if c.isLogin() {
 		if countString == "" || address == "" {
-			c.ErrorJson(-301, "parameter is nul", JsonData{})
+			c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 			return
 		}
 

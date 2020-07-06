@@ -56,6 +56,12 @@ type Balance struct {
 
 func (c *TestController) Get() {
 
+	account, _ := models.SigningKeyHexStringAccount("")
+
+	fmt.Println(account.Address+" -> ", account.Address)
+
+
+
 }
 
 func (c *AccreditController) Get() {
@@ -66,7 +72,6 @@ func (c *AccreditController) Get() {
 	}
 }
 func (c *TokenController) Get() {
-
 	if c.isLogin() {
 		secret, e := models.FindSecretUserID(c.getCurrentUserId())
 		if e != nil {
@@ -161,7 +166,6 @@ func (c *ShowController) Get() {
 	c.Redirect("/user", 302)
 }
 
-
 func (c *UserController) Get() {
 	if c.isLogin() {
 		v := c.GetSession("user_id")
@@ -203,11 +207,11 @@ func (c *UserController) Get() {
 					} else {
 
 						isShow := c.Ctx.GetCookie("isShow")
-						if isShow == "show"{
+						if isShow == "show" {
 							c.Data["AppId"] = secret.AppId
 							c.Data["AppSecret"] = secret.AppSecret
 							c.Data["BY"] = "display: none"
-						}else {
+						} else {
 							c.Data["AppId"] = "**** **** **** ****"
 							c.Data["AppSecret"] = "**** **** **** **** **** **** **** ****"
 							c.Data["ZY"] = "display: none"

@@ -5,6 +5,7 @@ import (
 	"ae/models"
 	"ae/utils"
 	"fmt"
+	"github.com/beego/i18n"
 	"strconv"
 )
 //发送邮箱验证码
@@ -26,7 +27,7 @@ func (c *MailSendController) Post() {
 	//}
 
 	if email == ""  || captcha == "" || t == "" || addr == "" {
-		c.ErrorJson(-301, "parameter is nul", JsonData{})
+		c.ErrorJson(-301, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 

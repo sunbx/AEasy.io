@@ -4,7 +4,7 @@ import (
 	"ae/models"
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"github.com/beego/i18n"
 	"sync"
 	"time"
 )
@@ -48,7 +48,7 @@ func (c *ApiBlocksTopController) Post() {
 
 		c.SuccessJson(data)
 	} else {
-		c.ErrorJson(-100, "appId verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
 	}
 }
 
@@ -57,13 +57,13 @@ func (c *ApiThHashController) Post() {
 	if c.verifyAppId() {
 		th := c.GetString("th")
 		if th == "" {
-			c.ErrorJson(-200, "th is nil", JsonData{})
+			c.ErrorJson(-200,  i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 			return
 		}
 		t := models.ApiThHash(th)
 		c.SuccessJson(t)
 	} else {
-		c.ErrorJson(-100, "appId verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
 	}
 
 }
@@ -73,12 +73,12 @@ func (c *ApiTransferController) Post() {
 	data := c.GetString("data")
 	if c.verifySecret() {
 		if len(data) > 5000 || len(data) == 0 {
-			c.ErrorJson(-100, "data len > 50000 or data len = 0", JsonData{})
+			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
 		account := c.GetSecretAeAccount()
 		if !models.Is1AE(account.Address) {
-			c.ErrorJson(-500, "The balance should be greater than 1ae", JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(),"The balance should be greater than 1ae"), JsonData{})
 			return
 		}
 		tx, e := models.ApiSpend(account, "ak_wNL5NYtbr6AAuAWxKGF3ZwQNBeb7UMpu9BHoVb24pS9iWAQCo", 0.001, data)
@@ -89,7 +89,7 @@ func (c *ApiTransferController) Post() {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -97,7 +97,7 @@ func (c *WalletTransferRecordController) Post() {
 	address := c.GetString("address")
 	page, _ := c.GetInt("page", 1)
 	if address == "" {
-		c.ErrorJson(-100, "address = nil", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 	if c.verifyAppId() {
@@ -116,15 +116,11 @@ func (c *WalletTransferRecordController) Post() {
 			d := json.NewDecoder(bytes.NewReader([]byte(blocksDb[i].Tx)))
 			d.UseNumber()
 			err = d.Decode(&mapObj)
-			if err != nil {
-				// 错误处理
-				fmt.Println("Decode", "error.")
-			}
 			txs = append(txs, mapObj)
 		}
 		c.SuccessJson(txs)
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
 var lock sync.Mutex
@@ -134,12 +130,12 @@ func (c *WalletTransferController) Post() {
 	signingKey := c.GetString("signingKey")
 	amount, _ := c.GetFloat("amount", 0.001)
 	if address == "" || signingKey == "" {
-		c.ErrorJson(-100, "address = nil", JsonData{})
+		c.ErrorJson(-100,  i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
 		return
 	}
 	if c.verifyAppId() {
 		if len(data) > 5000 {
-			c.ErrorJson(-100, "data len > 50000 ", JsonData{})
+			c.ErrorJson(-100,  i18n.Tr(c.getHeaderLanguage(),"Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
 		account, err := models.SigningKeyHexStringAccount(signingKey)
@@ -157,7 +153,7 @@ func (c *WalletTransferController) Post() {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
 	} else {
-		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
 
