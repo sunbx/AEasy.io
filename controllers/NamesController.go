@@ -25,12 +25,15 @@ type NamesPriceController struct {
 type NamesMyRegisterController struct {
 	BaseController
 }
+
 type NamesMyOverController struct {
 	BaseController
 }
+
 type NamesOverController struct {
 	BaseController
 }
+
 type NamesUpdateController struct {
 	BaseController
 }
@@ -38,12 +41,15 @@ type NamesUpdateController struct {
 type NamesInfoController struct {
 	BaseController
 }
+
 type NamesAddController struct {
 	BaseController
 }
+
 type NamesTransferController struct {
 	BaseController
 }
+
 type NamesBaseController struct {
 	BaseController
 }

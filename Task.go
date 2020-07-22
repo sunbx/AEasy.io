@@ -6,19 +6,16 @@ import (
 	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/shopspring/decimal"
 	"strings"
-
-	//"fmt"
-	//"github.com/astaxie/beego/toolbox"
-	//"time"
 	"encoding/json"
 	"fmt"
 	"strconv"
 )
 
 func SynAeBlock() {
+
 	//查询当前同步的最新高度
 	dbHeight, _ := models.FindBlockHeight()
-	//dbHeight = 248022
+
 	//获取AE的最新高度
 	aeHeight, _ := strconv.Atoi(strconv.FormatUint(models.ApiBlocksTop(), 10))
 
@@ -164,10 +161,9 @@ func SynAeBlock() {
 	fmt.Println("Sucess+" + strconv.Itoa(int(dbHeight)))
 }
 
+//更新域名
 func updateNameIdBlock(height int) {
-
 	middleNames, e := models.FindNameIdIsNull(height)
-
 	if e != nil || len(middleNames) == 0 {
 		fmt.Println("没有nameid 为空的 name")
 		return
@@ -387,33 +383,30 @@ type Transactions struct {
 	Tx          interface{} `json:"tx"`
 }
 
-//func TimeUpdate() {
-//	aeaMiddleMicroBlocks, e := models.FindMicroBlockBlockTimeUpdate()
-//	if e != nil {
-//		fmt.Println("error+" + e.Error())
-//		return
-//	}
-//
-//	for i := 0; i < len(aeaMiddleMicroBlocks); i++ {
-//		//response := utils.Get("http://node.aechina.io:3013/v2/micro-blocks/hash/" + aeaMiddleMicroBlocks[i].BlockHash + "/header")
-//		response := utils.Get("http://node.aechina.io:3013/v2/micro-blocks/hash/" + aeaMiddleMicroBlocks[i].BlockHash + "/header")
-//		var block BlocksHeader
-//		err := json.Unmarshal([]byte(response), &block)
-//		if err != nil {
-//			fmt.Println(500, err.Error())
-//			return
-//		}
-//		aeaMiddleMicroBlocks[i].Time = block.Time
-//		err = models.InsertAeaMiddleMicroBlockBlockObj(aeaMiddleMicroBlocks[i])
-//		if err != nil {
-//
-//			fmt.Println("error+" + err.Error())
-//			return
-//		}
-//		fmt.Println("sucess->" + aeaMiddleMicroBlocks[i].BlockHash + " #### " + strconv.FormatInt(aeaMiddleMicroBlocks[i].Time, 10))
-//	}
-//
-//}
+
+
+type Foo struct {
+	AccountID string `json:"account_id"`
+	Fee       int64  `json:"fee"`
+	Name      string `json:"name"`
+	NameFee   int64  `json:"name_fee"`
+	NameSalt  int64  `json:"name_salt"`
+	Nonce     int64  `json:"nonce"`
+	Type      string `json:"type"`
+	Version   int64  `json:"version"`
+}
+
+type V2Name struct {
+	ID       string     `json:"id"`
+	Pointers []Pointers `json:"pointers"`
+	TTL      int64      `json:"ttl"`
+}
+
+type Pointers struct {
+	ID  string `json:"id"`
+	Key string `json:"key"`
+}
+
 
 type BlocksHeader struct {
 	Hash        string `json:"hash"`

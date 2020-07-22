@@ -39,6 +39,8 @@ type WalletTransferRecordController struct {
 	BaseController
 }
 
+var lock sync.Mutex
+
 //返回区块高度
 func (c *ApiBlocksTopController) Post() {
 	if c.verifyAppId() {
@@ -81,8 +83,10 @@ func (c *ApiTransferController) Post() {
 			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(),"The balance should be greater than 1ae"), JsonData{})
 			return
 		}
+		lock.Lock()
 		tx, e := models.ApiSpend(account, "ak_wNL5NYtbr6AAuAWxKGF3ZwQNBeb7UMpu9BHoVb24pS9iWAQCo", 0.001, data)
 		time.Sleep(3 * time.Second)
+		lock.Unlock()
 		if e == nil {
 			c.SuccessJson(map[string]interface{}{"tx": tx})
 		} else {
@@ -123,7 +127,7 @@ func (c *WalletTransferRecordController) Post() {
 		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
 	}
 }
-var lock sync.Mutex
+
 func (c *WalletTransferController) Post() {
 	data := c.GetString("data")
 	address := c.GetString("address")
@@ -145,7 +149,6 @@ func (c *WalletTransferController) Post() {
 		}
 		lock.Lock()
 		tx, e := models.ApiSpend(account, address, amount, data)
-		time.Sleep(3 * time.Second)
 		lock.Unlock()
 		if e == nil {
 			c.SuccessJson(map[string]interface{}{"tx": tx})
