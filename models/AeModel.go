@@ -19,29 +19,36 @@ import (
 
 //var nodeURL = "https://mainnet.aeternal.io"
 var nodeURL = "http://node.aechina.io:3013"
+var compilerURL = "https://compiler.aepps.com"
 
-//var nodeURL = nodeURL
+//===================================================================================================================================================================================================
+//|                           															AE-BASE																										 |
+///===================================================================================================================================================================================================
+
 //根据助记词返回用户
 func MnemonicAccount(mnemonic string, addressIndex uint32) (*account.Account, error) {
 
+	//生成种子
 	seed, err := account.ParseMnemonic(mnemonic)
 	if err != nil {
 		return nil, err
 	}
+
+	//验证助记词
 	_, err = bip39.EntropyFromMnemonic(mnemonic)
 
 	if err != nil {
 		return nil, err
 	}
+
+	//获取子账户
 	// Derive the subaccount m/44'/457'/3'/0'/1'
 	key, err := account.DerivePathFromSeed(seed, 0, addressIndex-1)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("key.ChildNumber=>", key.ChildNumber)
-
-	// Deriving the aeternity Account from a BIP32 Key is a destructive process
+	// 生成账户
 	alice, err := account.BIP32KeyToAeKey(key)
 	if err != nil {
 		return nil, err
@@ -62,22 +69,21 @@ func CreateAccount() (*account.Account, string) {
 	return acc, mnemonic
 }
 
-//随机创建用户
+//随机创建用户,返回助记词
 func CreateAccountUtils() (mnemonic string, signingKey string, address string) {
-
-	//cerate mnemonic
+	//创建助记词
 	entropy, _ := bip39.NewEntropy(128)
+	//生成助记词
 	mne, _ := bip39.NewMnemonic(entropy)
-
+	//生成种子
 	seed, _ := account.ParseMnemonic(mne)
-
+	//验证助记词
 	_, _ = bip39.EntropyFromMnemonic(mne)
-	// Derive the subaccount m/44'/457'/3'/0'/1'
+	//生成子账户
 	key, _ := account.DerivePathFromSeed(seed, 0, 0)
-	// Deriving the aeternity Account from a BIP32 Key is a destructive process
+	//获取账户
 	alice, _ := account.BIP32KeyToAeKey(key)
-	//alice.SigningKey.Seed()
-
+	//返回私钥和信息
 	return mne, alice.SigningKeyToHexString(), alice.Address
 }
 
@@ -88,7 +94,7 @@ func ApiBlocksTop() (height uint64) {
 	return h
 }
 
-//地址信息返回用户信息
+//地址信息返回用户信息和余额
 func ApiGetAccount(address string) (account *models.Account, e error) {
 	client := naet.NewNode(nodeURL, false)
 	acc, e := client.GetAccount(address)
@@ -98,21 +104,26 @@ func ApiGetAccount(address string) (account *models.Account, e error) {
 //发起转账
 func ApiSpend(account *account.Account, recipientId string, amount float64, data string) (*aeternity.TxReceipt, error) {
 
+	//获取账户
 	accountNet, e := ApiGetAccount(account.Address)
 	if e != nil {
 		return nil, e
 	}
+	//格式化账户的tokens
 	tokens, err := strconv.ParseFloat(accountNet.Balance.String(), 64)
 	if err == nil {
+		//判断账户余额是否大于要转账的余额
 		if tokens/1000000000000000000 > amount {
+			//获取节点信息
 			node := naet.NewNode(nodeURL, false)
-			//_, _, ttlnoncer := transactions.GenerateTTLNoncer(node)
-			ttlnoncer := transactions.NewTTLNoncer(node)
-
-			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlnoncer)
+			//生成ttl
+			ttlNoncer := transactions.NewTTLNoncer(node)
+			//生成转账tx
+			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
 			if err != nil {
 				return nil, err
 			}
+			//广播转账信息
 			hash, err := aeternity.SignBroadcast(spendTx, account, node, "ae_mainnet")
 			return hash, err
 		} else {
@@ -123,13 +134,6 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 	}
 }
 
-//获取Sophia vm 当前编译版本
-func ApiVersion() (v string) {
-	c := naet.NewCompiler("https://compiler.aepps.com", false)
-	v, _ = c.APIVersion()
-	return v
-}
-
 //返回tx详细信息
 func ApiThHash(th string) (tx *models.GenericSignedTx) {
 	client := naet.NewNode(nodeURL, false)
@@ -137,32 +141,49 @@ func ApiThHash(th string) (tx *models.GenericSignedTx) {
 	return t
 }
 
-//获取Sophia vm 当前编译版本
-func CompilerVersion() (v string) {
-	c := naet.NewCompiler("https://compiler.aepps.com", false)
-	v, _ = c.APIVersion()
-	return v
-}
+////获取Sophia vm 当前编译版本
+//func ApiVersion() (v string) {
+//	c := naet.NewCompiler("https://compiler.aepps.com", false)
+//	v, _ = c.APIVersion()
+//	return v
+//}
+//
+////获取Sophia vm 当前编译版本
+//func CompilerVersion() (v string) {
+//	c := naet.NewCompiler("https://compiler.aepps.com", false)
+//	v, _ = c.APIVersion()
+//	return v
+//}
+
+//===================================================================================================================================================================================================
+//|                           															AEX-9																										 |
+///===================================================================================================================================================================================================
 
 //创建AEX9代币
 func CompileContractInit(account *account.Account, name string, number string) (s string, e error) {
+	//创建节点
 	n := naet.NewNode(nodeURL, false)
-	c := naet.NewCompiler("https://compiler.aepps.com", true)
+	//设置虚拟机地址
+	c := naet.NewCompiler(compilerURL, false)
+	//创context
 	ctx := aeternity.NewContext(account, n)
+	//设置编译器
 	ctx.SetCompiler(c)
+	//生成合约
 	contract := aeternity.NewContract(ctx)
+	//获取aex9 代币合约
 	expected, _ := ioutil.ReadFile("contract/fungible-token.aes")
+	//部署aex9 合约代买
 	ctID, _, err := contract.Deploy(string(expected), "init", []string{"\"" + name + "\"", "18", "\"" + name + "\"", "Some(" + number + ")"}, config.CompilerBackendFATE)
 	if err != nil {
 		return "", err
 	}
-
+	//获取合约地址,将其返回
 	_, err = n.GetContractByID(ctID)
 	if err != nil {
 		return "", err
 	}
 	return ctID, err
-
 }
 
 type CallInfoResult struct {
@@ -174,16 +195,19 @@ type CallInfo struct {
 	ReturnValue string `json:"return_value"`
 }
 
-//是否大于1ae
+//检查账户是否大于1ae
 func Is1AE(address string) bool {
+	//获取账户信息
 	accountNet, err := ApiGetAccount(address)
 	if err != nil {
 		return false
 	}
+	//转换token
 	tokens, err := strconv.ParseFloat(accountNet.Balance.String(), 64)
 	if err != nil {
 		return false
 	}
+	//判断token 是否大于1
 	if tokens/1000000000000000000 < 1 {
 		return false
 	}
@@ -192,44 +216,56 @@ func Is1AE(address string) bool {
 
 //调用aex9 合约方法
 func CallContractFunction(account *account.Account, ctID string, function string, args []string) (s interface{}, e error) {
+	//获取节点信息
 	n := naet.NewNode(nodeURL, false)
-	//c := naet.NewCompiler(nodeURL, true)
-	c := naet.NewCompiler("https://compiler.aepps.com", false)
+	//获取编译器信息
+	c := naet.NewCompiler(compilerURL, false)
+	//创建上下文
 	ctx := aeternity.NewContext(account, n)
+	//关联编译器
 	ctx.SetCompiler(c)
+	//创建合约
 	contract := aeternity.NewContract(ctx)
+	//获取合约代码
 	expected, _ := ioutil.ReadFile("contract/fungible-token.aes")
+	//调用合约代码
 	callReceipt, err := contract.Call(ctID, string(expected), function, args, config.CompilerBackendFATE)
 	if err != nil {
 		return nil, err
 	}
+	//获取合约调用信息
 	response := utils.Get(nodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
+	//解析jSON
 	var callInfoResult CallInfoResult
 	err = json.Unmarshal([]byte(response), &callInfoResult)
 	if err != nil {
 		return nil, err
 	}
-	//tx, e := n.GetTransactionByHash(callReceipt.Hash)
-	//tx.Tx()
-	//genericTx, e := models.UnmarshalGenericTx(bytes.NewBuffer(i.), runtime.())
+	//解析结果
 	decodeResult, err := c.DecodeCallResult(callInfoResult.CallInfo.ReturnType, callInfoResult.CallInfo.ReturnValue, function, string(expected), config.Compiler.Backend)
 	if err != nil {
 		return nil, err
 	}
-	//fmt.Println(genericTx)
-
+	//返回结果
 	return decodeResult, err
 }
 
+//===================================================================================================================================================================================================
+//|                           															AENS																										 |
+///===================================================================================================================================================================================================
+
+//aens 转账
 func TransferAENS(account *account.Account, recipientAddress string, name string) (*aeternity.TxReceipt, error) {
+	//获取节点
 	client := naet.NewNode(nodeURL, false)
+	//创建账户信息
 	ctxAlice := aeternity.NewContext(account, client)
-	// Transfer the name to a recipient
+	// 创建转账aens tx
 	transferTx, err := transactions.NewNameTransferTx(account.Address, name, recipientAddress, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Transfer")
+	// 广播
 	txReceipt, err := ctxAlice.SignBroadcast(transferTx, config.Client.WaitBlocks)
 	if err != nil {
 		return nil, err
@@ -237,14 +273,17 @@ func TransferAENS(account *account.Account, recipientAddress string, name string
 	return txReceipt, err
 }
 
+//更新aens
 func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, error) {
+	//获取节点
 	client := naet.NewNode(nodeURL, false)
+	//获取账户信息
 	ctxAlice := aeternity.NewContext(account, client)
-	// Transfer the name to a recipient
 	alicesAddress, err := transactions.NewNamePointer("account_pubkey", account.Address)
 	if err != nil {
 		return nil, err
 	}
+	//生成tx
 	updateTx, err := transactions.NewNameUpdateTx(account.Address, name, []*transactions.NamePointer{alicesAddress}, config.Client.Names.ClientTTL+10000, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
@@ -258,39 +297,55 @@ func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, er
 	return txReceipt, err
 }
 
+//注册域名
 func ClaimAENS(account *account.Account, name string, fee *big.Int, isUpdate bool) (*aeternity.TxReceipt, error) {
 	client := naet.NewNode(nodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
-	// Preclaim the name
 	preclaimTx, salt, err := transactions.NewNamePreclaimTx(account.Address, name, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
 	}
 
-	p, err := ctxAlice.SignBroadcastWait(preclaimTx, config.Client.WaitBlocks)
+	_, err = ctxAlice.SignBroadcastWait(preclaimTx, config.Client.WaitBlocks)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("fee -> ", fee)
 
 	claimTx, err := transactions.NewNameClaimTx(account.Address, name, salt, fee, ctxAlice.TTLNoncer())
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("claimTx -> ", claimTx)
 
 	if isUpdate {
 		claimTx.NameSalt = new(big.Int)
 		claimTx.TTL = 0
 	}
-	fmt.Println("Claim salt -> ", salt)
-	fmt.Println("p -> ", p)
 	txReceipt, err := ctxAlice.SignBroadcast(claimTx, config.Client.WaitBlocks)
 
-	fmt.Println("Claim salt -> ", salt)
-	fmt.Println("txReceipt -> ", txReceipt)
 	if err != nil {
 		return nil, err
 	}
 	return txReceipt, err
+}
+
+//===================================================================================================================================================================================================
+//|                           															Oracle																										 |
+///===================================================================================================================================================================================================
+
+//注册预言鸡
+func OracleRegister(account *account.Account, querySpace string, responseSpec string, queryFee float64) (hash string, oraclePubKey string) {
+	client := naet.NewNode(nodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+
+	// Register Tx
+	register, err := transactions.NewOracleRegisterTx(account.Address, querySpace, responseSpec, utils.GetRealAebalanceBigInt(queryFee), config.OracleTTLTypeDelta, config.Client.Oracles.OracleTTLValue, config.Client.Oracles.ABIVersion, ctxAlice.TTLNoncer())
+	if err != nil {
+		println(err)
+	}
+	txReceipt, err := ctxAlice.SignBroadcast(register, config.Client.WaitBlocks)
+	if err != nil {
+		println(err)
+	}
+	oraclePubKey = register.ID()
+	return txReceipt.Hash, oraclePubKey
 }
