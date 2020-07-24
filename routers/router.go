@@ -118,10 +118,30 @@ func init() {
 	//所有域名基础信息
 	beego.Router("/api/names/base", &controllers.NamesBaseController{})
 
+
+
+	//====================预言鸡====================
+
+	//注册预言鸡
+	beego.Router("/api/oracle/register", &controllers.OracleRegisterController{})
+
+	//查询预言鸡
+	beego.Router("/api/oracle/query", &controllers.OracleQueryController{})
+
+	//相应预言鸡
+	beego.Router("/api/oracle/response", &controllers.OracleResponseController{})
+
+	//查询预言鸡待回复,已回复列表
+	beego.Router("/api/oracle/list", &controllers.OracleListController{})
+
+	//查询预言鸡 回复详情
+	beego.Router("/api/oracle/detail", &controllers.OracleQueryDetailController{})
+
 	//====================定时任务====================
 
 	//文章数据抓取
 	beego.Router("/article/data", &controllers.ArticleDataController{})
 
-	beego.Router("/test", &controllers.TestController{})
+
+
 }

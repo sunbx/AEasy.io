@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"ae/models"
+	"ae/utils"
 	"bytes"
 	"encoding/json"
 	"github.com/beego/i18n"
 	"sync"
 	"time"
+	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
 )
 
 //获取区块高度
@@ -38,6 +40,26 @@ type WalletTransferController struct {
 type WalletTransferRecordController struct {
 	BaseController
 }
+
+type OracleRegisterController struct {
+	BaseController
+}
+
+type OracleQueryController struct {
+	BaseController
+}
+
+type OracleResponseController struct {
+	BaseController
+}
+type OracleListController struct {
+	BaseController
+}
+
+type OracleQueryDetailController struct {
+	BaseController
+}
+
 
 var lock sync.Mutex
 
@@ -169,4 +191,134 @@ func (c *ApiCreateAccountController) Post() {
 		"address":     accountCreate.Address,
 		"signing_key": accountCreate.SigningKeyToHexString(),
 	})
+}
+
+
+func (c *OracleRegisterController) Get() {
+	querySpace := c.GetString("querySpace")
+	responseSpec := c.GetString("responseSpec")
+	signingKey := c.GetString("signingKey")
+	queryFee, _ := c.GetFloat("queryFee", 0)
+	if querySpace == "" || responseSpec == "" || signingKey == "" {
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+		return
+	}
+	//获取用户
+	account, err := models.SigningKeyHexStringAccount(signingKey)
+	if err != nil {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), []JsonData{})
+		return
+	}
+
+	if !models.Is1AE(account.Address) {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance is insufficient please keep the number of ae greater than 1"), JsonData{})
+		return
+	}
+
+	//注册预言机
+	hash, oraclePubKey := models.OracleRegister(account, querySpace, responseSpec, queryFee)
+	c.SuccessJson(map[string]interface{}{
+		"hash":         hash,
+		"oraclePubKey": oraclePubKey})
+}
+
+func (c *OracleQueryController) Post() {
+	oracleID := c.GetString("oracleID")
+	querySpec := c.GetString("querySpec")
+	signingKey := c.GetString("signingKey")
+	queryFee, _ := c.GetFloat("queryFee", 0)
+	if oracleID == "" || querySpec == "" || signingKey == "" {
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+		return
+	}
+	account, err := models.SigningKeyHexStringAccount(signingKey)
+
+	if err != nil {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), []JsonData{})
+		return
+	}
+
+	if !models.Is1AE(account.Address) {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance is insufficient please keep the number of ae greater than 1"), JsonData{})
+		return
+	}
+
+	//这可能要判断一下
+	hash, opId := models.OracleQuery(account, oracleID, querySpec, queryFee)
+
+	c.SuccessJson(map[string]interface{}{
+		"hash": hash,
+		"oqID": opId})
+
+}
+func (c *OracleResponseController) Get() {
+
+	oracleID := c.GetString("oracleID")
+	oqID := c.GetString("oqID")
+	signingKey := c.GetString("signingKey")
+	response := c.GetString("response")
+	if oracleID == "" || oqID == "" || signingKey == "" || response == "" {
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+		return
+	}
+
+	account, err := models.SigningKeyHexStringAccount(signingKey)
+
+	if err != nil {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "Account signingKey error"), []JsonData{})
+		return
+	}
+
+	if !models.Is1AE(account.Address) {
+		c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance is insufficient please keep the number of ae greater than 1"), JsonData{})
+		return
+	}
+
+	hash := models.OracleResponse(account, oracleID, oqID, response)
+
+	c.SuccessJson(map[string]interface{}{
+		"hash": hash,})
+}
+
+
+
+func (c *OracleListController) Get() {
+	oracleID := c.GetString("oracleID")
+	t := c.GetString("type")
+	if t != "open" && t != "closed" {
+		t = "open"
+	}
+
+	if oracleID == "" {
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+		return
+	}
+
+	response := utils.Get(models.NodeURL + "/v2/oracles/" + oracleID + "/queries?type=" + t)
+	var oracleQueries aemodels.OracleQueries
+	err := json.Unmarshal([]byte(response), &oracleQueries)
+	if err != nil {
+		c.ErrorJson(-500, err.Error(), JsonData{})
+		return
+	}
+	c.SuccessJson(oracleQueries)
+}
+
+func (c *OracleQueryDetailController) Get() {
+	oracleID := c.GetString("oracleID")
+	oqID := c.GetString("oqID")
+
+	if oracleID == "" {
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+		return
+	}
+
+	response := utils.Get(models.NodeURL + "/v2/oracles/" + oracleID + "/queries/" + oqID)
+	var oracleQuery aemodels.OracleQuery
+	err := json.Unmarshal([]byte(response), &oracleQuery)
+	if err != nil {
+		c.ErrorJson(-500, err.Error(), JsonData{})
+		return
+	}
+	c.SuccessJson(oracleQuery)
 }

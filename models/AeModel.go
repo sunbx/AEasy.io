@@ -18,7 +18,7 @@ import (
 )
 
 //var nodeURL = "https://mainnet.aeternal.io"
-var nodeURL = "http://node.aechina.io:3013"
+var NodeURL = "http://node.aechina.io:3013"
 var compilerURL = "https://compiler.aepps.com"
 
 //===================================================================================================================================================================================================
@@ -89,14 +89,14 @@ func CreateAccountUtils() (mnemonic string, signingKey string, address string) {
 
 //返回最新区块高度
 func ApiBlocksTop() (height uint64) {
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	h, _ := client.GetHeight()
 	return h
 }
 
 //地址信息返回用户信息和余额
 func ApiGetAccount(address string) (account *models.Account, e error) {
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	acc, e := client.GetAccount(address)
 	return acc, e
 }
@@ -115,9 +115,12 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 		//判断账户余额是否大于要转账的余额
 		if tokens/1000000000000000000 > amount {
 			//获取节点信息
-			node := naet.NewNode(nodeURL, false)
+			node := naet.NewNode(NodeURL, false)
 			//生成ttl
-			ttlNoncer := transactions.NewTTLNoncer(node)
+			ttler := transactions.CreateTTLer(node)
+			noncer := transactions.CreateNoncer(node)
+
+			ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
 			//生成转账tx
 			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
 			if err != nil {
@@ -125,6 +128,11 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 			}
 			//广播转账信息
 			hash, err := aeternity.SignBroadcast(spendTx, account, node, "ae_mainnet")
+
+			err = aeternity.WaitSynchronous(hash, config.Client.WaitBlocks, node)
+			if err != nil {
+				return nil, err
+			}
 			return hash, err
 		} else {
 			return nil, errors.New("tokens number insufficient")
@@ -136,7 +144,7 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 
 //返回tx详细信息
 func ApiThHash(th string) (tx *models.GenericSignedTx) {
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	t, _ := client.GetTransactionByHash(th)
 	return t
 }
@@ -162,7 +170,7 @@ func ApiThHash(th string) (tx *models.GenericSignedTx) {
 //创建AEX9代币
 func CompileContractInit(account *account.Account, name string, number string) (s string, e error) {
 	//创建节点
-	n := naet.NewNode(nodeURL, false)
+	n := naet.NewNode(NodeURL, false)
 	//设置虚拟机地址
 	c := naet.NewCompiler(compilerURL, false)
 	//创context
@@ -217,7 +225,7 @@ func Is1AE(address string) bool {
 //调用aex9 合约方法
 func CallContractFunction(account *account.Account, ctID string, function string, args []string) (s interface{}, e error) {
 	//获取节点信息
-	n := naet.NewNode(nodeURL, false)
+	n := naet.NewNode(NodeURL, false)
 	//获取编译器信息
 	c := naet.NewCompiler(compilerURL, false)
 	//创建上下文
@@ -234,7 +242,7 @@ func CallContractFunction(account *account.Account, ctID string, function string
 		return nil, err
 	}
 	//获取合约调用信息
-	response := utils.Get(nodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
+	response := utils.Get(NodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
 	//解析jSON
 	var callInfoResult CallInfoResult
 	err = json.Unmarshal([]byte(response), &callInfoResult)
@@ -257,7 +265,7 @@ func CallContractFunction(account *account.Account, ctID string, function string
 //aens 转账
 func TransferAENS(account *account.Account, recipientAddress string, name string) (*aeternity.TxReceipt, error) {
 	//获取节点
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	//创建账户信息
 	ctxAlice := aeternity.NewContext(account, client)
 	// 创建转账aens tx
@@ -276,7 +284,7 @@ func TransferAENS(account *account.Account, recipientAddress string, name string
 //更新aens
 func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, error) {
 	//获取节点
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	//获取账户信息
 	ctxAlice := aeternity.NewContext(account, client)
 	alicesAddress, err := transactions.NewNamePointer("account_pubkey", account.Address)
@@ -299,7 +307,7 @@ func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, er
 
 //注册域名
 func ClaimAENS(account *account.Account, name string, fee *big.Int, isUpdate bool) (*aeternity.TxReceipt, error) {
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
 	preclaimTx, salt, err := transactions.NewNamePreclaimTx(account.Address, name, ctxAlice.TTLNoncer())
 	if err != nil {
@@ -334,14 +342,17 @@ func ClaimAENS(account *account.Account, name string, fee *big.Int, isUpdate boo
 
 //注册预言鸡
 func OracleRegister(account *account.Account, querySpace string, responseSpec string, queryFee float64) (hash string, oraclePubKey string) {
-	client := naet.NewNode(nodeURL, false)
+	client := naet.NewNode(NodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
 
 	// Register Tx
-	register, err := transactions.NewOracleRegisterTx(account.Address, querySpace, responseSpec, utils.GetRealAebalanceBigInt(queryFee), config.OracleTTLTypeDelta, config.Client.Oracles.OracleTTLValue, config.Client.Oracles.ABIVersion, ctxAlice.TTLNoncer())
+	register, err := transactions.NewOracleRegisterTx(account.Address, querySpace, responseSpec, utils.GetRealAebalanceBigInt(queryFee), config.OracleTTLTypeDelta, 10000000, config.Client.Oracles.ABIVersion, ctxAlice.TTLNoncer())
+	//register, err := transactions.NewOracleRegisterTx(account.Address, querySpace, responseSpec, utils.GetRealAebalanceBigInt(queryFee), config.OracleTTLTypeDelta, config.Client.Oracles.OracleTTLValue, config.Client.Oracles.ABIVersion, ctxAlice.TTLNoncer())
 	if err != nil {
-		println(err)
+		println("err", err)
 	}
+	//println("account address",register.JSON())
+	println("utils.GetRealAebalanceBigInt(queryFee) ", utils.GetRealAebalanceBigInt(queryFee).String())
 	txReceipt, err := ctxAlice.SignBroadcast(register, config.Client.WaitBlocks)
 	if err != nil {
 		println(err)
@@ -349,3 +360,37 @@ func OracleRegister(account *account.Account, querySpace string, responseSpec st
 	oraclePubKey = register.ID()
 	return txReceipt.Hash, oraclePubKey
 }
+
+
+func OracleQuery(account *account.Account, oracleID string, querySpec string, queryFee float64) (hash string, opId string) {
+	client := naet.NewNode(NodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+
+	// Query
+	query, err := transactions.NewOracleQueryTx(account.Address, oracleID, querySpec, utils.GetRealAebalanceBigInt(queryFee), 0, 100, 0, 100, ctxAlice.TTLNoncer())
+	if err != nil {
+		println(err)
+	}
+	txReceipt, err := ctxAlice.SignBroadcast(query, config.Client.WaitBlocks)
+	if err != nil {
+		println(err)
+	}
+	id, _ := query.ID()
+	return txReceipt.Hash, id
+}
+
+func OracleResponse(account *account.Account, oracleID string, queryID string, response string) (hash string) {
+	client := naet.NewNode(NodeURL, false)
+	ctxAlice := aeternity.NewContext(account, client)
+	// Respond
+	respond, err := transactions.NewOracleRespondTx(account.Address, oracleID, queryID, response, config.OracleTTLTypeDelta, config.Client.Oracles.ResponseTTLValue, ctxAlice.TTLNoncer())
+	if err != nil {
+		println(err)
+	}
+	txReceipt, err := ctxAlice.SignBroadcastWait(respond, config.Client.WaitBlocks)
+	if err != nil {
+		println(err)
+	}
+	return txReceipt.Hash
+}
+

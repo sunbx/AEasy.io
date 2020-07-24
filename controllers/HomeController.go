@@ -2,10 +2,11 @@ package controllers
 
 import "C"
 import (
-	"ae/models"
+	models "ae/models"
 	"ae/utils"
 	"encoding/json"
 	"fmt"
+
 	"strconv"
 	"strings"
 )
@@ -33,9 +34,12 @@ type AccreditBindController struct {
 	BaseController
 }
 
-type TestController struct {
+
+
+type TestController5 struct {
 	BaseController
 }
+
 
 type TokenController struct {
 	BaseController
@@ -54,14 +58,15 @@ type Balance struct {
 	Some []float64 `json:"Some"`
 }
 
-func (c *TestController) Get() {
+func (c *TestController5) Get() {
 
-	account, _ := models.SigningKeyHexStringAccount("")
-
-	fmt.Println(account.Address+" -> ", account.Address)
-
-
-
+	//account, _ := models.SigningKeyHexStringAccount("")
+	//
+	//createAccount, _ := models.CreateAccount()
+	//tx, _ := models.ApiSpend(account, createAccount.Address, 0.0001, "")
+	//println("tx->", tx.Hash)
+	//c.SuccessJson(map[string]interface{}{
+	//	"sing": account.SigningKeyToHexString(),})
 }
 
 func (c *AccreditController) Get() {
