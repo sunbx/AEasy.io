@@ -1,8 +1,7 @@
 package controllers
 
-import "C"
 import (
-	models "ae/models"
+	 "ae/models"
 	"ae/utils"
 	"encoding/json"
 	"fmt"
