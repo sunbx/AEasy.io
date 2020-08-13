@@ -25,17 +25,17 @@ func (a *AeaMiddleBlock) TableName() string {
 }
 
 type AeaMiddleMicroBlock struct {
-	Id          int64  `orm:"column(id)" json:"id"`
-	BlockHash   string `orm:"column(block_hash)" json:"block_hash"`
-	BlockHeight int64  `orm:"column(block_height)" json:"block_height"`
-	Hash        string `orm:"column(hash)" json:"hash"`
-	RecipientId string `orm:"column(recipient_id)" json:"recipient_id"`
-	Signatures  string `orm:"column(signatures)" json:"signatures"`
-	Tx          string `orm:"column(tx)" json:"tx"`
-	Time        int64  `orm:"column(time)" json:"time"`
-	NameId      string `orm:"column(name_id)" json:"name_id"`
-	Name        string `orm:"column(name)" json:"name"`
-	AccountId   string `orm:"column(account_id)" json:"account_id"`
+	Id          int64                  `orm:"column(id)" json:"-"`
+	BlockHash   string                 `orm:"column(block_hash)" json:"block_hash"`
+	BlockHeight int64                  `orm:"column(block_height)" json:"block_height"`
+	Hash        string                 `orm:"column(hash)" json:"hash"`
+	RecipientId string                 `orm:"column(recipient_id)" json:"recipient_id"`
+	Signatures  string                 `orm:"column(signatures)" json:"signatures"`
+	Tx          string                 `orm:"column(tx)" json:"-"`
+	Time        int64                  `orm:"column(time)" json:"time"`
+	NameId      string                 `orm:"column(name_id)" json:"name_id"`
+	Name        string                 `orm:"column(name)" json:"name"`
+	AccountId   string                 `orm:"column(account_id)" json:"account_id"`
 }
 
 // TableName sets the insert table name for this struct type
@@ -165,10 +165,10 @@ func FindMicroBlockBlockList(address string, page int, t string) ([]AeaMiddleMic
 	var aeaMiddleMicroBlock []AeaMiddleMicroBlock
 	o := orm.NewOrm()
 	if t == "all" {
-		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = ? or sender_id=? or recipient_id = ?) order by time desc limit ?,?", address, address, address, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = ? or sender_id=? or recipient_id = ? or caller_id = ?) order by time desc limit ?,?", address, address, address,address, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
 		return aeaMiddleMicroBlock, err
 	} else {
-		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = '?' or sender_id='?' or recipient_id = '?') and type=? order by time desc limit ?,?", address, address, address, t, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = '?' or sender_id='?' or recipient_id = '?' or caller_id = ?) and type=? order by time desc limit ?,?", address, address, address,address, t, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
 		return aeaMiddleMicroBlock, err
 	}
 }

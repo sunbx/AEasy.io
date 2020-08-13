@@ -11,6 +11,7 @@ import (
 	"github.com/aeternity/aepp-sdk-go/naet"
 	"github.com/aeternity/aepp-sdk-go/swagguard/node/models"
 	"github.com/aeternity/aepp-sdk-go/transactions"
+	"github.com/shopspring/decimal"
 	"github.com/tyler-smith/go-bip39"
 	"io/ioutil"
 	"math/big"
@@ -112,8 +113,10 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 	//格式化账户的tokens
 	tokens, err := strconv.ParseFloat(accountNet.Balance.String(), 64)
 	if err == nil {
+
 		//判断账户余额是否大于要转账的余额
-		if tokens/1000000000000000000 > amount {
+		if tokens/1000000000000000000 >= amount {
+
 			//获取节点信息
 			node := naet.NewNode(NodeURL, false)
 			//生成ttl
@@ -123,6 +126,14 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 			ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
 			//生成转账tx
 			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
+
+			feeTokens, _ := strconv.ParseFloat(spendTx.Fee.String(), 64)
+
+			if (feeTokens/1000000000000000000+amount) >= tokens/1000000000000000000 {
+				decimalValue := decimal.NewFromFloat(feeTokens/1000000000000000000+amount)
+				return nil, errors.New("fee number insufficient , fee Need to be " +decimalValue.String())
+			}
+
 			if err != nil {
 				return nil, err
 			}
@@ -302,6 +313,10 @@ func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, er
 	if err != nil {
 		return nil, err
 	}
+	err = aeternity.WaitSynchronous(txReceipt, config.Client.WaitBlocks, client)
+	if err != nil {
+		return nil, err
+	}
 	return txReceipt, err
 }
 
@@ -361,7 +376,6 @@ func OracleRegister(account *account.Account, querySpace string, responseSpec st
 	return txReceipt.Hash, oraclePubKey
 }
 
-
 func OracleQuery(account *account.Account, oracleID string, querySpec string, queryFee float64) (hash string, opId string) {
 	client := naet.NewNode(NodeURL, false)
 	ctxAlice := aeternity.NewContext(account, client)
@@ -393,4 +407,3 @@ func OracleResponse(account *account.Account, oracleID string, queryID string, r
 	}
 	return txReceipt.Hash
 }
-

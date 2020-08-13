@@ -118,8 +118,6 @@ func init() {
 	//所有域名基础信息
 	beego.Router("/api/names/base", &controllers.NamesBaseController{})
 
-
-
 	//====================预言鸡====================
 
 	//注册预言鸡
@@ -141,7 +139,6 @@ func init() {
 
 	//文章数据抓取
 	beego.Router("/article/data", &controllers.ArticleDataController{})
-
-
+	beego.Router("/test", &controllers.TestController5{})
 
 }

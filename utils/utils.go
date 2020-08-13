@@ -94,7 +94,7 @@ func FormatTokens(tokens float64) string {
 		decimalValue := decimal.NewFromFloat(tokens)
 		decimalValue = decimalValue.Div(decimal.NewFromInt(1000000000000000000))
 		f, _ := decimalValue.Float64()
-		str := strconv.FormatFloat(f, 'f', 5, 64)
+		str := strconv.FormatFloat(math.Trunc(f/0.00001) * 0.00001, 'f', 5, 64)
 		return str
 	} else {
 		return "0"

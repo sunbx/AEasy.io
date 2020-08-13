@@ -5,10 +5,10 @@ import (
 	"ae/utils"
 	"bytes"
 	"encoding/json"
+	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
 	"github.com/beego/i18n"
 	"sync"
 	"time"
-	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
 )
 
 //获取区块高度
@@ -60,7 +60,6 @@ type OracleQueryDetailController struct {
 	BaseController
 }
 
-
 var lock sync.Mutex
 
 //返回区块高度
@@ -72,7 +71,7 @@ func (c *ApiBlocksTopController) Post() {
 
 		c.SuccessJson(data)
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId verify error"), JsonData{})
 	}
 }
 
@@ -81,13 +80,13 @@ func (c *ApiThHashController) Post() {
 	if c.verifyAppId() {
 		th := c.GetString("th")
 		if th == "" {
-			c.ErrorJson(-200,  i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
+			c.ErrorJson(-200, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 			return
 		}
 		t := models.ApiThHash(th)
 		c.SuccessJson(t)
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId verify error"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId verify error"), JsonData{})
 	}
 
 }
@@ -97,12 +96,12 @@ func (c *ApiTransferController) Post() {
 	data := c.GetString("data")
 	if c.verifySecret() {
 		if len(data) > 5000 || len(data) == 0 {
-			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"Len is greater than 50000 or len is equal to 0"), JsonData{})
+			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
 		account := c.GetSecretAeAccount()
 		if !models.Is1AE(account.Address) {
-			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(),"The balance should be greater than 1ae"), JsonData{})
+			c.ErrorJson(-500, i18n.Tr(c.getHeaderLanguage(), "The balance should be greater than 1ae"), JsonData{})
 			return
 		}
 		lock.Lock()
@@ -115,7 +114,7 @@ func (c *ApiTransferController) Post() {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -123,7 +122,7 @@ func (c *WalletTransferRecordController) Post() {
 	address := c.GetString("address")
 	page, _ := c.GetInt("page", 1)
 	if address == "" {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 		return
 	}
 	if c.verifyAppId() {
@@ -134,20 +133,40 @@ func (c *WalletTransferRecordController) Post() {
 			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
 		}
-		var txs []map[string]interface{}
+		var microBlocks []map[string]interface{}
 		for i := 0; i < len(blocksDb); i++ {
+			var model = map[string]interface{}{}
 			mapObj := make(map[string]interface{})
 
 			// body是后端的http返回结果
 			d := json.NewDecoder(bytes.NewReader([]byte(blocksDb[i].Tx)))
 			d.UseNumber()
 			err = d.Decode(&mapObj)
-			txs = append(txs, mapObj)
+			model["hash"] = blocksDb[i].Hash
+			model["block_hash"] = blocksDb[i].BlockHash
+			model["block_height"] = blocksDb[i].BlockHeight
+			model["time"] = blocksDb[i].Time
+			model["tx"] = mapObj
+
+			microBlocks = append(microBlocks, model)
 		}
-		c.SuccessJson(txs)
+		c.SuccessJson(microBlocks)
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
+}
+
+type AeaMiddleMicroBlockModel struct {
+	BlockHash   string                 `json:"block_hash"`
+	BlockHeight int64                  `json:"block_height"`
+	Hash        string                 `json:"hash"`
+	RecipientId string                 `json:"recipient_id"`
+	Signatures  string                 `json:"signatures"`
+	Time        int64                  `json:"time"`
+	NameId      string                 `json:"name_id"`
+	Name        string                 `json:"name"`
+	AccountId   string                 `json:"account_id"`
+	Tx          map[string]interface{} `json:"tx"`
 }
 
 func (c *WalletTransferController) Post() {
@@ -156,12 +175,12 @@ func (c *WalletTransferController) Post() {
 	signingKey := c.GetString("signingKey")
 	amount, _ := c.GetFloat("amount", 0.001)
 	if address == "" || signingKey == "" {
-		c.ErrorJson(-100,  i18n.Tr(c.getHeaderLanguage(),"parameter is nul"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 		return
 	}
 	if c.verifyAppId() {
 		if len(data) > 5000 {
-			c.ErrorJson(-100,  i18n.Tr(c.getHeaderLanguage(),"Len is greater than 50000 or len is equal to 0"), JsonData{})
+			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
 		account, err := models.SigningKeyHexStringAccount(signingKey)
@@ -169,16 +188,16 @@ func (c *WalletTransferController) Post() {
 			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
 		}
-		lock.Lock()
+		//lock.Lock()
 		tx, e := models.ApiSpend(account, address, amount, data)
-		lock.Unlock()
+		//lock.Unlock()
 		if e == nil {
 			c.SuccessJson(map[string]interface{}{"tx": tx})
 		} else {
 			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(),"appId or secret verify error"), JsonData{})
+		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
 }
 
@@ -192,7 +211,6 @@ func (c *ApiCreateAccountController) Post() {
 		"signing_key": accountCreate.SigningKeyToHexString(),
 	})
 }
-
 
 func (c *OracleRegisterController) Get() {
 	querySpace := c.GetString("querySpace")
@@ -279,8 +297,6 @@ func (c *OracleResponseController) Get() {
 	c.SuccessJson(map[string]interface{}{
 		"hash": hash,})
 }
-
-
 
 func (c *OracleListController) Get() {
 	oracleID := c.GetString("oracleID")
