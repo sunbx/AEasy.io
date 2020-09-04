@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	 "ae/models"
+	"ae/models"
 	"ae/utils"
 	"encoding/json"
 	"fmt"
-
 	"strconv"
 	"strings"
 )
@@ -61,12 +60,24 @@ func (c *TestController5) Get() {
 
 	account, _ := models.SigningKeyHexStringAccount("0b5a745770a17cb571e58eac04b0e536db1818dc9036216252aa749e848563fb56a1fc4ef38cbc5ddcb6b23307b0c535402e72a932c9087c8a22cabe6edd030f")
 
-	for i := 0; i <= 100; i++ {
+	for i := 0; i <= 1000; i++ {
 		createAccount, _ := models.CreateAccount()
-		tx, _ := models.ApiSpend(account, createAccount.Address, 0.0001, "")
-		println("tx->"+strconv.Itoa(i)+" ", tx.Hash,)
-	}
+		tx, err := models.ApiSpend(account, createAccount.Address, 0.0001, "")
+		if err!=nil{
+			println("tx->"+strconv.Itoa(i)+" ",err.Error())
+		}else{
 
+			signedTx := models.ApiThHash(tx.Hash)
+			//if signedTx.BlockHeight.String() !="none"{
+				println("tx->"+strconv.Itoa(i)+" ",signedTx.BlockHeight.String(),)
+			//}
+
+
+		}
+
+
+	}
+	c.TplName = "index.html"
 	//c.SuccessJson(map[string]interface{}{
 	//	"sing": account.SigningKeyToHexString(),})
 }

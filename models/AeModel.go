@@ -15,11 +15,15 @@ import (
 	"github.com/tyler-smith/go-bip39"
 	"io/ioutil"
 	"math/big"
+	"net/http"
 	"strconv"
+	"time"
 )
 
-//var nodeURL = "https://mainnet.aeternal.io"
-var NodeURL = "http://node.aechina.io:3013"
+var NodeURL = "https://mainnet.aeternal.io"
+//var NodeURL = "http://www.aestore.co:3013"
+//var NodeURL = "http://47.108.93.212:3013"
+//var NodeURL = "http://node.aechina.io:3013"
 var compilerURL = "https://compiler.aepps.com"
 
 //===================================================================================================================================================================================================
@@ -140,7 +144,9 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 			//广播转账信息
 			hash, err := aeternity.SignBroadcast(spendTx, account, node, "ae_mainnet")
 
-			err = aeternity.WaitSynchronous(hash, config.Client.WaitBlocks, node)
+			//err = aeternity.WaitSynchronous(hash, config.Client.WaitBlocks, node)
+
+			time.Sleep(4 * time.Second)
 			if err != nil {
 				return nil, err
 			}
@@ -252,11 +258,20 @@ func CallContractFunction(account *account.Account, ctID string, function string
 	if err != nil {
 		return nil, err
 	}
+
+	resp, err := http.Get(NodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
 	//获取合约调用信息
-	response := utils.Get(NodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
+	//response := utils.Get(NodeURL + "/v2/transactions/" + callReceipt.Hash + "/info")
 	//解析jSON
 	var callInfoResult CallInfoResult
-	err = json.Unmarshal([]byte(response), &callInfoResult)
+	err = json.Unmarshal(body, &callInfoResult)
 	if err != nil {
 		return nil, err
 	}
@@ -313,10 +328,7 @@ func UpdateAENS(account *account.Account, name string) (*aeternity.TxReceipt, er
 	if err != nil {
 		return nil, err
 	}
-	err = aeternity.WaitSynchronous(txReceipt, config.Client.WaitBlocks, client)
-	if err != nil {
-		return nil, err
-	}
+
 	return txReceipt, err
 }
 

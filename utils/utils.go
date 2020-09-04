@@ -100,6 +100,7 @@ func FormatTokens(tokens float64) string {
 		return "0"
 	}
 }
+
 func FormatTokensInt(tokens float64) int {
 	if tokens > 0 {
 		decimalValue := decimal.NewFromFloat(tokens)

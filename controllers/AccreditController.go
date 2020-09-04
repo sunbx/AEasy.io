@@ -45,7 +45,7 @@ func (c *AccreditInfoController) Post() {
 		if e != nil {
 			if e.Error() == "Error: Account not found" {
 				c.SuccessJson(map[string]string{
-					"balance": "0",
+					"balance": "0.00000",
 					"address": address,
 				})
 			} else {

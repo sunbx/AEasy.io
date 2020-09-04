@@ -29,7 +29,7 @@ func SynAeBlock() {
 	fmt.Println(aeHeight, "---", dbHeight)
 	for i := dbHeight; i <= int64(aeHeight); i++ {
 		//从 node 当前高度的区块
-		response := utils.Get("http://node.aechina.io:3013/v2/generations/height/" + strconv.Itoa(int(i)))
+		response := utils.Get(models.NodeURL+"/v2/generations/height/" + strconv.Itoa(int(i)))
 		//解析区块信息为实体
 		var block Block
 		err := json.Unmarshal([]byte(response), &block)
@@ -45,13 +45,13 @@ func SynAeBlock() {
 		if err != nil {
 			fmt.Println("aea_middle_block 主块数据库插入失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
 		}
-		fmt.Println("aea_middle_block 主块SUCESS => height->" + strconv.Itoa(int(i)))
+		fmt.Println("aea_middle_block 主块SUCESS => height->" + strconv.Itoa(int(i))," 微块数量->",len(block.MicroBlocks))
 
 		//获取微块 ID 机型循环
 		for j := 0; j < len(block.MicroBlocks); j++ {
 
 			//从 node 获取微块详细信息
-			response := utils.Get("http://node.aechina.io:3013/v2/micro-blocks/hash/" + block.MicroBlocks[j] + "/transactions")
+			response := utils.Get(models.NodeURL+"/v2/micro-blocks/hash/" + block.MicroBlocks[j] + "/transactions")
 
 			//解析微块信息
 			var block MicroBlock
@@ -64,7 +64,7 @@ func SynAeBlock() {
 			//解析微块的转账记录
 			for k := 0; k < len(block.Transactions); k++ {
 				//从note 获取微块信息,主要获取的是time
-				response := utils.Get("http://node.aechina.io:3013/v2/micro-blocks/hash/" + block.Transactions[k].BlockHash + "/header")
+				response := utils.Get(models.NodeURL+"/v2/micro-blocks/hash/" + block.Transactions[k].BlockHash + "/header")
 				var blockHeader BlocksHeader
 				err = json.Unmarshal([]byte(response), &blockHeader)
 				if err != nil {
@@ -226,7 +226,7 @@ func updateNameTimeBlock(i int64, mapObj map[string]interface{}) bool {
 
 func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) bool {
 	name := mapObj["name"].(string)
-	response := utils.Get("http://node.aechina.io:3013/v2/names/" + name)
+	response := utils.Get(models.NodeURL+"/v2/names/" + name)
 	var v2Name V2Name
 	err := json.Unmarshal([]byte(response), &v2Name)
 	if err != nil {

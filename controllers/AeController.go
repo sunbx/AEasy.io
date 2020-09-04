@@ -126,6 +126,17 @@ func (c *WalletTransferRecordController) Post() {
 		return
 	}
 	if c.verifyAppId() {
+		var microBlocks []map[string]interface{}
+		addresses, err := models.FindAddress(address)
+		if err != nil {
+			c.ErrorJson(-500, err.Error(), JsonData{})
+			return
+		}
+
+		if len(addresses) == 0 {
+			c.SuccessJson([]JsonData{})
+			return
+		}
 
 		blocksDb, err := models.FindMicroBlockBlockList(address, page, "all")
 
@@ -133,7 +144,7 @@ func (c *WalletTransferRecordController) Post() {
 			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
 		}
-		var microBlocks []map[string]interface{}
+
 		for i := 0; i < len(blocksDb); i++ {
 			var model = map[string]interface{}{}
 			mapObj := make(map[string]interface{})
@@ -149,6 +160,10 @@ func (c *WalletTransferRecordController) Post() {
 			model["tx"] = mapObj
 
 			microBlocks = append(microBlocks, model)
+		}
+		if len(microBlocks) == 0 {
+			c.SuccessJson([]JsonData{})
+			return
 		}
 		c.SuccessJson(microBlocks)
 	} else {

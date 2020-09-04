@@ -33,6 +33,14 @@ func FindAddressBalanceTopList() ([]AeaMiddleAddress, error) {
 	return aeaMiddleAddress, err
 }
 
+//获取 地址是否存在
+func FindAddress(address string) ([]AeaMiddleAddress, error) {
+	var aeaMiddleAddress []AeaMiddleAddress
+	o := orm.NewOrm()
+	_, err := o.Raw("SELECT * FROM `aea_middle_address` WHERE address = ?", address).QueryRows(&aeaMiddleAddress)
+	return aeaMiddleAddress, err
+}
+
 func UpdateAddressTime(address string, time int64) error {
 	o := orm.NewOrm()
 	_, err := o.QueryTable("aea_middle_address").Filter("address", address).Update(orm.Params{
