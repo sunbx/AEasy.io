@@ -73,7 +73,7 @@ func FindNameOver(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? order by over_height  limit ?,?", address, height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? and over_height>? order by over_height  limit ?,?", address, height,height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 

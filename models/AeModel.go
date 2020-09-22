@@ -17,14 +17,15 @@ import (
 	"math/big"
 	"net/http"
 	"strconv"
-	"time"
 )
 
-var NodeURL = "https://mainnet.aeternal.io"
+//var NodeURL = "https://mainnet.aeternal.io"
+var NodeURL = "http://localhost:3013"
 //var NodeURL = "http://www.aestore.co:3013"
 //var NodeURL = "http://47.108.93.212:3013"
 //var NodeURL = "http://node.aechina.io:3013"
-var compilerURL = "https://compiler.aepps.com"
+var compilerURL = "http://localhost:3080"
+//var compilerURL = "https://compiler.aepps.com"
 
 //===================================================================================================================================================================================================
 //|                           															AE-BASE																										 |
@@ -146,7 +147,6 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 
 			//err = aeternity.WaitSynchronous(hash, config.Client.WaitBlocks, node)
 
-			time.Sleep(4 * time.Second)
 			if err != nil {
 				return nil, err
 			}
@@ -413,7 +413,7 @@ func OracleResponse(account *account.Account, oracleID string, queryID string, r
 	if err != nil {
 		println(err)
 	}
-	txReceipt, err := ctxAlice.SignBroadcastWait(respond, config.Client.WaitBlocks)
+	txReceipt, err := ctxAlice.SignBroadcast(respond, config.Client.WaitBlocks)
 	if err != nil {
 		println(err)
 	}

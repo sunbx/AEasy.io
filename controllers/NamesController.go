@@ -501,6 +501,7 @@ func (c *NamesAddController) Post() {
 		var tokens float64
 		if e != nil {
 			tokens = 0
+			return
 		} else {
 			tokens, err = strconv.ParseFloat(accountNet.Balance.String(), 64)
 			if err != nil {
@@ -512,6 +513,7 @@ func (c *NamesAddController) Post() {
 		f, _ := decimalValue.Float64()
 
 		println("f", utils.FormatTokensInt(f))
+		println("tokens",tokens)
 		println("name", name)
 		println("tokens", utils.FormatTokensInt(tokens))
 		if utils.FormatTokensInt(tokens) <= utils.FormatTokensInt(f) {

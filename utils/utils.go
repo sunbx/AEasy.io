@@ -101,14 +101,14 @@ func FormatTokens(tokens float64) string {
 	}
 }
 
-func FormatTokensInt(tokens float64) int {
+func FormatTokensInt(tokens float64) float64 {
 	if tokens > 0 {
 		decimalValue := decimal.NewFromFloat(tokens)
 		decimalValue = decimalValue.Div(decimal.NewFromInt(1000000000000000000))
 		f, _ := decimalValue.Float64()
 		str := strconv.FormatFloat(f, 'f', 5, 64)
-		v2, _ := strconv.Atoi(str)
-		return v2
+		parseFloat, _ := strconv.ParseFloat(str, 64)
+		return parseFloat
 	} else {
 		return 0
 	}
@@ -268,4 +268,6 @@ func Get(url string) (response string) {
 	}
 	response = result.String()
 	return
+
 }
+

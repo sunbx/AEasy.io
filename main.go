@@ -45,7 +45,6 @@ func main() {
 
 	//设置session
 	beego.BConfig.WebConfig.Session.SessionOn = true
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 7776000
 
 	//设置缓冲目录
 	beego.BConfig.WebConfig.Session.SessionProvider = "file"
