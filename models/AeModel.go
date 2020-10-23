@@ -109,7 +109,6 @@ func ApiGetAccount(address string) (account *models.Account, e error) {
 
 //发起转账
 func ApiSpend(account *account.Account, recipientId string, amount float64, data string) (*aeternity.TxReceipt, error) {
-
 	//获取账户
 	accountNet, e := ApiGetAccount(account.Address)
 	if e != nil {
@@ -121,7 +120,6 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 
 		//判断账户余额是否大于要转账的余额
 		if tokens/1000000000000000000 >= amount {
-
 			//获取节点信息
 			node := naet.NewNode(NodeURL, false)
 			//生成ttl
@@ -131,7 +129,8 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 			ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
 			//生成转账tx
 			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
-
+			spendTxJson, _ := json.Marshal(spendTx)
+			println("spendTx->",string(spendTxJson))
 			feeTokens, _ := strconv.ParseFloat(spendTx.Fee.String(), 64)
 
 			if (feeTokens/1000000000000000000+amount) >= tokens/1000000000000000000 {

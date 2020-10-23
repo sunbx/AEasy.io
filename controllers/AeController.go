@@ -4,9 +4,14 @@ import (
 	"ae/models"
 	"ae/utils"
 	"bytes"
+	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
+	"github.com/aeternity/aepp-sdk-go/naet"
 	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
+	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/beego/i18n"
+	rlp "github.com/randomshinichi/rlpae"
 	"sync"
 	"time"
 )
@@ -186,10 +191,10 @@ type AeaMiddleMicroBlockModel struct {
 
 func (c *WalletTransferController) Post() {
 	data := c.GetString("data")
-	address := c.GetString("address")
-	signingKey := c.GetString("signingKey")
+	senderID := c.GetString("senderID")
+	recipientID := c.GetString("recipientID")
 	amount, _ := c.GetFloat("amount", 0.001)
-	if address == "" || signingKey == "" {
+	if senderID == "" || recipientID == "" {
 		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
 		return
 	}
@@ -198,19 +203,26 @@ func (c *WalletTransferController) Post() {
 			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
-		account, err := models.SigningKeyHexStringAccount(signingKey)
-		if err != nil {
-			c.ErrorJson(-500, err.Error(), JsonData{})
-			return
-		}
-		//lock.Lock()
-		tx, e := models.ApiSpend(account, address, amount, data)
-		//lock.Unlock()
-		if e == nil {
-			c.SuccessJson(map[string]interface{}{"tx": tx})
-		} else {
-			c.ErrorJson(-500, e.Error(), JsonData{})
-		}
+
+		node := naet.NewNode(models.NodeURL, false)
+		ttler := transactions.CreateTTLer(node)
+		noncer := transactions.CreateNoncer(node)
+		ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
+		spendTx, _ := transactions.NewSpendTx(senderID, recipientID, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
+
+
+		spendTxJson, _ := json.Marshal(spendTx)
+		uEnc := base64.URLEncoding.EncodeToString([]byte(spendTxJson))
+
+		txRaw, _ := rlp.EncodeToBytes(spendTx)
+		msg := append([]byte("ae_mainnet"), txRaw...)
+		//serializeTx, _ := transactions.SerializeTx(spendTx)
+		decodeMsg := hex.EncodeToString(msg)
+
+		c.SuccessJson(map[string]interface{}{
+			"tx":  uEnc,
+			"msg": decodeMsg})
+
 	} else {
 		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}

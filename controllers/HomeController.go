@@ -3,8 +3,14 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/aeternity/aepp-sdk-go/aeternity"
+	"github.com/aeternity/aepp-sdk-go/binary"
+	"github.com/aeternity/aepp-sdk-go/naet"
+	"github.com/aeternity/aepp-sdk-go/transactions"
+	rlp "github.com/randomshinichi/rlpae"
 	"strconv"
 	"strings"
 )
@@ -32,12 +38,12 @@ type AccreditBindController struct {
 	BaseController
 }
 
-
-
 type TestController5 struct {
 	BaseController
 }
-
+type TestController6 struct {
+	BaseController
+}
 
 type TokenController struct {
 	BaseController
@@ -58,28 +64,51 @@ type Balance struct {
 
 func (c *TestController5) Get() {
 
-	account, _ := models.SigningKeyHexStringAccount("0b5a745770a17cb571e58eac04b0e536db1818dc9036216252aa749e848563fb56a1fc4ef38cbc5ddcb6b23307b0c535402e72a932c9087c8a22cabe6edd030f")
+	node := naet.NewNode(models.NodeURL, false)
+	ttler := transactions.CreateTTLer(node)
+	noncer := transactions.CreateNoncer(node)
+	ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
+	spendTx, _ := transactions.NewSpendTx("ak_idkx6m3bgRr7WiKXuB8EBYBoRqVsaSc6qo4dsd23HKgj3qiCF", "ak_CNcf2oywqbgmVg3FfKdbHQJfB959wrVwqfzSpdWVKZnep7nj4", utils.GetRealAebalanceBigInt(0.0001), []byte(""), ttlNoncer)
+	txRaw, _ := rlp.EncodeToBytes(spendTx)
+	msg := append([]byte("ae_mainnet"), txRaw...)
+	serializeTx, _ := transactions.SerializeTx(spendTx)
+	decodeMsg := hex.EncodeToString(msg)
+	c.SuccessJson(map[string]interface{}{
+		"tx":  serializeTx,
+		"msg": decodeMsg})
 
-	for i := 0; i <= 1000; i++ {
-		createAccount, _ := models.CreateAccount()
-		tx, err := models.ApiSpend(account, createAccount.Address, 0.0001, "")
-		if err!=nil{
-			println("tx->"+strconv.Itoa(i)+" ",err.Error())
-		}else{
+}
+func (c *TestController6) Get() {
 
-			signedTx := models.ApiThHash(tx.Hash)
-			//if signedTx.BlockHeight.String() !="none"{
-				println("tx->"+strconv.Itoa(i)+" ",signedTx.BlockHeight.String(),)
-			//}
+	//获取节点信息
+	node := naet.NewNode(models.NodeURL, false)
 
+	signature, _ := hex.DecodeString("94f15f30cded724e0007f8d0bfd7552538ebea5275507618f59f48ee8ffa7ea6e2ee77796f7dde52feffa90b061bfe123e6ec4ddae97cad5c9a36fd8a76d970c")
 
-		}
+	deSerializeTx, _ := transactions.DeserializeTxStr("tx_+FwMAaEBXojXIiRilc7+wxQ9LPIhI0eqyWDQs+pKvgP7qGzg3C6hARnSsmChDXB7PhOaZw0EClNI9L/vtuPHGJFbExne3e6YhlrzEHpAAIYPWi5nYACDBRAeggK8gCGuTdA=")
 
+	var signedTx = transactions.NewSignedTx([][]byte{}, deSerializeTx)
+	signedTx.Signatures = append(signedTx.Signatures, signature)
+	var sgSignature = binary.Encode(binary.PrefixSignature, signature)
+	txHash, _ := transactions.Hash(signedTx)
 
+	signedTxStr, err := transactions.SerializeTx(signedTx)
+	if err != nil {
+		c.SuccessJson("signedTxStr")
+		return
 	}
-	c.TplName = "index.html"
-	//c.SuccessJson(map[string]interface{}{
-	//	"sing": account.SigningKeyToHexString(),})
+
+	err = node.PostTransaction(signedTxStr, txHash)
+	if err != nil {
+		c.SuccessJson(err.Error())
+		return
+	}
+
+
+	var txReceipt = aeternity.NewTxReceipt(deSerializeTx, signedTxStr, txHash, sgSignature)
+
+	c.SuccessJson(txReceipt)
+
 }
 
 func (c *AccreditController) Get() {

@@ -62,9 +62,6 @@ func init() {
 	//查询th_hash
 	beego.Router("/api/ae/th_hash", &controllers.ApiThHashController{})
 
-	////ae china文章列表
-	//beego.Router("/api/article/list", &controllers.ArticleListController{})
-
 	//钱包排行榜
 	beego.Router("/api/wallet/list", &controllers.WalletListController{})
 
@@ -73,12 +70,6 @@ func init() {
 
 	//====================API高级接口====================
 
-	//助记词登录
-	beego.Router("/api/user/login", &controllers.AccreditLoginController{})
-
-	//助记词注册
-	beego.Router("/api/user/register", &controllers.AccreditRegisterController{})
-
 	//转账
 	beego.Router("/api/wallet/transfer", &controllers.WalletTransferController{})
 
@@ -86,7 +77,10 @@ func init() {
 	beego.Router("/api/wallet/transfer/record", &controllers.WalletTransferRecordController{})
 
 	//获取account账户余额
-	beego.Router("/api/user/info", &controllers.AccreditInfoController{})
+	beego.Router("/api/tx/broadcast", &controllers.BroadcastTxController{})
+
+	//获取account账户余额
+	beego.Router("/api/user/info", &controllers.AccountInfoController{})
 
 	//拍卖中 - 即将结束拍卖
 	beego.Router("/api/names/auctions", &controllers.NamesAuctionsActiveController{})
@@ -103,42 +97,26 @@ func init() {
 	//我的 - 即将过期的域名
 	beego.Router("/api/names/my/over", &controllers.NamesMyOverController{})
 
-	//更新域名
-	beego.Router("/api/names/update", &controllers.NamesUpdateController{})
-
 	//域名详细信息
 	beego.Router("/api/names/info", &controllers.NamesInfoController{})
-
-	//域名注册
-	beego.Router("/api/names/add", &controllers.NamesAddController{})
-
-	//域名转移
-	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
 
 	//所有域名基础信息
 	beego.Router("/api/names/base", &controllers.NamesBaseController{})
 
-	//====================预言鸡====================
+	//更新域名
+	beego.Router("/api/names/update", &controllers.NamesUpdateController{})
 
-	//注册预言鸡
-	beego.Router("/api/oracle/register", &controllers.OracleRegisterController{})
+	//域名声明
+	beego.Router("/api/names/preclaim", &controllers.PreclaimController{})
 
-	//查询预言鸡
-	beego.Router("/api/oracle/query", &controllers.OracleQueryController{})
+	//域名注册
+	beego.Router("/api/names/claim", &controllers.NamesClaimController{})
 
-	//相应预言鸡
-	beego.Router("/api/oracle/response", &controllers.OracleResponseController{})
+	//域名转移
+	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
 
-	//查询预言鸡待回复,已回复列表
-	beego.Router("/api/oracle/list", &controllers.OracleListController{})
 
-	//查询预言鸡 回复详情
-	beego.Router("/api/oracle/detail", &controllers.OracleQueryDetailController{})
-
-	//====================定时任务====================
-
-	//文章数据抓取
-	beego.Router("/article/data", &controllers.ArticleDataController{})
 	beego.Router("/test", &controllers.TestController5{})
+	beego.Router("/test2", &controllers.TestController6{})
 
 }
