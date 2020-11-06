@@ -10,9 +10,9 @@ import (
 	"github.com/aeternity/aepp-sdk-go/binary"
 	"github.com/aeternity/aepp-sdk-go/naet"
 	"github.com/aeternity/aepp-sdk-go/transactions"
-	rlp "github.com/randomshinichi/rlpae"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type MainController struct {
@@ -64,18 +64,32 @@ type Balance struct {
 
 func (c *TestController5) Get() {
 
-	node := naet.NewNode(models.NodeURL, false)
-	ttler := transactions.CreateTTLer(node)
-	noncer := transactions.CreateNoncer(node)
-	ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
-	spendTx, _ := transactions.NewSpendTx("ak_idkx6m3bgRr7WiKXuB8EBYBoRqVsaSc6qo4dsd23HKgj3qiCF", "ak_CNcf2oywqbgmVg3FfKdbHQJfB959wrVwqfzSpdWVKZnep7nj4", utils.GetRealAebalanceBigInt(0.0001), []byte(""), ttlNoncer)
-	txRaw, _ := rlp.EncodeToBytes(spendTx)
-	msg := append([]byte("ae_mainnet"), txRaw...)
-	serializeTx, _ := transactions.SerializeTx(spendTx)
-	decodeMsg := hex.EncodeToString(msg)
-	c.SuccessJson(map[string]interface{}{
-		"tx":  serializeTx,
-		"msg": decodeMsg})
+	//node := naet.NewNode(models.NodeURL, false)
+	//ttler := transactions.CreateTTLer(node)
+	//noncer := transactions.CreateNoncer(node)
+	//ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
+	//spendTx, _ := transactions.NewSpendTx("ak_idkx6m3bgRr7WiKXuB8EBYBoRqVsaSc6qo4dsd23HKgj3qiCF", "ak_CNcf2oywqbgmVg3FfKdbHQJfB959wrVwqfzSpdWVKZnep7nj4", utils.GetRealAebalanceBigInt(0.0001), []byte(""), ttlNoncer)
+	//txRaw, _ := rlp.EncodeToBytes(spendTx)
+	//msg := append([]byte("ae_mainnet"), txRaw...)
+	//serializeTx, _ := transactions.SerializeTx(spendTx)
+	//decodeMsg := hex.EncodeToString(msg)
+	//c.SuccessJson(map[string]interface{}{
+	//	"tx":  serializeTx,
+	//	"msg": decodeMsg})
+	address := ""
+	for {
+		account, s := models.CreateAccount()
+		address = account.Address
+		content := address[ len(address)-6 : len(address)]
+		fmt.Println(address," - ",s," - ",content)
+		res := address+" - "+s+" - "+content
+		c.Ctx.WriteString(string(res))
+		if strings.ContainsAny(content, "box"){
+			break
+		}
+		time.Sleep(100)
+
+	}
 
 }
 func (c *TestController6) Get() {

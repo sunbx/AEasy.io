@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/aeternity/aepp-sdk-go/naet"
 	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
 	"github.com/aeternity/aepp-sdk-go/transactions"
@@ -203,6 +204,12 @@ func (c *WalletTransferController) Post() {
 			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
 			return
 		}
+
+		if data == ""{
+			data = "Box aepp"
+		}
+
+		fmt.Println(amount)
 
 		node := naet.NewNode(models.NodeURL, false)
 		ttler := transactions.CreateTTLer(node)

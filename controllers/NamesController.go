@@ -315,6 +315,7 @@ func (c *NamesUpdateController) Post() {
 		ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
 
 		pointerAddress, err := transactions.NewNamePointer("account_pubkey", address)
+		//pointerAddress2, err := transactions.NewNamePointer("test", "123")
 		if err != nil {
 			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
