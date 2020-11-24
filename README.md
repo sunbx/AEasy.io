@@ -1,6 +1,7 @@
 # AEasy.io
 
 > AEasy is Convenient Aeternity Framework . AEasy quickly, conveniently realize Aeternity aaepp development
+
 > Sponsors Æternity Crypto Foundation
 
 ![](https://github.com/sunbx/AEasy.io/blob/master/aeasy.jpeg?raw=true)
