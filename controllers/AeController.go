@@ -4,15 +4,9 @@ import (
 	"ae/models"
 	"ae/utils"
 	"bytes"
-	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"github.com/aeternity/aepp-sdk-go/naet"
 	aemodels "github.com/aeternity/aepp-sdk-go/swagguard/node/models"
-	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/beego/i18n"
-	rlp "github.com/randomshinichi/rlpae"
 	"sync"
 	"time"
 )
@@ -192,48 +186,80 @@ type AeaMiddleMicroBlockModel struct {
 
 func (c *WalletTransferController) Post() {
 	data := c.GetString("data")
-	senderID := c.GetString("senderID")
-	recipientID := c.GetString("recipientID")
-	amount, _ := c.GetFloat("amount", 0.001)
-	if senderID == "" || recipientID == "" {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+	address := c.GetString("address")
+	signingKey := c.GetString("signingKey")
+	amount, _ := c.GetFloat("amount", 0.0)
+	if address == "" || signingKey == "" || amount == 0 {
+		c.ErrorJson(-100, "params error", JsonData{})
 		return
 	}
 	if c.verifyAppId() {
 		if len(data) > 5000 {
-			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
+			c.ErrorJson(-100, "data len > 50000 ", JsonData{})
+			return
+		}
+		account, err := models.SigningKeyHexStringAccount(signingKey)
+		if err != nil {
+			c.ErrorJson(-500, err.Error(), JsonData{})
 			return
 		}
 
-		if data == ""{
-			data = "Box aepp"
+		tx, e := models.ApiSpend(account, address, amount, data)
+		time.Sleep(3 * time.Second)
+		if e == nil {
+			c.SuccessJson(map[string]interface{}{"tx": tx})
+		} else {
+			c.ErrorJson(-500, e.Error(), JsonData{})
 		}
-
-		fmt.Println(amount)
-
-		node := naet.NewNode(models.NodeURL, false)
-		ttler := transactions.CreateTTLer(node)
-		noncer := transactions.CreateNoncer(node)
-		ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
-		spendTx, _ := transactions.NewSpendTx(senderID, recipientID, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
-
-
-		spendTxJson, _ := json.Marshal(spendTx)
-		uEnc := base64.URLEncoding.EncodeToString([]byte(spendTxJson))
-
-		txRaw, _ := rlp.EncodeToBytes(spendTx)
-		msg := append([]byte("ae_mainnet"), txRaw...)
-		//serializeTx, _ := transactions.SerializeTx(spendTx)
-		decodeMsg := hex.EncodeToString(msg)
-
-		c.SuccessJson(map[string]interface{}{
-			"tx":  uEnc,
-			"msg": decodeMsg})
-
 	} else {
-		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
+		c.ErrorJson(-100, "appId or secret verify error", JsonData{})
 	}
 }
+
+//func (c *WalletTransferController) Post() {
+//	data := c.GetString("data")
+//	senderID := c.GetString("senderID")
+//	recipientID := c.GetString("recipientID")
+//	amount, _ := c.GetFloat("amount", 0.001)
+//	if senderID == "" || recipientID == "" {
+//		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "parameter is nul"), JsonData{})
+//		return
+//	}
+//	if c.verifyAppId() {
+//		if len(data) > 5000 {
+//			c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "Len is greater than 50000 or len is equal to 0"), JsonData{})
+//			return
+//		}
+//
+//		if data == ""{
+//			data = "Box aepp"
+//		}
+//
+//		fmt.Println(amount)
+//
+//		node := naet.NewNode(models.NodeURL, false)
+//		ttler := transactions.CreateTTLer(node)
+//		noncer := transactions.CreateNoncer(node)
+//		ttlNoncer := transactions.CreateTTLNoncer(ttler, noncer)
+//		spendTx, _ := transactions.NewSpendTx(senderID, recipientID, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
+//
+//
+//		spendTxJson, _ := json.Marshal(spendTx)
+//		uEnc := base64.URLEncoding.EncodeToString([]byte(spendTxJson))
+//
+//		txRaw, _ := rlp.EncodeToBytes(spendTx)
+//		msg := append([]byte("ae_mainnet"), txRaw...)
+//		//serializeTx, _ := transactions.SerializeTx(spendTx)
+//		decodeMsg := hex.EncodeToString(msg)
+//
+//		c.SuccessJson(map[string]interface{}{
+//			"tx":  uEnc,
+//			"msg": decodeMsg})
+//
+//	} else {
+//		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
+//	}
+//}
 
 //创建用户
 func (c *ApiCreateAccountController) Post() {
