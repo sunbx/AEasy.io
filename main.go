@@ -75,7 +75,6 @@ func task() {
 			fmt.Println("task end")
 			isTask = true
 		} else {
-			fmt.Println("task wait")
 		}
 
 		return nil

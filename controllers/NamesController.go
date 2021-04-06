@@ -42,6 +42,10 @@ type NamesUpdateController struct {
 	BaseController
 }
 
+type NamesSourceUpdateController struct {
+	BaseController
+}
+
 type NamesInfoController struct {
 	BaseController
 }
@@ -647,4 +651,47 @@ func (c *PreclaimController) Post() {
 	} else {
 		c.ErrorJson(-100, i18n.Tr(c.getHeaderLanguage(), "appId or secret verify error"), JsonData{})
 	}
+}
+
+func (c *NamesSourceUpdateController) Get() {
+	name := c.GetString("name")
+	response := utils.Get(models.NodeURL + "/v2/names/" + name)
+	var v2Name V2Name
+	err := json.Unmarshal([]byte(response), &v2Name)
+	if err != nil {
+		c.ErrorJson(-100, "/v2/names/", JsonData{})
+		return
+	}
+	if v2Name.Owner == ""{
+		names, err := models.FindNameName(name)
+		if err != nil {
+			c.ErrorJson(-100, err.Error(), JsonData{})
+			return
+		}
+		c.SuccessJson(map[string]interface{}{"name": names})
+		return
+	}
+	err = models.UpdateNameAndOwner(name, v2Name.Owner, v2Name.ID, int(v2Name.TTL))
+	if err != nil {
+		c.ErrorJson(-100, err.Error(), JsonData{})
+		return
+	}
+	names, err := models.FindNameName(name)
+	if err != nil {
+		c.ErrorJson(-100, err.Error(), JsonData{})
+		return
+	}
+	c.SuccessJson(map[string]interface{}{"name": names})
+}
+
+type V2Name struct {
+	ID       string     `json:"id"`
+	Owner    string     `json:"owner"`
+	Pointers []Pointers `json:"pointers"`
+	TTL      int64      `json:"ttl"`
+}
+
+type Pointers struct {
+	ID  string `json:"id"`
+	Key string `json:"key"`
 }

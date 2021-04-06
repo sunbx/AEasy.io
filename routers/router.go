@@ -106,6 +106,9 @@ func init() {
 	//更新域名
 	beego.Router("/api/names/update", &controllers.NamesUpdateController{})
 
+	//更新域名-重新获取链上数据进行更新
+	beego.Router("/api/names/source/update", &controllers.NamesSourceUpdateController{})
+
 	//域名声明
 	beego.Router("/api/names/preclaim", &controllers.PreclaimController{})
 

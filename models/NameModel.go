@@ -45,6 +45,17 @@ func FindNameIdIsNull(height int) ([]AeaMiddleNames, error) {
 	return aeaMiddleNames, err
 }
 
+//临时更新域名归属者
+func UpdateNameAndOwner(name string, owner string, nameId string, overHeight int) error {
+	o := orm.NewOrm()
+	_, err := o.QueryTable("aea_middle_names").Filter("name", name).Update(orm.Params{
+		"owner":       owner,
+		"name_id":     nameId,
+		"over_height": overHeight,
+	})
+	return err
+}
+
 //拍卖中 - 即将拍卖结束
 func FindNameAuctionOver(page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
@@ -73,7 +84,7 @@ func FindNameOver(page int, height int) ([]AeaMiddleNames, error) {
 func FindNameMyRegister(address string, page int, height int) ([]AeaMiddleNames, error) {
 	var aeaMiddleNames []AeaMiddleNames
 	o := orm.NewOrm()
-	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? and over_height>? order by over_height  limit ?,?", address, height,height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
+	_, err := o.Raw("SELECT * FROM `aea_middle_names` where owner=? and end_height<? and over_height>? order by over_height  limit ?,?", address, height, height, (page-1)*20, 20).QueryRows(&aeaMiddleNames)
 	return aeaMiddleNames, err
 }
 

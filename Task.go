@@ -3,12 +3,12 @@ package main
 import (
 	"ae/models"
 	"ae/utils"
-	"github.com/aeternity/aepp-sdk-go/transactions"
-	"github.com/shopspring/decimal"
-	"strings"
 	"encoding/json"
 	"fmt"
+	"github.com/aeternity/aepp-sdk-go/transactions"
+	"github.com/shopspring/decimal"
 	"strconv"
+	"strings"
 )
 
 func SynAeBlock() {
@@ -29,7 +29,7 @@ func SynAeBlock() {
 	fmt.Println(aeHeight, "---", dbHeight)
 	for i := dbHeight; i <= int64(aeHeight); i++ {
 		//从 node 当前高度的区块
-		response := utils.Get(models.NodeURL+"/v2/generations/height/" + strconv.Itoa(int(i)))
+		response := utils.Get(models.NodeURL + "/v2/generations/height/" + strconv.Itoa(int(i)))
 		//解析区块信息为实体
 		var block Block
 		err := json.Unmarshal([]byte(response), &block)
@@ -45,13 +45,13 @@ func SynAeBlock() {
 		if err != nil {
 			fmt.Println("aea_middle_block 主块数据库插入失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
 		}
-		fmt.Println("aea_middle_block 主块SUCESS => height->" + strconv.Itoa(int(i))," 微块数量->",len(block.MicroBlocks))
+		fmt.Println("aea_middle_block 主块SUCESS => height->"+strconv.Itoa(int(i)), " 微块数量->", len(block.MicroBlocks))
 
 		//获取微块 ID 机型循环
 		for j := 0; j < len(block.MicroBlocks); j++ {
 
 			//从 node 获取微块详细信息
-			response := utils.Get(models.NodeURL+"/v2/micro-blocks/hash/" + block.MicroBlocks[j] + "/transactions")
+			response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + block.MicroBlocks[j] + "/transactions")
 
 			//解析微块信息
 			var block MicroBlock
@@ -64,7 +64,7 @@ func SynAeBlock() {
 			//解析微块的转账记录
 			for k := 0; k < len(block.Transactions); k++ {
 				//从note 获取微块信息,主要获取的是time
-				response := utils.Get(models.NodeURL+"/v2/micro-blocks/hash/" + block.Transactions[k].BlockHash + "/header")
+				response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + block.Transactions[k].BlockHash + "/header")
 				var blockHeader BlocksHeader
 				err = json.Unmarshal([]byte(response), &blockHeader)
 				if err != nil {
@@ -145,7 +145,7 @@ func SynAeBlock() {
 					if err != nil {
 						fmt.Println("aea_middle_micro_block ERROR 微块转账记录插入失败=>height->", i, strconv.Itoa(j)+"TH =>"+strconv.Itoa(k)+"-->error:"+err.Error())
 					} else {
-						fmt.Println("aea_middle_micro_block 微块转账记录插入成功 =>height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
+						//fmt.Println("aea_middle_micro_block 微块转账记录插入成功 =>height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
 					}
 
 				}
@@ -226,7 +226,7 @@ func updateNameTimeBlock(i int64, mapObj map[string]interface{}) bool {
 
 func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) bool {
 	name := mapObj["name"].(string)
-	response := utils.Get(models.NodeURL+"/v2/names/" + name)
+	response := utils.Get(models.NodeURL + "/v2/names/" + name)
 	var v2Name V2Name
 	err := json.Unmarshal([]byte(response), &v2Name)
 	if err != nil {
@@ -288,7 +288,7 @@ func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) boo
 	fmt.Println("th->" + block.Transactions[k].Hash)
 	fmt.Println("len->" + strconv.Itoa(len(name)-6))
 	fmt.Println("name_id->" + v2Name.ID)
-	fmt.Println("owner->" + accountId)
+	fmt.Println("owner->" + v2Name.Owner)
 	fmt.Println("price->" + priceFormat)
 	fmt.Println("priceCurrent->" + priceFormat2)
 	//fmt.Println(priceFormat2)
@@ -304,7 +304,7 @@ func InsertNameBlock(mapObj map[string]interface{}, block MicroBlock, k int) boo
 	aeaMiddleName.Owner = accountId
 	aeaMiddleName.Price = priceFloat
 	aeaMiddleName.CurrentPrice = priceFloat2
-	models.InsertName(block.Transactions[k].BlockHeight,aeaMiddleName)
+	models.InsertName(block.Transactions[k].BlockHeight, aeaMiddleName)
 	fmt.Println("aea_middle_names AENS插入成功->", name)
 
 	return false
@@ -383,8 +383,6 @@ type Transactions struct {
 	Tx          interface{} `json:"tx"`
 }
 
-
-
 type Foo struct {
 	AccountID string `json:"account_id"`
 	Fee       int64  `json:"fee"`
@@ -398,6 +396,7 @@ type Foo struct {
 
 type V2Name struct {
 	ID       string     `json:"id"`
+	Owner    string     `json:"owner"`
 	Pointers []Pointers `json:"pointers"`
 	TTL      int64      `json:"ttl"`
 }
@@ -406,7 +405,6 @@ type Pointers struct {
 	ID  string `json:"id"`
 	Key string `json:"key"`
 }
-
 
 type BlocksHeader struct {
 	Hash        string `json:"hash"`
