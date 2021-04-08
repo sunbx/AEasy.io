@@ -23,7 +23,7 @@ import (
 //var NodeURL = "http://localhost:3013"
 //var NodeURL = "http://www.aestore.co:3013"
 //var NodeURL = "http://47.108.93.212:3013"
-var NodeURL = "https://node.aeasy.io"
+var NodeURL = "https://node.aechina.io"
 //var compilerURL = "http://localhost:3080"s
 var compilerURL = "https://compiler.aeasy.io"
 
