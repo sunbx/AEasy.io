@@ -1,0 +1,82 @@
+payable contract QuizGame =
+
+  record user =
+    { userAddress    : address, //押注的地址
+      number         : string,  //竞猜时输入的数量
+      amount         : int,     //竞猜的金额
+      createTime     : int }    //创建时间
+
+  record state =
+    { users          : map(int,user),        //当前押注的信息
+      usersInvitation: map(address,address), //当前押注的信息
+      amountSum      : int,                  //总金额
+      peopleCout     : int,                  //押注次数
+      userLenth      : int,                  //map length
+      lotteryNumber  : int}                  //开奖的次数
+
+  //初始化
+  entrypoint init() =
+    { users = {},
+      usersInvitation = {},
+      amountSum = 0,
+      peopleCout = 0,
+      userLenth = 0,
+      lotteryNumber = 0}
+
+  //获取最新投票的投票记录
+  stateful entrypoint getLotterys() =
+    if(Call.caller != Call.origin)
+      abort("This method should be called with the caller.")
+    else
+      state.users
+
+  //发放奖励
+  payable stateful entrypoint lottery(address : address) =
+    if(Call.caller != Call.origin)
+      abort("This method should be called with the caller.")
+    let lotteryNumber = getLotteryNumber() + 1
+    put( state{ users = {} , amountSum = 0 , peopleCout = 0, userLenth = 0 ,lotteryNumber = lotteryNumber})
+
+  //获取当局一共多少人参与
+  stateful entrypoint getUserLenth() : int =
+    state.userLenth
+
+  //获取当前奖金池余额
+  entrypoint getAmountSum() : int =
+    state.amountSum
+
+  //获取当局一共多少人参与
+  entrypoint getPeopleCout() : int =
+    state.peopleCout
+
+  //获取一共开奖了几次
+  entrypoint getLotteryNumber() : int =
+    state.lotteryNumber
+
+  //押注
+  payable stateful entrypoint quiz(number : string) =
+
+    //金额过小给出提示
+    if(Call.value < 1)
+      abort("The amount is less than 1.")
+
+    //转账
+    Chain.spend(Call.origin, Call.value)
+
+    //生成押注信息
+    let user = { userAddress = Call.caller, number = number, amount = Call.value, createTime = Chain.timestamp}
+
+    //记住map 长度
+    let index = getUserLenth() + 1
+
+    //计算一共的押注金额
+    let amountSum = getAmountSum() + Call.value
+
+    //计算押注数量
+    let peopleCout = getPeopleCout() + 1
+
+    //存储
+    put(state{ users[index - 1] = user , amountSum = amountSum , peopleCout = peopleCout, userLenth = index})
+
+
+

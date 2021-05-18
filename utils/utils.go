@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/shopspring/decimal"
 	"io"
+	"io/ioutil"
 	"math"
 	"math/big"
 	"math/rand"
@@ -271,3 +272,24 @@ func Get(url string) (response string) {
 
 }
 
+
+//发送POST请求
+//url:请求地址		data:POST请求提交的数据		contentType:请求体格式，如：application/json
+//content:请求返回的内容
+func PostBody(url string, data string, contentType string) (content string) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(data)))
+	req.Header.Add("content-type", contentType)
+	if err != nil {
+		return ""
+	}
+	defer req.Body.Close()
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, error := client.Do(req)
+	if error != nil {
+		return ""
+	}
+	defer resp.Body.Close()
+	result, _ := ioutil.ReadAll(resp.Body)
+	content = string(result)
+	return
+}

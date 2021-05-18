@@ -96,6 +96,14 @@ func FindNameMyRegisterIng(address string, page int, height int) ([]AeaMiddleNam
 	return aeaMiddleNames, err
 }
 
+//拍卖中 - 即将拍卖结束
+func GetNameAll() ([]AeaMiddleNames, error) {
+	var aeaMiddleNames []AeaMiddleNames
+	o := orm.NewOrm()
+	_, err := o.Raw("SELECT * FROM `aea_middle_names`").QueryRows(&aeaMiddleNames)
+	return aeaMiddleNames, err
+}
+
 type NameBase struct {
 	Count    int       `json:"count"`
 	Sum      int       `json:"sum"`

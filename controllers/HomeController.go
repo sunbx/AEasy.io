@@ -3,16 +3,14 @@ package controllers
 import (
 	"ae/models"
 	"ae/utils"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/aeternity/aepp-sdk-go/aeternity"
-	"github.com/aeternity/aepp-sdk-go/binary"
+	"github.com/aeternity/aepp-sdk-go/config"
 	"github.com/aeternity/aepp-sdk-go/naet"
-	"github.com/aeternity/aepp-sdk-go/transactions"
+	"github.com/shopspring/decimal"
+	"io/ioutil"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type MainController struct {
@@ -39,9 +37,6 @@ type AccreditBindController struct {
 }
 
 type TestController5 struct {
-	BaseController
-}
-type TestController6 struct {
 	BaseController
 }
 
@@ -76,54 +71,143 @@ func (c *TestController5) Get() {
 	//c.SuccessJson(map[string]interface{}{
 	//	"tx":  serializeTx,
 	//	"msg": decodeMsg})
-	address := ""
-	for {
-		account, s := models.CreateAccount()
-		address = account.Address
-		content := address[ len(address)-6 : len(address)]
-		fmt.Println(address," - ",s," - ",content)
-		res := address+" - "+s+" - "+content
-		c.Ctx.WriteString(string(res))
-		if strings.ContainsAny(content, "box"){
-			break
-		}
-		time.Sleep(100)
+	//address := ""
+	//for {
+	//	account, s := models.CreateAccount()
+	//	address = account.Address
+	//	content := address[ len(address)-6 : len(address)]
+	//	fmt.Println(address," - ",s," - ",content)
+	//	res := address+" - "+s+" - "+content
+	//	c.Ctx.WriteString(string(res))
+	//	if strings.ContainsAny(content, "baixin"){
+	//		break
+	//	}
+	//	time.Sleep(100)
+	//
+	//}
+	//从 node 获取微块详细信息
+	response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + "mh_G4kfZw6bjazQL3rNTkkZsdCD9k8s3pRRcvEUDdMePKXTtS4gd" + "/transactions")
 
-	}
-
-}
-func (c *TestController6) Get() {
-
-	//获取节点信息
-	node := naet.NewNode(models.NodeURL, false)
-
-	signature, _ := hex.DecodeString("94f15f30cded724e0007f8d0bfd7552538ebea5275507618f59f48ee8ffa7ea6e2ee77796f7dde52feffa90b061bfe123e6ec4ddae97cad5c9a36fd8a76d970c")
-
-	deSerializeTx, _ := transactions.DeserializeTxStr("tx_+FwMAaEBXojXIiRilc7+wxQ9LPIhI0eqyWDQs+pKvgP7qGzg3C6hARnSsmChDXB7PhOaZw0EClNI9L/vtuPHGJFbExne3e6YhlrzEHpAAIYPWi5nYACDBRAeggK8gCGuTdA=")
-
-	var signedTx = transactions.NewSignedTx([][]byte{}, deSerializeTx)
-	signedTx.Signatures = append(signedTx.Signatures, signature)
-	var sgSignature = binary.Encode(binary.PrefixSignature, signature)
-	txHash, _ := transactions.Hash(signedTx)
-
-	signedTxStr, err := transactions.SerializeTx(signedTx)
+	//解析微块信息
+	var block MicroBlock
+	err := json.Unmarshal([]byte(response), &block)
 	if err != nil {
-		c.SuccessJson("signedTxStr")
 		return
 	}
 
-	err = node.PostTransaction(signedTxStr, txHash)
+	mapObj, err := Obj2map(block.Transactions[1].Tx)
 	if err != nil {
-		c.SuccessJson(err.Error())
+		fmt.Println("Obj2map error", err.Error())
+		return
+	}
+	responseContractCode := utils.Get(models.NodeURL + "/v2/contracts/" + mapObj["contract_id"].(string) + "/code")
+
+	var code interface{}
+	err = json.Unmarshal([]byte(responseContractCode), &code)
+	if err != nil {
+		return
+	}
+	codeMap, err := Obj2map(code)
+	compile := naet.NewCompiler("https://compiler.aeasy.io", false)
+	decodedData, err := compile.DecodeCalldataBytecode(codeMap["bytecode"].(string), mapObj["call_data"].(string), config.Compiler.Backend)
+	decodedDataJson, _ := json.Marshal(decodedData)
+	var contractDecode ContractDecode
+	err = json.Unmarshal(decodedDataJson, &contractDecode)
+	if err != nil {
+		fmt.Println("Obj2map error", err.Error())
 		return
 	}
 
+	//只有aex9合约才记录
+	aex9Amount := 0.0
+	amount := 0.0
+	aex9ReceiveAddress := ""
 
-	var txReceipt = aeternity.NewTxReceipt(deSerializeTx, signedTxStr, txHash, sgSignature)
+	amountFloat, _ := mapObj["amount"].(float64)
+	amountFrom := decimal.NewFromFloat(amountFloat)
+	amount, _ = amountFrom.Float64()
+	feeFloat, _ := mapObj["fee"].(float64)
+	feeForm := decimal.NewFromFloat(feeFloat)
+	fee, _ := feeForm.Float64()
+	hash := block.Transactions[1].Hash
+	function := contractDecode.Function
+	decodeJson := string(decodedDataJson)
+	contractId := mapObj["contract_id"].(string)
+	callAddress := mapObj["caller_id"].(string)
+	tokens, _ := ioutil.ReadFile("conf/tokens.json")
 
-	c.SuccessJson(txReceipt)
+	if strings.Contains(string(tokens), contractId) && function == "transfer" {
+		argumentsAddress := decodedData.Arguments[0].(map[string]interface{})
+		argumentsAmount := decodedData.Arguments[1].(map[string]interface{})
+		aex9ReceiveAddress = argumentsAddress["value"].(string)
+		aex9AmountFloat, _ := argumentsAmount["value"].(json.Number).Float64()
+		aex9AmountFloatDecimal := decimal.NewFromFloat(aex9AmountFloat)
+		aex9Amount, _ = aex9AmountFloatDecimal.Float64()
+	}
+
+	responseContractInfo := utils.Get(models.NodeURL + "/v2/transactions/" + hash + "/info")
+	var info ResultInfo
+	err = json.Unmarshal([]byte(responseContractInfo), &info)
+	if err != nil {
+		fmt.Println("Obj2map error", err.Error())
+		return
+	}
+
+	returnType := info.CallInfo.ReturnType
+	_, err = models.InsertContract("mh_2URQJSVGn8o7tCAdDPGXRLNzG82t53pYJwbt5dC2J4aTwEdhTf", 1, hash, function, decodeJson, contractId, callAddress, aex9Amount, amount, fee, returnType, aex9ReceiveAddress, 0)
+	if err != nil {
+		fmt.Println("Obj2map error", err.Error())
+		return
+	}
+	c.SuccessJson(contractDecode)
 
 }
+
+func Obj2map(obj interface{}) (mapObj map[string]interface{}, err error) {
+	// 结构体转json
+	b, err := json.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(b, &result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type ResultInfo struct {
+	CallInfo struct {
+		CallerID    string        `json:"caller_id"`
+		CallerNonce int           `json:"caller_nonce"`
+		ContractID  string        `json:"contract_id"`
+		GasPrice    int           `json:"gas_price"`
+		GasUsed     int           `json:"gas_used"`
+		Height      int           `json:"height"`
+		Log         []interface{} `json:"log"`
+		ReturnType  string        `json:"return_type"`
+		ReturnValue string        `json:"return_value"`
+	} `json:"call_info"`
+}
+
+type ContractDecode struct {
+	Arguments []interface{} `json:"arguments"`
+	Function  string        `json:"function"`
+}
+
+type MicroBlock struct {
+	Transactions []Transactions `json:"transactions"`
+}
+
+type Transactions struct {
+	BlockHash   string      `json:"block_hash"`
+	BlockHeight int64       `json:"block_height"`
+	Hash        string      `json:"hash"`
+	Signatures  []string    `json:"signatures"`
+	Tx          interface{} `json:"tx"`
+}
+
 
 func (c *AccreditController) Get() {
 	if c.verifyAppId() {

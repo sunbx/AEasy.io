@@ -118,8 +118,8 @@ func init() {
 	//域名转移
 	beego.Router("/api/names/transfer", &controllers.NamesTransferController{})
 
+	beego.Router("/api/aex9/record", &controllers.AEX9RecordController{})
 
 	beego.Router("/test", &controllers.TestController5{})
-	beego.Router("/test2", &controllers.TestController6{})
 
 }

@@ -16,6 +16,10 @@ type ApiBlocksTopController struct {
 	BaseController
 }
 
+type AEX9RecordController struct {
+	BaseController
+}
+
 //查询ae th
 type ApiThHashController struct {
 	BaseController
@@ -399,4 +403,30 @@ func (c *OracleQueryDetailController) Get() {
 		return
 	}
 	c.SuccessJson(oracleQuery)
+}
+
+func (c *AEX9RecordController) Post() {
+	ctId := c.GetString("ct_id")
+	address := c.GetString("address")
+	page, _ := c.GetInt("page", 1)
+	if ctId == "" || address == "" {
+		c.ErrorJson(-500, "address or address nil", JsonData{})
+		return
+	}
+	contracts, e := models.GetAEX9RecordAll(page, address, ctId)
+	if e != nil {
+		c.ErrorJson(-500, e.Error(), JsonData{})
+		return
+	}
+	if contracts ==nil || len(contracts) ==0{
+		c.SuccessJson([]JsonData{})
+		return
+	}
+	for i := 0; i < len(contracts); i++ {
+		contracts[i].Aex9AmountString = utils.FormatTokensP(contracts[i].Aex9Amount, -1)
+		contracts[i].AmountString = utils.FormatTokensP(contracts[i].Amount, -1)
+		contracts[i].FeeString = utils.FormatTokensP(contracts[i].Fee, -1)
+	}
+	c.SuccessJson(contracts)
+
 }

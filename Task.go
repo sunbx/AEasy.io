@@ -5,8 +5,11 @@ import (
 	"ae/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/aeternity/aepp-sdk-go/config"
+	"github.com/aeternity/aepp-sdk-go/naet"
 	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/shopspring/decimal"
+	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -31,27 +34,27 @@ func SynAeBlock() {
 		//从 node 当前高度的区块
 		response := utils.Get(models.NodeURL + "/v2/generations/height/" + strconv.Itoa(int(i)))
 		//解析区块信息为实体
-		var block Block
-		err := json.Unmarshal([]byte(response), &block)
+		var mainBlock Block
+		err := json.Unmarshal([]byte(response), &mainBlock)
 		if err != nil {
 			fmt.Println("aea_middle_block 主块JSON转换失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
 		}
 
 		//微块信息转移成json
-		microJson, err := json.Marshal(block.MicroBlocks)
+		microJson, err := json.Marshal(mainBlock.MicroBlocks)
 
 		//插入区块高度库
-		_, err = models.InsertAeaMiddleBlock(block.KeyBlock.Beneficiary, block.KeyBlock.Hash, block.KeyBlock.Height, string(microJson), block.KeyBlock.Miner, block.KeyBlock.PrevHash, block.KeyBlock.PrevKeyHash, block.KeyBlock.StateHash, block.KeyBlock.Target, block.KeyBlock.Time, block.KeyBlock.Version)
+		_, err = models.InsertAeaMiddleBlock(mainBlock.KeyBlock.Beneficiary, mainBlock.KeyBlock.Hash, mainBlock.KeyBlock.Height, string(microJson), mainBlock.KeyBlock.Miner, mainBlock.KeyBlock.PrevHash, mainBlock.KeyBlock.PrevKeyHash, mainBlock.KeyBlock.StateHash, mainBlock.KeyBlock.Target, mainBlock.KeyBlock.Time, mainBlock.KeyBlock.Version)
 		if err != nil {
 			fmt.Println("aea_middle_block 主块数据库插入失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
 		}
-		fmt.Println("aea_middle_block 主块SUCESS => height->"+strconv.Itoa(int(i)), " 微块数量->", len(block.MicroBlocks))
+		fmt.Println("aea_middle_block Black success! height->"+strconv.Itoa(int(i)), "m mainBlock count ->", len(mainBlock.MicroBlocks))
 
 		//获取微块 ID 机型循环
-		for j := 0; j < len(block.MicroBlocks); j++ {
+		for j := 0; j < len(mainBlock.MicroBlocks); j++ {
 
 			//从 node 获取微块详细信息
-			response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + block.MicroBlocks[j] + "/transactions")
+			response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + mainBlock.MicroBlocks[j] + "/transactions")
 
 			//解析微块信息
 			var block MicroBlock
@@ -133,9 +136,13 @@ func SynAeBlock() {
 						continue
 					}
 					if updateNameOwnerBlock(mapObj) {
-						return
+						continue
 					}
 
+				}else if inter.(string) == "ContractCallTx" {
+					if insertContract(mapObj,block.Transactions[k].Hash,mainBlock.KeyBlock.Height,mainBlock.KeyBlock.Hash,mainBlock.KeyBlock.Time){
+						continue
+					}
 				}
 
 				if len(block.Transactions[k].Signatures) > 0 {
@@ -145,7 +152,7 @@ func SynAeBlock() {
 					if err != nil {
 						fmt.Println("aea_middle_micro_block ERROR 微块转账记录插入失败=>height->", i, strconv.Itoa(j)+"TH =>"+strconv.Itoa(k)+"-->error:"+err.Error())
 					} else {
-						//fmt.Println("aea_middle_micro_block 微块转账记录插入成功 =>height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
+						fmt.Println("aea_middle_micro_block m success height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
 					}
 
 				}
@@ -199,6 +206,82 @@ func updateNameIdBlock(height int) {
 	}
 }
 
+func insertContract(mapObj map[string]interface{}, hash string, height int64, mainHash string, time int64) bool {
+	responseContractCode := utils.Get(models.NodeURL + "/v2/contracts/" + mapObj["contract_id"].(string) + "/code")
+
+	var code interface{}
+	err := json.Unmarshal([]byte(responseContractCode), &code)
+
+	codeMap, err := Obj2map(code)
+	compile := naet.NewCompiler("https://compiler.aeasy.io", false)
+	decodedData, err := compile.DecodeCalldataBytecode(codeMap["bytecode"].(string), mapObj["call_data"].(string), config.Compiler.Backend)
+	decodedDataJson, _ := json.Marshal(decodedData)
+	var contractDecode ContractDecode
+	err = json.Unmarshal(decodedDataJson, &contractDecode)
+	if err != nil {
+		fmt.Println(err.Error())
+		return true
+	}
+
+	//只有aex9合约才记录
+	aex9Amount := 0.0
+	amount := 0.0
+	aex9ReceiveAddress := ""
+
+	amountFloat, _ := mapObj["amount"].(float64)
+	amountFrom := decimal.NewFromFloat(amountFloat)
+	amount, _ = amountFrom.Float64()
+	feeFloat, _ := mapObj["fee"].(float64)
+	feeForm := decimal.NewFromFloat(feeFloat)
+	fee, _ := feeForm.Float64()
+	function := contractDecode.Function
+	decodeJson := string(decodedDataJson)
+	contractId := mapObj["contract_id"].(string)
+	callAddress := mapObj["caller_id"].(string)
+	tokens, _ := ioutil.ReadFile("conf/tokens.json")
+
+	if strings.Contains(string(tokens),contractId) && function == "transfer"{
+		argumentsAddress := decodedData.Arguments[0].(map[string]interface{})
+		argumentsAmount := decodedData.Arguments[1].(map[string]interface{})
+		aex9ReceiveAddress = argumentsAddress["value"].(string)
+		aex9AmountFloat, _ := argumentsAmount["value"].(json.Number).Float64()
+		aex9AmountFloatDecimal := decimal.NewFromFloat(aex9AmountFloat)
+		aex9Amount, _ = aex9AmountFloatDecimal.Float64()
+	}
+
+	responseContractInfo := utils.Get(models.NodeURL + "/v2/transactions/" + hash + "/info")
+	var info ResultInfo
+	err = json.Unmarshal([]byte(responseContractInfo), &info)
+	if err != nil {
+		fmt.Println(err.Error())
+		return true
+	}
+
+	returnType := info.CallInfo.ReturnType
+	_, err = models.InsertContract(mainHash, height, hash, function, decodeJson, contractId, callAddress, aex9Amount, amount, fee, returnType, aex9ReceiveAddress, time)
+	return false
+}
+
+type ResultInfo struct {
+	CallInfo struct {
+		CallerID    string        `json:"caller_id"`
+		CallerNonce int           `json:"caller_nonce"`
+		ContractID  string        `json:"contract_id"`
+		GasPrice    int           `json:"gas_price"`
+		GasUsed     int           `json:"gas_used"`
+		Height      int           `json:"height"`
+		Log         []interface{} `json:"log"`
+		ReturnType  string        `json:"return_type"`
+		ReturnValue string        `json:"return_value"`
+	} `json:"call_info"`
+}
+
+type ContractDecode struct {
+	Arguments []interface{} `json:"arguments"`
+	Function  string        `json:"function"`
+}
+
+
 func updateNameOwnerBlock(mapObj map[string]interface{}) bool {
 	nameId := mapObj["name_id"].(string)
 	recipientId := mapObj["recipient_id"].(string)
@@ -220,7 +303,17 @@ func updateNameTimeBlock(i int64, mapObj map[string]interface{}) bool {
 		return true
 	}
 	fmt.Println("aea_middle_micro_block AENS更新成功->", nameId)
-
+	names, err := models.FindNameId(nameId)
+	var response = utils.Get(models.NodeURL + "/v2/names/" + names.Name)
+	var v2Name V2Name
+	err = json.Unmarshal([]byte(response), &v2Name)
+	if err != nil {
+		return false
+	}
+	if v2Name.Owner == ""{
+		return false
+	}
+	err = models.UpdateNameAndOwner(names.Name, v2Name.Owner, v2Name.ID, int(v2Name.TTL))
 	return false
 }
 
@@ -333,7 +426,8 @@ func InsertAddressBlock(senderId string, blockHeader BlocksHeader) bool {
 	address.Address = senderId
 	address.UpdateTime = blockHeader.Time
 	models.InsertAddress(address)
-	fmt.Println("aea_middle_address address数据库插入成功->", senderId, "->", address.Balance, "->", address.UpdateTime)
+	fmt.Println("aea_middle_address address db install success!->", senderId)
+	//fmt.Println("aea_middle_address address db install success!->", senderId, "->", address.Balance, "->", address.UpdateTime)
 	return false
 }
 

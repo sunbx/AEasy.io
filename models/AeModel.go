@@ -2,11 +2,13 @@ package models
 
 import (
 	"ae/utils"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/aeternity/aepp-sdk-go/account"
 	"github.com/aeternity/aepp-sdk-go/aeternity"
+	"github.com/aeternity/aepp-sdk-go/binary"
 	"github.com/aeternity/aepp-sdk-go/config"
 	"github.com/aeternity/aepp-sdk-go/naet"
 	"github.com/aeternity/aepp-sdk-go/swagguard/node/models"
@@ -24,8 +26,10 @@ import (
 //var NodeURL = "http://www.aestore.co:3013"
 //var NodeURL = "http://47.108.93.212:3013"
 var NodeURL = "https://node.aechina.io"
+
 //var compilerURL = "http://localhost:3080"s
 var compilerURL = "https://compiler.aeasy.io"
+var NodeUrlDebug = "https://debug.aeasy.io"
 
 //===================================================================================================================================================================================================
 //|                           															AE-BASE																										 |
@@ -130,12 +134,12 @@ func ApiSpend(account *account.Account, recipientId string, amount float64, data
 			//生成转账tx
 			spendTx, err := transactions.NewSpendTx(account.Address, recipientId, utils.GetRealAebalanceBigInt(amount), []byte(data), ttlNoncer)
 			spendTxJson, _ := json.Marshal(spendTx)
-			println("spendTx->",string(spendTxJson))
+			println("spendTx->", string(spendTxJson))
 			feeTokens, _ := strconv.ParseFloat(spendTx.Fee.String(), 64)
 
-			if (feeTokens/1000000000000000000+amount) >= tokens/1000000000000000000 {
-				decimalValue := decimal.NewFromFloat(feeTokens/1000000000000000000+amount)
-				return nil, errors.New("fee number insufficient , fee Need to be " +decimalValue.String())
+			if (feeTokens/1000000000000000000 + amount) >= tokens/1000000000000000000 {
+				decimalValue := decimal.NewFromFloat(feeTokens/1000000000000000000 + amount)
+				return nil, errors.New("fee number insufficient , fee Need to be " + decimalValue.String())
 			}
 
 			if err != nil {
@@ -164,20 +168,6 @@ func ApiThHash(th string) (tx *models.GenericSignedTx) {
 	t, _ := client.GetTransactionByHash(th)
 	return t
 }
-
-////获取Sophia vm 当前编译版本
-//func ApiVersion() (v string) {
-//	c := naet.NewCompiler("https://compiler.aepps.com", false)
-//	v, _ = c.APIVersion()
-//	return v
-//}
-//
-////获取Sophia vm 当前编译版本
-//func CompilerVersion() (v string) {
-//	c := naet.NewCompiler("https://compiler.aepps.com", false)
-//	v, _ = c.APIVersion()
-//	return v
-//}
 
 //===================================================================================================================================================================================================
 //|                           															AEX-9																										 |
@@ -236,6 +226,48 @@ func Is1AE(address string) bool {
 		return false
 	}
 	return true
+}
+
+//获取合约数据try-run
+func CallStaticContractFunction(address string, ctID string, function string, args []string) (s interface{}, functionEncode string, e error) {
+
+	node := naet.NewNode(NodeURL, false)
+	compile := naet.NewCompiler(compilerURL, false)
+	var source []byte
+	source, _ = ioutil.ReadFile("contract/AEX9Contract.aes")
+	var callData = ""
+
+	data, err := compile.EncodeCalldata(string(source), function, args, config.CompilerBackendFATE)
+	if err != nil {
+		return nil, function, err
+	}
+	callData = data
+
+	callTx, err := transactions.NewContractCallTx(address, ctID, big.NewInt(0), config.Client.Contracts.GasLimit, config.Client.GasPrice, config.Client.Contracts.ABIVersion, callData, transactions.NewTTLNoncer(node))
+	if err != nil {
+		return nil, function, err
+	}
+
+	w := &bytes.Buffer{}
+	err = callTx.EncodeRLP(w)
+	if err != nil {
+		println(callTx.CallData)
+		return nil, function, err
+	}
+
+	txStr := binary.Encode(binary.PrefixTransaction, w.Bytes())
+
+	body := "{\"accounts\":[{\"pub_key\":\"" + address + "\",\"amount\":100000000000000000000000000000000000}],\"txs\":[{\"tx\":\"" + txStr + "\"}]}"
+
+	response := utils.PostBody(NodeUrlDebug+"/v2/debug/transactions/dry-run", body, "application/json")
+	var tryRun TryRun
+	err = json.Unmarshal([]byte(response), &tryRun)
+	if err != nil {
+		return nil, function, err
+	}
+
+	decodeResult, err := compile.DecodeCallResult(tryRun.Results[0].CallObj.ReturnType, tryRun.Results[0].CallObj.ReturnValue, function, string(source), config.Compiler.Backend)
+	return decodeResult, function, err
 }
 
 //调用aex9 合约方法
@@ -417,4 +449,24 @@ func OracleResponse(account *account.Account, oracleID string, queryID string, r
 		println(err)
 	}
 	return txReceipt.Hash
+}
+
+type TryRun struct {
+	Results []Results `json:"results"`
+}
+type CallObj struct {
+	CallerID    string        `json:"caller_id"`
+	CallerNonce int           `json:"caller_nonce"`
+	ContractID  string        `json:"contract_id"`
+	GasPrice    int           `json:"gas_price"`
+	GasUsed     int           `json:"gas_used"`
+	Height      int           `json:"height"`
+	Log         []interface{} `json:"log"`
+	ReturnType  string        `json:"return_type"`
+	ReturnValue string        `json:"return_value"`
+}
+type Results struct {
+	CallObj CallObj `json:"call_obj"`
+	Result  string  `json:"result"`
+	Type    string  `json:"type"`
 }
