@@ -5,10 +5,6 @@ import (
 	"ae/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/aeternity/aepp-sdk-go/config"
-	"github.com/aeternity/aepp-sdk-go/naet"
-	"github.com/shopspring/decimal"
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
@@ -58,7 +54,7 @@ type Balance struct {
 }
 
 func (c *TestController5) Get() {
-
+	//account, _ := models.SigningKeyHexStringAccount("d03826de64d010f683b4aee0ac67e074e01725bb6f94c6d26942ab5a5671886a5e88d722246295cefec3143d2cf2212347aac960d0b3ea4abe03fba86ce0dc2e")
 	//node := naet.NewNode(models.NodeURL, false)
 	//ttler := transactions.CreateTTLer(node)
 	//noncer := transactions.CreateNoncer(node)
@@ -85,81 +81,15 @@ func (c *TestController5) Get() {
 	//	time.Sleep(100)
 	//
 	//}
-	//从 node 获取微块详细信息
-	response := utils.Get(models.NodeURL + "/v2/micro-blocks/hash/" + "mh_G4kfZw6bjazQL3rNTkkZsdCD9k8s3pRRcvEUDdMePKXTtS4gd" + "/transactions")
 
-	//解析微块信息
-	var block MicroBlock
-	err := json.Unmarshal([]byte(response), &block)
-	if err != nil {
-		return
-	}
+	//c.SuccessJson(spendTx)
+	//for i := 0; i < 3; i++ {
+	//	spendTx.Nonce = uint64(spendTx.Nonce+uint64(i))
+	//	hash, _ := aeternity.SignBroadcast(spendTx, account, node, "ae_mainnet")
+	//	fmt.Println(hash)
+	//}
 
-	mapObj, err := Obj2map(block.Transactions[1].Tx)
-	if err != nil {
-		fmt.Println("Obj2map error", err.Error())
-		return
-	}
-	responseContractCode := utils.Get(models.NodeURL + "/v2/contracts/" + mapObj["contract_id"].(string) + "/code")
-
-	var code interface{}
-	err = json.Unmarshal([]byte(responseContractCode), &code)
-	if err != nil {
-		return
-	}
-	codeMap, err := Obj2map(code)
-	compile := naet.NewCompiler("https://compiler.aeasy.io", false)
-	decodedData, err := compile.DecodeCalldataBytecode(codeMap["bytecode"].(string), mapObj["call_data"].(string), config.Compiler.Backend)
-	decodedDataJson, _ := json.Marshal(decodedData)
-	var contractDecode ContractDecode
-	err = json.Unmarshal(decodedDataJson, &contractDecode)
-	if err != nil {
-		fmt.Println("Obj2map error", err.Error())
-		return
-	}
-
-	//只有aex9合约才记录
-	aex9Amount := 0.0
-	amount := 0.0
-	aex9ReceiveAddress := ""
-
-	amountFloat, _ := mapObj["amount"].(float64)
-	amountFrom := decimal.NewFromFloat(amountFloat)
-	amount, _ = amountFrom.Float64()
-	feeFloat, _ := mapObj["fee"].(float64)
-	feeForm := decimal.NewFromFloat(feeFloat)
-	fee, _ := feeForm.Float64()
-	hash := block.Transactions[1].Hash
-	function := contractDecode.Function
-	decodeJson := string(decodedDataJson)
-	contractId := mapObj["contract_id"].(string)
-	callAddress := mapObj["caller_id"].(string)
-	tokens, _ := ioutil.ReadFile("conf/tokens.json")
-
-	if strings.Contains(string(tokens), contractId) && function == "transfer" {
-		argumentsAddress := decodedData.Arguments[0].(map[string]interface{})
-		argumentsAmount := decodedData.Arguments[1].(map[string]interface{})
-		aex9ReceiveAddress = argumentsAddress["value"].(string)
-		aex9AmountFloat, _ := argumentsAmount["value"].(json.Number).Float64()
-		aex9AmountFloatDecimal := decimal.NewFromFloat(aex9AmountFloat)
-		aex9Amount, _ = aex9AmountFloatDecimal.Float64()
-	}
-
-	responseContractInfo := utils.Get(models.NodeURL + "/v2/transactions/" + hash + "/info")
-	var info ResultInfo
-	err = json.Unmarshal([]byte(responseContractInfo), &info)
-	if err != nil {
-		fmt.Println("Obj2map error", err.Error())
-		return
-	}
-
-	returnType := info.CallInfo.ReturnType
-	_, err = models.InsertContract("mh_2URQJSVGn8o7tCAdDPGXRLNzG82t53pYJwbt5dC2J4aTwEdhTf", 1, hash, function, decodeJson, contractId, callAddress, aex9Amount, amount, fee, returnType, aex9ReceiveAddress, 0)
-	if err != nil {
-		fmt.Println("Obj2map error", err.Error())
-		return
-	}
-	c.SuccessJson(contractDecode)
+	//c.SuccessJson(hash)
 
 }
 

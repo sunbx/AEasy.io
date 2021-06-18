@@ -188,7 +188,7 @@ func CompileContractInit(account *account.Account, name string, number string) (
 	//获取aex9 代币合约
 	expected, _ := ioutil.ReadFile("contract/fungible-token.aes")
 	//部署aex9 合约代买
-	ctID, _, err := contract.Deploy(string(expected), "init", []string{"\"" + name + "\"", "18", "\"" + name + "\"", "Some(" + number + ")"}, config.CompilerBackendFATE)
+	ctID, _, err := contract.Deploy(string(expected), "init", []string{"\"" + name + "\"", "18", "\"" + name + "\"", "Some(" + number + ")"})
 	if err != nil {
 		return "", err
 	}
@@ -237,7 +237,7 @@ func CallStaticContractFunction(address string, ctID string, function string, ar
 	source, _ = ioutil.ReadFile("contract/AEX9Contract.aes")
 	var callData = ""
 
-	data, err := compile.EncodeCalldata(string(source), function, args, config.CompilerBackendFATE)
+	data, err := compile.EncodeCalldata(string(source), function, args)
 	if err != nil {
 		return nil, function, err
 	}
@@ -266,7 +266,7 @@ func CallStaticContractFunction(address string, ctID string, function string, ar
 		return nil, function, err
 	}
 
-	decodeResult, err := compile.DecodeCallResult(tryRun.Results[0].CallObj.ReturnType, tryRun.Results[0].CallObj.ReturnValue, function, string(source), config.Compiler.Backend)
+	decodeResult, err := compile.DecodeCallResult(tryRun.Results[0].CallObj.ReturnType, tryRun.Results[0].CallObj.ReturnValue, function, string(source))
 	return decodeResult, function, err
 }
 
@@ -285,7 +285,7 @@ func CallContractFunction(account *account.Account, ctID string, function string
 	//获取合约代码
 	expected, _ := ioutil.ReadFile("contract/fungible-token.aes")
 	//调用合约代码
-	callReceipt, err := contract.Call(ctID, string(expected), function, args, config.CompilerBackendFATE)
+	callReceipt, err := contract.Call(ctID, string(expected), function, args)
 	if err != nil {
 		return nil, err
 	}
@@ -307,7 +307,7 @@ func CallContractFunction(account *account.Account, ctID string, function string
 		return nil, err
 	}
 	//解析结果
-	decodeResult, err := c.DecodeCallResult(callInfoResult.CallInfo.ReturnType, callInfoResult.CallInfo.ReturnValue, function, string(expected), config.Compiler.Backend)
+	decodeResult, err := c.DecodeCallResult(callInfoResult.CallInfo.ReturnType, callInfoResult.CallInfo.ReturnValue, function, string(expected))
 	if err != nil {
 		return nil, err
 	}

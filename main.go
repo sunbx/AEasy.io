@@ -91,7 +91,7 @@ var isTaskNames = true
 
 //定时任务, 从节点抓取数据
 func taskNamesSyn() {
-	tk := toolbox.NewTask("AEASY_NAMES_SYN", "0 */10 * * * *", func() error {
+	tk := toolbox.NewTask("AEASY_NAMES_SYN", "0 */60 * * * *", func() error {
 		if isTaskNames {
 			isTaskNames = false
 
@@ -113,7 +113,7 @@ func taskNamesSyn() {
 					}
 					err = models.UpdateNameAndOwner(names.Name, v2Name.Owner, v2Name.ID, int(v2Name.TTL))
 					if err == nil{
-						fmt.Println("name update success "+names.Name)
+						//fmt.Println("name update success "+names.Name)
 					}else{
 						fmt.Errorf("name update error "+names.Name)
 					}

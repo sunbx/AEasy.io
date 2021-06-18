@@ -5,7 +5,6 @@ import (
 	"ae/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/aeternity/aepp-sdk-go/config"
 	"github.com/aeternity/aepp-sdk-go/naet"
 	"github.com/aeternity/aepp-sdk-go/transactions"
 	"github.com/shopspring/decimal"
@@ -37,6 +36,7 @@ func SynAeBlock() {
 		var mainBlock Block
 		err := json.Unmarshal([]byte(response), &mainBlock)
 		if err != nil {
+			fmt.Println(response)
 			fmt.Println("aea_middle_block 主块JSON转换失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
 		}
 
@@ -46,7 +46,7 @@ func SynAeBlock() {
 		//插入区块高度库
 		_, err = models.InsertAeaMiddleBlock(mainBlock.KeyBlock.Beneficiary, mainBlock.KeyBlock.Hash, mainBlock.KeyBlock.Height, string(microJson), mainBlock.KeyBlock.Miner, mainBlock.KeyBlock.PrevHash, mainBlock.KeyBlock.PrevKeyHash, mainBlock.KeyBlock.StateHash, mainBlock.KeyBlock.Target, mainBlock.KeyBlock.Time, mainBlock.KeyBlock.Version)
 		if err != nil {
-			fmt.Println("aea_middle_block 主块数据库插入失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error())
+			fmt.Println("aea_middle_block 主块数据库插入失败 => height->" + strconv.Itoa(int(i)) + " " + err.Error()+ " "+string(mainBlock.KeyBlock.Height))
 		}
 		fmt.Println("aea_middle_block Black success! height->"+strconv.Itoa(int(i)), "m mainBlock count ->", len(mainBlock.MicroBlocks))
 
@@ -152,7 +152,7 @@ func SynAeBlock() {
 					if err != nil {
 						fmt.Println("aea_middle_micro_block ERROR 微块转账记录插入失败=>height->", i, strconv.Itoa(j)+"TH =>"+strconv.Itoa(k)+"-->error:"+err.Error())
 					} else {
-						fmt.Println("aea_middle_micro_block m success height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
+						//fmt.Println("aea_middle_micro_block m success height->", i, strconv.Itoa(int(i))+" "+strconv.Itoa(j)+"TH =>"+strconv.Itoa(k))
 					}
 
 				}
@@ -213,8 +213,14 @@ func insertContract(mapObj map[string]interface{}, hash string, height int64, ma
 	err := json.Unmarshal([]byte(responseContractCode), &code)
 
 	codeMap, err := Obj2map(code)
+
+	if codeMap == nil || codeMap["bytecode"].(string) == "" || mapObj["call_data"].(string) == ""{
+		return true
+	}
+
+
 	compile := naet.NewCompiler("https://compiler.aeasy.io", false)
-	decodedData, err := compile.DecodeCalldataBytecode(codeMap["bytecode"].(string), mapObj["call_data"].(string), config.Compiler.Backend)
+	decodedData, err := compile.DecodeCalldataBytecode(codeMap["bytecode"].(string), mapObj["call_data"].(string))
 	decodedDataJson, _ := json.Marshal(decodedData)
 	var contractDecode ContractDecode
 	err = json.Unmarshal(decodedDataJson, &contractDecode)
@@ -426,7 +432,7 @@ func InsertAddressBlock(senderId string, blockHeader BlocksHeader) bool {
 	address.Address = senderId
 	address.UpdateTime = blockHeader.Time
 	models.InsertAddress(address)
-	fmt.Println("aea_middle_address address db install success!->", senderId)
+	//fmt.Println("aea_middle_address address db install success!->", senderId)
 	//fmt.Println("aea_middle_address address db install success!->", senderId, "->", address.Balance, "->", address.UpdateTime)
 	return false
 }

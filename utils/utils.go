@@ -251,11 +251,13 @@ func IsMobile(userAgent string) bool {
 //response:请求返回的内容
 func Get(url string) (response string) {
 	client := http.Client{Timeout: 600 * time.Second}
-	resp, error := client.Get(url)
-	defer resp.Body.Close()
-	if error != nil {
-		panic(error)
+	resp, e := client.Get(url)
+	if e != nil {
+		//panic(e)
+		return
 	}
+	defer resp.Body.Close()
+
 	var buffer [512]byte
 	result := bytes.NewBuffer(nil)
 	for {
@@ -264,7 +266,7 @@ func Get(url string) (response string) {
 		if err != nil && err == io.EOF {
 			break
 		} else if err != nil {
-			panic(err)
+			//panic(err)
 		}
 	}
 	response = result.String()

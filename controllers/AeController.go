@@ -211,7 +211,7 @@ func (c *WalletTransferController) Post() {
 		}
 
 		tx, e := models.ApiSpend(account, address, amount, data)
-		time.Sleep(3 * time.Second)
+		//time.Sleep(3 * time.Second)
 		if e == nil {
 			c.SuccessJson(map[string]interface{}{"tx": tx})
 		} else {
