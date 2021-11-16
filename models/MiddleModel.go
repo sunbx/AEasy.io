@@ -165,10 +165,10 @@ func FindMicroBlockBlockList(address string, page int, t string) ([]AeaMiddleMic
 	var aeaMiddleMicroBlock []AeaMiddleMicroBlock
 	o := orm.NewOrm()
 	if t == "all" {
-		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = ? or sender_id=? or recipient_id = ? or caller_id = ?) order by time desc limit ?,?", address, address, address,address, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = ? or sender_id=? or recipient_id = ? or caller_id = ?) order by time desc limit ?,?", address, address, address,address, (page-1)*20, 20).QueryRows(&aeaMiddleMicroBlock)
 		return aeaMiddleMicroBlock, err
 	} else {
-		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = '?' or sender_id='?' or recipient_id = '?' or caller_id = ?) and type=? order by time desc limit ?,?", address, address, address,address, t, (page-1)*20, page*20).QueryRows(&aeaMiddleMicroBlock)
+		_, err := o.Raw("select * from aea_middle_micro_block where (account_id = '?' or sender_id='?' or recipient_id = '?' or caller_id = ?) and type=? order by time desc limit ?,?", address, address, address,address, t, (page-1)*20, 20).QueryRows(&aeaMiddleMicroBlock)
 		return aeaMiddleMicroBlock, err
 	}
 }

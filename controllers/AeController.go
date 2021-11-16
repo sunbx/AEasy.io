@@ -158,7 +158,7 @@ func (c *WalletTransferRecordController) Post() {
 			d.UseNumber()
 			err = d.Decode(&mapObj)
 
-			mapObj["payload"] = ""
+			//mapObj["payload"] =  blocksDb[i].Tx
 			model["hash"] = blocksDb[i].Hash
 			model["block_hash"] = blocksDb[i].BlockHash
 			model["block_height"] = blocksDb[i].BlockHeight

@@ -31,7 +31,7 @@ func (c *AccountInfoController) Post() {
 		}
 		accountNet, e := models.ApiGetAccount(address)
 		if e != nil {
-			if e.Error() == "Error: Account not found" {
+			if e.Error() == "Account not found" {
 				c.SuccessJson(map[string]string{
 					"balance": "0.00000",
 					"address": address,
